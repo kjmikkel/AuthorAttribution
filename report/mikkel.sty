@@ -1,0 +1,61 @@
+% The LaTeX package for Mikkel Kjær Jensen
+\ProvidesPackage{mikkel}
+\newif\ifPDF
+\ifx\pdfoutput\undefined\PDFfalse
+\else\ifnum\pdfoutput > 0 \PDFtrue
+    	\else\PDFfalse
+		\fi
+\fi
+
+%\usepackage{a4}
+\usepackage[danish]{babel}
+\usepackage[latin1]{inputenc}
+%\usepackage{float}
+%\usepackage{textcomp}
+\usepackage{enumerate}
+\usepackage{verbatim}
+%\usepackage{amssymb}
+\usepackage{listing}
+%\usepackage{ulem}
+\ifPDF
+	\usepackage[pdftex]{hyperref}
+	\usepackage{graphicx}
+\else
+	\usepackage[dvips]{graphicx}
+%	\usepackage[dvips]{hyperref}
+\fi
+
+%\lstset{language=ML,numbers=left,stepnumber=1,basicstyle=\scriptsize}
+% Pages styles (master pages)
+\makeatletter
+\newcommand{\sqbox}{\hfill$\square$}
+\newcommand{\hide}[1]{}
+\newcommand{\E}[1]{\{#1\}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\dfrac}[4]{\frac{\frac{#1}{#2}}{\frac{#3}{#4}}}
+\newcommand{\eqa}[1]{\begin{eqnarray*}#1\end{eqnarray*}}
+\newcommand{\limTO}[2]{\lim_{#1 \rightarrow #2}}
+\newcommand{\LHop}{=^{[0/0]}}
+\newcommand{\parDif}[1]{\frac{\partial }{\partial #1}}
+\newcommand{\grad}[3]{\nabla #1(#2) = (#3)}
+\newcommand{\gra}[3]{\nabla #1(#2)}
+\newcommand{\ngr}[1]{$\|$#1$\|$}
+\newcommand{\ad}[2]{
+\begin{description}
+\item[Advantages:]
+\begin{itemize}
+#1
+\end{itemize}
+\item[Disadvantages:]
+\begin{itemize}
+#2
+\end{itemize}
+\end{description}
+}
+\newcommand{\q}[1]{``#1''}
+\newcommand{\forum}{web forums}
+\newcommand\ps@Standard{
+\renewcommand\@oddhead{Mikkel Kjær Jensen, CPR: 2501851747}
+\renewcommand\@evenhead{\@oddhead}
+}
