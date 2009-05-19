@@ -40,7 +40,17 @@
 \newcommand{\parDif}[1]{\frac{\partial }{\partial #1}}
 \newcommand{\grad}[3]{\nabla #1(#2) = (#3)}
 \newcommand{\gra}[3]{\nabla #1(#2)}
-\newcommand{\ngr}[1]{$\|$#1$\|$}
+\newcommand{\ngr}[1]{$\mid$#1$\mid$}
+\newcommand{\ann}[2]{$^{#1}$[#2]}
+\newcommand{\method}[5]{
+\subsubsection{#1}
+#2 
+\emph{Example:}\\
+#3
+\\\\
+\emph{Advantages and Disadvantages:}\\
+\ad{#4}{#5}
+}
 \newcommand{\ad}[2]{
 \begin{description}
 \item[Advantages:]

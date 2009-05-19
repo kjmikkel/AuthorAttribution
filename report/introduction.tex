@@ -7,7 +7,7 @@ A common feature in papers about Authorship Attribution is that their sample lan
 I will therefore not try to solve any kind of word boundary problem\footnote{As an aside it should be mentioned that this would have been rather difficult if I had to work with an Asian language}.
 
 \subsection{Expectations to the reader}
-I expect the reader to be familiar with the basic problems within the field Author Attribution, as well as a working knowledge of some of the methods for finding it - especially the n-gram method.Due to the nature of the sample content, it would be advisable if the reader had, at least, a passing familiarity with message boards, and the kind of post made on these.
+I expect the reader to be familiar with the basic problems within the field Author Attribution, as well as a working knowledge of some of the methods for finding it - especially the n-gram method.Due to the nature of the sample content, it would be advisable if the reader had, at least, a passing familiarity with message boards, and the kind of posts made on these.
 
 \subsection{Learning targets and objectives}
 \subsubsection{Learning targets}
@@ -24,52 +24,83 @@ I will in this section discuss the major different types of Author Attribution t
 
 To give an example of the different techniques, I will use a text extract from ``The Federalist Papers'' \cite{federalist} \footnote{The chronological first of essays which both Axelander Hamilton and James Madison have claimed to write} in all the different examples. It should be noted that in many of the instances there is no established canonical way or method. The example should therefore be seen as nothing more than an example of the method mentioned in the chosen paper - and not be generalized to the entire technique.
 
-\subsubsection{Lexical}
+%\method{Lexical}
+%{}
+%{}
+%{\item 1}
+%{\item 2}
 
-\subsubsection{Character}
-Lexical analysis works on a purely lexical level. Thus it only looks at the actual characters that make up the text. Of the methods that can be found at the lexical level, I will in particular focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, a statistical analysis is made against the possible authors.
-
-For an example see the following\footnote{Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.}:
+\method{Character}
+{Lexical analysis works on a purely character level. Thus it only looks at the actual characters that make up the text. Of the methods that can be found at the lexical level, I will in particular focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, a statistical analysis is made against the possible authors.
+}
+{
+I have in the following\footnote{Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.} chosen to represent whitespace by the $\_$ character:
 \q{His proposition is,}
 which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ngr{\_pr}, \ngr{pro}, \ngr{rop}, \ngr{opo}, \ngr{pos}, \ngr{osi}, \ngr{sit}, \ngr{iti}, \ngr{tio}, \ngr{ion}, \ngr{on\_}, \ngr{n\_i}, \ngr{\_is}, \ngr{is,}. 
-
-\ad
+}
 {
 \item Very simple to implement
 \item Does not require specialised tools or much in the way prepossessing
 \item Gives very good results in practice
+\item The text does not need to be spelled correctly (as long as words are spelled consistently)
+\item Ignores problems with word or sentence boundaries.
 }
 {
-\item Seems perhaps too simple
 \item Can create very large datasets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters - though many of these are bound to be the same.
 \item Might not be applicable on alphabets based on symbols or pictogram's instead of individual letters (though it should avoid any word barrier problem).
 }
 
-\subsubsection{Syntactic Features}
-Syntactic features tries to identify the author through the syntactic
+\method{Syntactic Features}
+{Syntactic features tries to identify the author through the syntactic
 features that are prevalent through the corpus of the authors
-work. The underlying assumption is that each author has a certain way of writing, that they subconsciously use this through their text. 
-
-\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
-
-\ad{
+work. The underlying assumption is that each author has a certain way of writing, that they subconsciously use this through their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as nounphrases or verbphrases) and the frequency of punctuation.
+} 
+{
+In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phrase, ADVP a adverbial phrase and CON conjunction.
+\q{\ann{NP}{His proposition is}, "\ann{CON}{that whenever any two of \ann{NP}{the three branches of government} \ann{VP}{shall concur in opinion}, \ann{NP}{each by the voices of two thirds of their whole number}, \ann{NP}{that a convention is} \ann{VP}{necessary for altering the constitution},\ann{CON}{or CORRECTING BREACHES OF IT}, \ann{VP}{a convention shall be called for the purpose.}}
+}
+}
+{
 \item Could very well be very accurate.
 }{
 \item Requires advanced software that can identify the different parts of the sentence - which I believe is beyond the scope of this project. 
 }
 
-\subsubsection{Stylistic information}
-Looking at the style of a text seems like an obvious choice when trying to identify the author (and indeed, not only the name, but also other data, like age and sex). In order to do, the text must be parsed to identify and mark parts of the text for certain predefined categories (\cite{style} mentions such concepts as ``Type'' and ``Orientation'', with further subcategories, all hung on certain words). 
-
-\ad{
+\method{Stylistic information}
+{
+Looking at the style of a text seems like an obvious choice when trying to identify the author (and indeed, not only the name, but also other data, like age and sex). In order to do, the text must be parsed to identify and mark parts of the text for certain predefined categories. \cite{style} mentions 3 top categories: 
+\begin{description}
+\item[Cohesion:] How a Text hangs together. Is constructed out of ``Elaboration'', ``Extension'' and ``Enhancement''.
+\item[Assessment:] How a text ``constructs propositions as statements of belief, obligation, or necessity''\footnote{\cite{style}, p. 804} - constructed out of  ``Type'', ``Value'', ``Orientation'', ``Objective'', ``Manifestation'', each with further subcategories, all hung on certain words.
+\item[Appraisal:] Qualifiers
+\end{description}
+}
+{
+I have annotated the words that I have found that might have been annotated by the system. However, I would like to note that this is only an approximation, and should not be taken as a qualification of the system described in \cite{style}:
+\q{His proposition is, "that \ann{Value}{whenever} any two of the three branches of government shall concur in opinion, \ann{Elaboration}{each by the voices of two thirds of their whole number}, \ann{Orientation}{that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT}, a convention \ann{Type}{shall} be called for the purpose.}
+}
+{
+\item Does not care about word or phrase boundaries.
+\item Given that the system could differentiate between the different cases, it is likely that information about the text could be used to construct a profile.
 }{
-\item For optimal efficiency it would require the entire text to be spelled correctly. Since I intend to create my corpora from text from \forum on the Internet - this requirement is unlikely to be satisfied.
+\item This methods seems to be even more For optimal efficiency it would require the entire text to be spelled correctly. Since I intend to create my corpora from text from \forum on the Internet - this requirement is unlikely to be satisfied.
+\item Furthermore the system seems to require that the specific words must be identified and tied to categories. This would mean that it cannot be applied to another language without a large amount of work.
 } 
 
-\subsubsection{Application Specific}
+\method{Application Specific}
+{
 
-\ad{
+}
+{
+\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
+}
+{
 \item Might be applicable since this project this with \forum s, which are known to use different structures when writing their posts
 }{
 \item Might very well become too specific so that it will only work on a subsection of forums or wikis.
 }
+
+\subsubsection{Conclusion}
+The conclusion must be that
+
+While one would be amis to disregard forums whose language is pictogram based - this project focus solely on those that involve individual characters. 
