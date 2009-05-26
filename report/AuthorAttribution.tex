@@ -1,13 +1,16 @@
 \documentclass[letter,12pt,english, final]{article}
-\usepackage{mikkel}
+\usepackauge{mikkel}
 % define the title\begin{document}
-\title{Auhor Attribution}
+\title{Auhor Attribution with n-gram analysis}
 \author{Mikkel Kjær Jensen}
 \begin{document}
 \pagestyle{headings}
 \maketitle
 
 \include{introduction}
-\include{bib}
+%\include{bib}
+
+\bibliography{authorBib}{}
+\bibliographystyle{plain}
  
 \end{document}

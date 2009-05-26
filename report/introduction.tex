@@ -1,37 +1,45 @@
 \section{Introduction}
-
-Authorship Attribution is the science of attributing written texts to potential authors. This is done by carefully analysing a corpora of text for each author, and then comparing the information gleaned to the text in question. The canonical case in Author Attribution is 12 of the essays written in the \q{The Federalist Papers} series, whom both Alexander Hamilton and James Madison claimed to have written. The introduction of computers and the advent of the Internet (and the anonymity on it), has only served to make Author Attribution a more important field of study. I will in this paper try to apply Author Attribution techniques to messages found on \forum s, and try to evaluate the quality of the result.  
+\label{introduction}
+Authorship Attribution is the science of attributing one or more texts to a list of potential authors. This is done by carefully analysing a corpora of text from each author, and then comparing the information gleaned to the text in question. The canonical case in Author Attribution is 12 of the essays written in the \q{The Federalist Papers} series, whom both Alexander Hamilton and James Madison claimed to have written. The introduction of computers and the advent of the Internet (and the anonymity on it), has only served to make Author Attribution a more important field of study. I will in this paper try to apply a chosen Author Attribution technique to posts found on \forum s, and try to evaluate the quality of the result.  
 
 \subsection{Scope and Limitations}
-A common feature in papers about Authorship Attribution is that their sample languages tend to be English, Greek and Chinese. Since I do not have no relation to any Greek or Chinese forum, and indeed no ability to speak or understand either language, I have chosen to exclusively concentrate on forums that use English as their main language.\\
+\label{scope}
+A common feature in papers about Authorship Attribution is that their sample languages tend to be English, Greek and Chinese \cite{syntactic}, \cite{nr2}, \cite{nr4} and \cite{app-spe}. Since I do not have any relation to any Greek or Chinese forum, and indeed no ability to speak or understand either language, I have chosen to exclusively concentrate on forums that use English as their main language.\\
 I will therefore not try to solve any kind of word boundary problem\footnote{As an aside it should be mentioned that this would have been rather difficult if I had to work with an Asian language}.
 
 \subsection{Expectations to the reader}
-I expect the reader to be familiar with the basic problems within the field Author Attribution, as well as a working knowledge of some of the methods for finding it - especially the n-gram method.Due to the nature of the sample content, it would be advisable if the reader had, at least, a passing familiarity with message boards, and the kind of posts made on these.
+\label{expectations}
+I expect the reader to be familiar with the basic problems within the field Author Attribution, as well as a working knowledge on of some of the methods for finding it - especially the n-gram method.Due to the nature of the sample content, it would be advisable if the reader had, at least, a passing familiarity with message boards, and the kind of posts made on these.
 
 \subsection{Learning targets and objectives}
+\label{lerning}
 \subsubsection{Learning targets}
 After having completed this assignment I will have learned 
 \begin{itemize}
-\item To briefly be able to surmise techniques, practical as well as theoretical, for authorship attribution.
+\item To briefly be able to summarise techniques, practical as well as theoretical, for authorship attribution.
 \item Apply a simple technique for authorship attribution on a limited and specific domain with texts, which have special syntactical characteristics.
 \item To be able to implement and test the above in a practical manner.
 \end{itemize}
 
 \subsection{Various techniques used for Author attribution}
-
+\label{techniques}
 I will in this section discuss the major different types of Author Attribution that exists, and debate the advantages and disadvantages of using each for this project.
 
 To give an example of the different techniques, I will use a text extract from ``The Federalist Papers'' \cite{federalist} \footnote{The chronological first of essays which both Axelander Hamilton and James Madison have claimed to write} in all the different examples. It should be noted that in many of the instances there is no established canonical way or method. The example should therefore be seen as nothing more than an example of the method mentioned in the chosen paper - and not be generalized to the entire technique.
 
-%\method{Lexical}
-%{}
-%{}
-%{\item 1}
-%{\item 2}
+I will use the following criteria for judging the method's effectiveness:
+\begin{itemize}
+\item It should work on reasonably sized amount of text
+\item The time complexity inherent in the algorithm should not be too large
+\item I should be practically able to implement the solution in a reasonable time
+\item I should not be required to be an expert in natural language constructions to be able to implement the solution
+\item The solution should at lest be able to work on languages written in the a character alphabet, though it might be a plus if it also worked on pictogram based languages.
+\item There should be as little work as possible to actually get the method up and working.
+\end{itemize}
 
 \method{Character}
-{Lexical analysis works on a purely character level. Thus it only looks at the actual characters that make up the text. Of the methods that can be found at the lexical level, I will in particular focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, a statistical analysis is made against the possible authors.
+{\label{character}
+Lexical analysis works on a purely character level. Thus it only looks at the actual characters that make up the text. Of the methods that can be found at the lexical level, I will in particular focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, a statistical analysis is made against the possible authors.
 }
 {
 I have in the following\footnote{Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.} chosen to represent whitespace by the $\_$ character:
@@ -46,14 +54,15 @@ which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ng
 \item Ignores problems with word or sentence boundaries.
 }
 {
-\item Can create very large datasets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters - though many of these are bound to be the same.
+\item Can create very large data sets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters - though many of these are bound to be the same.
 \item Might not be applicable on alphabets based on symbols or pictogram's instead of individual letters (though it should avoid any word barrier problem).
 }
 
 \method{Syntactic Features}
-{Syntactic features tries to identify the author through the syntactic
+{\label{syntactic}
+Syntactic features tries to identify the author through the syntactic
 features that are prevalent through the corpus of the authors
-work. The underlying assumption is that each author has a certain way of writing, that they subconsciously use this through their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as nounphrases or verbphrases) and the frequency of punctuation.
+work. The underlying assumption is that each author has a certain way of writing, that they subconsciously use this through their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A nonporous is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
 } 
 {
 In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phrase, ADVP a adverbial phrase and CON conjunction.
@@ -63,22 +72,23 @@ In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phras
 {
 \item Could very well be very accurate.
 }{
-\item Requires advanced software that can identify the different parts of the sentence - which I believe is beyond the scope of this project. 
+\item Requires advanced software that can identify the different parts of the sentence - which I believe is beyond the scope of this project.
+
 }
 
 \method{Stylistic information}
-{
+{\label{stylistic}
 Looking at the style of a text seems like an obvious choice when trying to identify the author (and indeed, not only the name, but also other data, like age and sex). In order to do, the text must be parsed to identify and mark parts of the text for certain predefined categories. \cite{style} mentions 3 top categories: 
 \begin{description}
-\item[Cohesion:] How a Text hangs together. Is constructed out of ``Elaboration'', ``Extension'' and ``Enhancement''.
-\item[Assessment:] How a text ``constructs propositions as statements of belief, obligation, or necessity''\footnote{\cite{style}, p. 804} - constructed out of  ``Type'', ``Value'', ``Orientation'', ``Objective'', ``Manifestation'', each with further subcategories, all hung on certain words.
+\item[Cohesion:] How a Text is constructed. Is constructed out of ``Elaboration'', ``Extension'' and ``Enhancement''.
+\item[Assessment:] How a text \q{constructs propositions as statements of belief, obligation, or necessity}\footnote{\cite{style}, p. 804} - constructed out of  ``Type'', ``Value'', ``Orientation'', ``Objective'', ``Manifestation'', each with further subcategories, all hung on certain words.
 \item[Appraisal:] Qualifiers
 \end{description}
 }
 {
 I have annotated the words that I have found that might have been annotated by the system. However, I would like to note that this is only an approximation, and should not be taken as a qualification of the system described in \cite{style}:
 \q{His proposition is, "that \ann{Value}{whenever} any two of the three branches of government shall concur in opinion, \ann{Elaboration}{each by the voices of two thirds of their whole number}, \ann{Orientation}{that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT}, a convention \ann{Type}{shall} be called for the purpose.}
-}
+}  
 {
 \item Does not care about word or phrase boundaries.
 \item Given that the system could differentiate between the different cases, it is likely that information about the text could be used to construct a profile.
@@ -88,19 +98,22 @@ I have annotated the words that I have found that might have been annotated by t
 } 
 
 \method{Application Specific}
-{
-
+{\label{application}
+Instead of trying to fit a general model on on every text, the application specific takes care to use information about the medium in question - such as HTML tags for message on \forum , indentation, the use of signature, fonts, size etc.
 }
 {
-\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
+Since this method is mainly for use for web based applications, it is unsuitable an example such as the Federalist papers, and I will therefore not try to analyse it.
+%\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
 }
 {
-\item Might be applicable since this project this with \forum s, which are known to use different structures when writing their posts
+\item Might be applicable since this project this with \forum s, which are known to use different structures when writing their posts.
+\item Would most likely boost the attribution, as many forum regulars (who are the only ones that leave enough information to be identified) tend to have signatures and/or signature styles.
 }{
-\item Might very well become too specific so that it will only work on a subsection of forums or wikis.
+\item Might very well become too specific, and will thus only work on a subsection of forums or wikis (and not on those that have their own style or formatting).
+\item Is described very vaguely - there is not much information on what should be done, nor what should be focused on
+\item Requires more advanced pattern recognition 
 }
 
 \subsubsection{Conclusion}
-The conclusion must be that
-
-While one would be amis to disregard forums whose language is pictogram based - this project focus solely on those that involve individual characters. 
+\label{technique:conclusion}
+From this we must conclude that the best choice would be to use the character based n-gram approach - since it is both simpler than most of the other attribution models (and requires less manual intervention), while still giving good results. Since I have decided to focus on western languages, I will not try to accommodate languages whose alphabet is pictogram based - e.g. Chinese.
