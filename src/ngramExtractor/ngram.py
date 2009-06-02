@@ -19,6 +19,7 @@
 
 from types import StringType, ListType, FloatType, IntType, BooleanType
 import pprint
+import re
 
 class ngram:
    """ Used to compute similarities between strings. Can easily be used to
@@ -109,6 +110,9 @@ class ngram:
       grams = {}
 
       for string in haystack:
+         # start modified -fixit
+         string = re.sub('[0-9]','\v', string)
+         # end modified
          tmpstr = string
          if only_alnum: raise NotImplementedError
          if ic:         tmpstr = tmpstr.lower()
@@ -116,18 +120,27 @@ class ngram:
             tmpstr = tmpstr.replace(char, '')
          if seen.has_key(tmpstr): continue
          seen[tmpstr] = 1
-
+         
+         # start modified by me
          tmpstr = padding + tmpstr + padding
          length = len(tmpstr)
          for i in xrange( length - self.__ngram_len + 1 ):
             ngram = tmpstr[i:i+self.__ngram_len]
             if not grams.has_key(ngram):
-               grams[ngram] = {string: {'grams':0, 'len': 0} }
-            if not grams[ngram].has_key(string):
-               grams[ngram][string] = {'grams':0, 'len': 0}
-            grams[ngram][string]['grams'] += 1
-            grams[ngram][string]['len']   += length
+               grams[ngram] = {'grams':0}
+           # if not grams[ngram].has_key(string):
+           #    grams[ngram][string] = {'grams':0}
+            grams[ngram]['grams'] += 1
+      # end modified by me
       return grams
+
+   def probabilityNorm(self, words):
+       prob = 1
+       for i in range(0, len(words) -1):
+           prob *= probability(words[i],words[0:i-1])
+       return prob
+
+    
 
    def reInit(self, base):
       """
@@ -181,10 +194,11 @@ class ngram:
                ngram_buf[ngram][actName] = ngram_count
             if ngram_buf[ngram][actName] > 0:
                ngram_buf[ngram][actName] -= 1
-               if not siminfo.has_key(actName): siminfo[actName] = {'name': 0, 'len':0}
+               """ start modified"""
+               if not siminfo.has_key(actName): siminfo[actName] = {'name': 0}
                siminfo[actName]['name'] += 1
-               siminfo[actName]['len'] = actMatch['len']
-
+               """ """
+               
       return self.computeSimilarity(string, siminfo)
 
    def computeSimilarity(self, string, siminfo):
@@ -194,7 +208,7 @@ class ngram:
          string   - This is what we want to get the score of
          siminfo  - A dictionary containing info about n-gram distribution.
                     (see getSimilarStrings)
-      RETURNS:
+      RETURNS: 
          the score as float
       """
       result = {}
@@ -360,12 +374,9 @@ class ngram:
 if __name__ == "__main__":
 
    # A simple example
-    string = " abcdef ghijklmnoprstuv xyz  abc"
-    base = [string]
+    string = " abcdef ghijklmnoprstuv xyz 2 abc"
+    base = [string, "abcabcabc"]
     tg = ngram(base, min_sim=0.0)
     value = tg.ngramify(base)
+    value = {'Mikkel Kjaer Jensen': value}
     pprint.pprint(value)
-    print "before"
-    for val in value:
-        print value[val][string]
-    
