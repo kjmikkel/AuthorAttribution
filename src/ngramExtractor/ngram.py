@@ -20,6 +20,7 @@
 from types import StringType, ListType, FloatType, IntType, BooleanType
 import pprint
 import re
+import probability as prob
 
 class ngram:
    """ Used to compute similarities between strings. Can easily be used to
@@ -54,13 +55,14 @@ class ngram:
       """
 
       self.__min_sim    = 0.0
-      self.__warp       = 1.0
+      self.__warp       = 1.0 
       self.__ic         = False     # ignore case
       self.__only_alnum = False
       self.__noise      = ''
       self.__debug      = False
-      self.__ngram_len  = 3
+      self.__ngram_len  = 6
       self.__padding    = self.__ngram_len - 1
+      self.__corp       = None
 
       if kwargs.has_key('min_sim'):    self.min_sim(kwargs['min_sim'])
       if kwargs.has_key('warp'):       self.warp(kwargs['warp'])
@@ -108,6 +110,7 @@ class ngram:
 
       seen  = {}
       grams = {}
+      list = []
 
       for string in haystack:
          # start modified -fixit
@@ -131,17 +134,10 @@ class ngram:
            # if not grams[ngram].has_key(string):
            #    grams[ngram][string] = {'grams':0}
             grams[ngram]['grams'] += 1
+            list.append(ngram)
       # end modified by me
-      return grams
-
-   def probabilityNorm(self, words):
-       prob = 1
-       for i in range(0, len(words) -1):
-           prob *= probability(words[i],words[0:i-1])
-       return prob
-
-    
-
+      return (grams, list)
+  
    def reInit(self, base):
       """
       Reinitialises the search space.
@@ -371,12 +367,84 @@ class ngram:
       else: return result[s1]
    compare = classmethod(compare)
 
-if __name__ == "__main__":
+#methods written by me
+   def probabilityNorm(self, words):
+       prob = 1
+       for i in range(0, len(words) -1):
+           prob *= probability(words[i],words[0:i-1])
+       return prob
+   
+   def propability(self, word, number):
+    #   print word[-1]
+       divValue = 0
+       #divValue = self.corp.word[:-1].count(word[-1])       #self.corp.count(word[number])
+       for corp in self.corp:
+           print "word:", word, "gram:", corp
+           divValue += corp.count(word)           
+       if divValue > 0:
+           return self.probHat(word, number, divValue)
+       else:
+           newWord = word[1:]
+           if len(newWord) > 0:
+               return self.beta(word) * self.propability(newWord, number)
+           else:
+               return 0
+      
+   def beta(self, words):
+       upperSum = 0
+       index = 0
+       for i in range(0, len(words)):
+           x = words[i]
+           divValue = words.count(x)
+           upperSum += self.probHat(words, i, divValue)
+       lowerSum = 0
+       
+       lessWords = words[1:]
+       for i in range(0, len(lessWords)):
+           x = lessWords[i]
+           divVaule = lessWords.count(x)
+           lowerSum += self.probHat(lessWords, i, divValue)
+        
+       upper = float(1 - upperSum)
+       lower = float(1 - lowerSum)
+       # print "beta ", lower, upper, upper / lower
+       return upper / lower
 
+   def probHat(self, words, number, divValue):
+        freq = prob.FreqDist(words)
+        goodTur = prob.GoodTuringProbDist(freq)
+        sum = 0
+        list = []
+     #   print words
+     #   for i in range(0, len(words)):
+     #       print goodTur.prob(words[i])
+     #       sum += goodTur.prob(words[i])
+        return (float(goodTur.prob(words)) / float(divValue))
+   
+   def ngram_to_list(self, grams):
+        list = []
+        for val in grams:
+            for i in range(0, grams[val]['grams']):
+                list.append(val)
+        return  list
+        
+#end methods written by me
+
+if __name__ == "__main__":
    # A simple example
-    string = " abcdef ghijklmnoprstuv xyz 2 abc"
+    string = "3 May. Bistritz.--"
+    # Left Munich at 8:35 P.M., on 1st May, arriving at Vienna early next morning; should have arrived at 6:46, but train was an hour late.  Buda-Pesth seems a wonderful place, from the glimpse which I got of it from the train and the little I could walk through the streets.  I feared to go very far from the station, as we had arrived late and would start as near the correct time as possible. The impression I had was that we were leaving the West and entering the East; the most western of splendid bridges over the Danube, which is here of noble width and depth, took us among the traditions of Turkish rule. We left in pretty good time, and came after nightfall to Klausenburg. Here I stopped for the night at the Hotel Royale.  I had for dinner, or rather supper, a chicken done up some way with red pepper, which was very good but thirsty.  (Mem. get recipe for Mina.) I asked the waiter, and he said it was called paprika hendl, and that, as it was a national dish, I should be able to get it anywhere along the Carpathians. I found my smattering of German very useful here, indeed, I don't know how I should be able to get on without it. Having had some time at my disposal when in London, I had visited the British Museum, and made search among the books and maps in the library regarding Transylvania; it had struck me that some foreknowledge of the country could hardly fail to have some importance in dealing with a nobleman of that country. I find that the district he named is in the extreme east of the country, just on the borders of three states, Transylvania, Moldavia, and Bukovina, in the midst of the Carpathian mountains; one of the wildest and least known portions of Europe. I was not able to light on any map or work giving the exact locality of the Castle Dracula, as there are no maps of this country as yet to compare with our own Ordnance Survey Maps; but I found that Bistritz the post town named by Count Dracula, is a fairly well-known place.  I shall enter here some of my notes, as they may refresh my memory when I talk over my travels with Mina."
     base = [string, "abcabcabc"]
     tg = ngram(base, min_sim=0.0)
-    value = tg.ngramify(base)
-    value = {'Mikkel Kjaer Jensen': value}
-    pprint.pprint(value)
+    (gram, list) = tg.ngramify(base)
+    
+    tg.corp = list #tg.ngram_to_list(gram)
+    #print tg.corp
+    #print tg.timesInCorp('abc')
+    #list = tg.ngram_to_list(value)
+    #test = {'Mikkel Kjaer Jensen': value}
+    sum = 0
+    reminder = []
+#    for word in tg.corp:
+    sum += tg.propability("May", 0)
+    print sum
