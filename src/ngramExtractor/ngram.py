@@ -375,11 +375,10 @@ class ngram:
        return prob
    
    def propability(self, word, number):
-    #   print word[-1]
        divValue = 0
-       #divValue = self.corp.word[:-1].count(word[-1])       #self.corp.count(word[number])
+       # I look through every n-gram of the corpus, to see whether the
+       # word appers
        for corp in self.corp:
-           print "word:", word, "gram:", corp
            divValue += corp.count(word)           
        if divValue > 0:
            return self.probHat(word, number, divValue)
@@ -411,7 +410,7 @@ class ngram:
        return upper / lower
 
    def probHat(self, words, number, divValue):
-        freq = prob.FreqDist(words)
+        freq = prob.FreqDist(self.corp)
         goodTur = prob.GoodTuringProbDist(freq)
         sum = 0
         list = []
@@ -419,7 +418,10 @@ class ngram:
      #   for i in range(0, len(words)):
      #       print goodTur.prob(words[i])
      #       sum += goodTur.prob(words[i])
-        return (float(goodTur.prob(words)) / float(divValue))
+        upper = float(goodTur.prob(words))
+        if upper > 0:
+            print words, ":", str(upper), ":", divValue
+        return (upper / float(divValue))
    
    def ngram_to_list(self, grams):
         list = []
@@ -431,20 +433,23 @@ class ngram:
 #end methods written by me
 
 if __name__ == "__main__":
-   # A simple example
-    string = "3 May. Bistritz.--"
-    # Left Munich at 8:35 P.M., on 1st May, arriving at Vienna early next morning; should have arrived at 6:46, but train was an hour late.  Buda-Pesth seems a wonderful place, from the glimpse which I got of it from the train and the little I could walk through the streets.  I feared to go very far from the station, as we had arrived late and would start as near the correct time as possible. The impression I had was that we were leaving the West and entering the East; the most western of splendid bridges over the Danube, which is here of noble width and depth, took us among the traditions of Turkish rule. We left in pretty good time, and came after nightfall to Klausenburg. Here I stopped for the night at the Hotel Royale.  I had for dinner, or rather supper, a chicken done up some way with red pepper, which was very good but thirsty.  (Mem. get recipe for Mina.) I asked the waiter, and he said it was called paprika hendl, and that, as it was a national dish, I should be able to get it anywhere along the Carpathians. I found my smattering of German very useful here, indeed, I don't know how I should be able to get on without it. Having had some time at my disposal when in London, I had visited the British Museum, and made search among the books and maps in the library regarding Transylvania; it had struck me that some foreknowledge of the country could hardly fail to have some importance in dealing with a nobleman of that country. I find that the district he named is in the extreme east of the country, just on the borders of three states, Transylvania, Moldavia, and Bukovina, in the midst of the Carpathian mountains; one of the wildest and least known portions of Europe. I was not able to light on any map or work giving the exact locality of the Castle Dracula, as there are no maps of this country as yet to compare with our own Ordnance Survey Maps; but I found that Bistritz the post town named by Count Dracula, is a fairly well-known place.  I shall enter here some of my notes, as they may refresh my memory when I talk over my travels with Mina."
-    base = [string, "abcabcabc"]
+    # A simple example
+    string = "3 May. Bistritz.-Left Munich at 8:35 P.M., on 1st May, arriving at Vienna early next morning; should have arrived at 6:46, but train was an hour late.  Buda-Pesth seems a wonderful place, from the glimpse which I got of it from the train and the little I could walk through the streets.  I feared to go very far from the station, as we had arrived late and would start as near the correct time as possible. The impression I had was that we were leaving the West and entering the East; the most western of splendid bridges over the Danube, which is here of noble width and depth, took us among the traditions of Turkish rule. We left in pretty good time, and came after nightfall to Klausenburg. Here I stopped for the night at the Hotel Royale.  I had for dinner, or rather supper, a chicken done up some way with red pepper, which was very good but thirsty.  (Mem. get recipe for Mina.) I asked the waiter, and he said it was called paprika hendl, and that, as it was a national dish, I should be able to get it anywhere along the Carpathians. I found my smattering of German very useful here, indeed, I don't know how I should be able to get on without it. Having had some time at my disposal when in London, I had visited the British Museum, and made search among the books and maps in the library regarding Transylvania; it had struck me that some foreknowledge of the country could hardly fail to have some importance in dealing with a nobleman of that country. I find that the district he named is in the extreme east of the country, just on the borders of three states, Transylvania, Moldavia, and Bukovina, in the midst of the Carpathian mountains; one of the wildest and least known portions of Europe. I was not able to light on any map or work giving the exact locality of the Castle Dracula, as there are no maps of this country as yet to compare with our own Ordnance Survey Maps; but I found that Bistritz the post town named by Count Dracula, is a fairly well-known place.  I shall enter here some of my notes, as they may refresh my memory when I talk over my travels with Mina."
+    base = [string]
     tg = ngram(base, min_sim=0.0)
     (gram, list) = tg.ngramify(base)
-    
     tg.corp = list #tg.ngram_to_list(gram)
+    
+    
     #print tg.corp
     #print tg.timesInCorp('abc')
     #list = tg.ngram_to_list(value)
     #test = {'Mikkel Kjaer Jensen': value}
+    
     sum = 0
-    reminder = []
-#    for word in tg.corp:
-    sum += tg.propability("May", 0)
+    compareTo =  [string] # ["Left Munich at 8:35 P.M., on 1st May"]
+    com = ngram(compareTo, min_sin=0.0)
+    (gram, workList) = tg.ngramify(compareTo)
+    for word in workList: 
+        sum += tg.propability(word, 0)
     print sum
