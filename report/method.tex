@@ -1,0 +1,45 @@
+\section{Method used}
+\label{method}
+
+\fixme{Make a proper introduction}
+The method in \cite{4} tries to find the author with the greatest probability of having written a given text t. It does so by calculating the probability of each author having written the text, and then chooses the one with the greatest probability.
+
+It should be mentioned that my implementation looks only on characters while the solution proposed in \cite{nr4} uses words\footnote{Thus the each ``gram'' would consist of a word}, which   \fixme{Should this be here? - should be in the report at all}.
+
+The probability is calculated as follows:
+\begin{enumerate}it be 
+\item First an author a is chosen from the pool of A 
+\item For each n-gram n in the text t we check to see whether the n-gram appears in the corpus of a
+\begin{description}
+\item[$n \in n-gram(a)$:] Return the result of probHat on n
+\item[$n \notin n-gram(a)$:] Return the normalization\_constant(n) * probability($n^\prime$ - where $n^{\prime}$ is n with the first character removed (so if n =``abc'', then $n^{\prime}$ = ``bc'' 
+\end{description} 
+\end{enumerate}
+
+In the following $c_n$ is the n'th character in the text. As stated in \cite{nr4}, the probability of the value of i'th character is based on the past i - 1 characters (with the more recent characters counting for more \fixme{is this true}). However, calculating this probability would be prohibitory expensive. With n-grams, we only use the probability for the last n characters - so the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.
+
+\begin{equation*}
+Pr(c_{i - n + 1} \ldots c_{i}) = \left\{
+\begin{array}{rl}
+\hat{P}r(c_{i - n + 1} \ldots c_{i}), \text{if } \#(c_{i - n + 1} \ldots c_{i}) > 0\\
+\beta(c_{i - n + 1} \ldots c_{i-1}) \cdot Pr(c_{i - n + 2} \ldots c_{i}), \mathrm{otherwise}
+\end{array} \right.
+\end{equation*}
+
+where 
+$$
+\hat{P}r(c_{i - n + 1} \ldots c_{i}) = \frac{discount \#(c_{i - n + 1} \ldots c_{i})}{\#(c_{i - n + 1} \ldots c_{i-1})}
+$$
+
+$$
+\beta(c_{i - n + 1} \ldots c_{i-1}) = 
+\frac
+{1 - \sum_{x \in (c_{i - n + 1} \ldots c_{i-1})}\hat{P}r(c_{i - n + 1} \ldots c_{i-1} x)}
+{1 - \sum_{x \in (c_{i - n + 1} \ldots c_{i-1})}\hat{P}r(c_{i - n + 2} \ldots c_{i-1} x)}
+$$
+and 
+$discount\#(c_{i - n + 1} \ldots c_{i})$ 
+is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}}\fixme{Either refer to a source that describes Good-Turing smoothing or explain why it is needed} against the corpora for the author we are calculating against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora. This was especially relevant when the n-grams consited of words, as it did in \cite{nr4}, since the alfabet of words in the English language than the alfabet of letters, and thus would leave them with a too large dataset to shift through. \fixme{Decide whether it is worth explaining the division.}. The division of the number of occurences of $c_{i - n + 1} \ldots c_{i - 1}$ in the corpora is to make sure the  
+
+%\fixme{Should this be here or moved up?}
+%c_{i - n + 1} c_{i - n + 2} \ldots c_{i-1}

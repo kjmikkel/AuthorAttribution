@@ -102,7 +102,8 @@ I have annotated the words that I have found that might have been annotated by t
 Instead of trying to fit a general model on on every text, the application specific takes care to use information about the medium in question - such as HTML tags for message on \forum , indentation, the use of signature, fonts, size etc.
 }
 {
-Since this method is mainly for use for web based applications, it is unsuitable an example such as the Federalist papers, and I will therefore not try to analyse it.
+\fixme{Add example and remove this tripe}
+Since this method is mainly for use for web based applications, it is unsuitable an example such as the Federalist papers, and I will therefore not try to analyse it. 
 %\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
 }
 {
@@ -119,8 +120,9 @@ Since this method is mainly for use for web based applications, it is unsuitable
 From this we must conclude that the best choice would be to use the character based n-gram approach - since it is both simpler than most of the other attribution models (and requires less manual intervention), while still giving good results. Since I have decided to focus on western languages, I will not try to accommodate languages whose alphabet is pictogram based - e.g. Chinese.
 
 
-
 \subsection{Choice of n-gram analysis}
+\fixme{help}
+
 
 \subsubsection{nr3}
 \cite{nr3} first selects the most important n-grams, using a number of rules (which, due to their complexity, will not be included here). In order to compare whether or not a certain author has written a certain text, another involved formula is then used, to gauge the information gain given the corpora of the author.
@@ -132,7 +134,7 @@ This paper uses a improved version of the algorithm found in \cite{Bennet}, whic
 
 The Authors of \cite{nr2} then use the following formula
 $$
-\sum_{n \in profile}(\frac{2 \cdot ((f_1)(n) - f_2(n))}{f_1(n) + f_2(n)})^2
+\sum_{n \in profile}\left(\frac{2 \cdot (f_1(n) - f_2(n))}{f_1(n) + f_2(n)}\right)^2
 $$advantage
 to calculate the dissimilarity between the document we wish to assign an author and the Author we want to check against. $f_1(n)$ and $f_2(n)$ is the frequency of n-gram n in the document and the corpora of the author, respectively. 
 
