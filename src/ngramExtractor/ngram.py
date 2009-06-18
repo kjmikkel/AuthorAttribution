@@ -18,9 +18,11 @@
 #
 
 from types import StringType, ListType, FloatType, IntType, BooleanType
+from cStringIO import StringIO
 import pprint
 import re
 import probability as prob
+import json
 
 class ngram:
    """ Used to compute similarities between strings. Can easily be used to
@@ -367,7 +369,7 @@ class ngram:
       else: return result[s1]
    compare = classmethod(compare)
 
-#methods written by me
+   #methods written by me
    def probabilityNorm(self, words):
        prob = 1
        for i in range(0, len(words) -1):
@@ -378,8 +380,9 @@ class ngram:
        divValue = 0
        # I look through every n-gram of the corpus, to see whether the
        # word appers
+       newWord = word[:-1]
        for corp in self.corp:
-           divValue += corp.count(word)           
+           divValue += corp.count(newWord)           
        if divValue > 0:
            return self.probHat(word, number, divValue)
        else:
@@ -412,27 +415,34 @@ class ngram:
    def probHat(self, words, number, divValue):
         freq = prob.FreqDist(self.corp)
         goodTur = prob.GoodTuringProbDist(freq)
+        upper = 0
+        for word in words:
+            for cor in self.corp:
+                upper += cor.count(word)
         sum = 0
-        list = []
+     #   list = []
      #   print words
-     #   for i in range(0, len(words)):
-     #       print goodTur.prob(words[i])
-     #       sum += goodTur.prob(words[i])
-        upper = float(goodTur.prob(words))
-        if upper > 0:
-            print words, ":", str(upper), ":", divValue
+        #for i in range(0, len(words)):
+        #    sum += goodTur.prob(words[i])
+        #upper = float(goodTur.prob(words))
+        #if upper > 0:
+         #   print words, ":", str(upper), ":", divValue
         return (upper / float(divValue))
    
-   def ngram_to_list(self, grams):
-        list = []
-        for val in grams:
-            for i in range(0, grams[val]['grams']):
-                list.append(val)
-        return  list
-        
+
+def ngram_to_list(grams):
+    list = []
+    for val in grams:
+        for i in range(0, grams[val]):
+            list.append(val)
+    return  list
+
 #end methods written by me
-def makeAuthor(text):
-    base = [text]
+#begin toplevel methods written by me
+def makeAuthor(texts):
+    base = []
+    for text in texts:
+        base.append(text)
     tg = ngram(base, min_sim=0.0)
     (gram, list) = tg.ngramify(base)
     tg.corp = list
@@ -463,14 +473,90 @@ def largestDictKey(resultDict):
     max_key = b[max(b.keys())]
     return (max_key, resultDict[max_key])
 
-if __name__ == "__main__":
+def listify(fileLoad, fileSave):
+    dict = read_JSON_file(fileLoad)
+    saveDict = {}
+    for author in dict:
+        list =  ngram_to_list(dict[author])
+        saveDict[author] = list
+    
+    save_JSON_file(fileSave, saveDict)
+
+def makeJsonFile(filename, fileToSave_name):
+    dict = read_JSON_file(filename)
     authorDict = {}
-    authorDict["Bram Stoker"] = "3 May. Bistritz.-Left Munich at 8:35 P.M., on 1st May, arriving at Vienna early next morning; should have arrived at 6:46, but train was an hour late.  Buda-Pesth seems a wonderful place, from the glimpse which I got of it from the train and the little I could walk through the streets.  I feared to go very far from the station, as we had arrived late and would start as near the correct time as possible. The impression I had was that we were leaving the West and entering the East; the most western of splendid bridges over the Danube, which is here of noble width and depth, took us among the traditions of Turkish rule. We left in pretty good time, and came after nightfall to Klausenburg. Here I stopped for the night at the Hotel Royale.  I had for dinner, or rather supper, a chicken done up some way with red pepper, which was very good but thirsty.  (Mem. get recipe for Mina.) I asked the waiter, and he said it was called paprika hendl, and that, as it was a national dish, I should be able to get it anywhere along the Carpathians. I found my smattering of German very useful here, indeed, I don't know how I should be able to get on without it. Having had some time at my disposal when in London, I had visited the British Museum, and made search among the books and maps in the library regarding Transylvania; it had struck me that some foreknowledge of the country could hardly fail to have some importance in dealing with a nobleman of that country. I find that the district he named is in the extreme east of the country, just on the borders of three states, Transylvania, Moldavia, and Bukovina, in the midst of the Carpathian mountains; one of the wildest and least known portions of Europe. I was not able to light on any map or work giving the exact locality of the Castle Dracula, as there are no maps of this country as yet to compare with our own Ordnance Survey Maps; but I found that Bistritz the post town named by Count Dracula, is a fairly well-known place.  I shall enter here some of my notes, as they may refresh my memory when I talk over my travels with Mina."
-    authorDict["Corrow Doctorow"] = "I lived long enough to see the cure for death; to see the rise of the Bitchun Society, to learn ten languages; to compose three symphonies; to realize my boyhood dream of taking up residence in Disney World; to see the death of the workplace and of work. I never thought I'd live to see the day when Keep A-Movin' Dan would decide to deadhead until the heat death of the Universe. Dan was in his second or third blush of youth when I first met him, sometime late-XXI. He was a rangy cowpoke, apparent 25 or so, all rawhide squint-lines and sunburned neck, boots worn thin and infinitely comfortable. I was in the middle of my Chem thesis, my fourth Doctorate, and he was taking a break from Saving the World, chilling on campus in Toronto and core-dumping for some poor Anthro major. We hooked up at the Grad Students' Union -- the GSU, or Gazoo for those who knew -- on a busy Friday night, summer-ish. I was fighting a coral-slow battle for a stool at the scratched bar, inching my way closer every time the press of bodies shifted, and he had one of the few seats, surrounded by a litter of cigarette junk and empties, clearly encamped. Some duration into my foray, he cocked his head at me and raised a sun-bleached eyebrow. \"You get any closer, son, and we're going to have to get a pre-nup.\" I was apparent forty or so, and I thought about bridling at being called son, but I looked into his eyes and decided that he had enough realtime that he could call me son anytime he wanted. I backed off a little and apologized. He struck a cig and blew a pungent, strong plume over the bartender's head. \"Don't worry about it. I'm probably a little over accustomed to personal space.\" I couldn't remember the last time I'd heard anyone on-world talk about personal space. With the mortality rate at zero and the birth-rate at non-zero, the world was inexorably accreting a dense carpet of people, even with the migratory and deadhead drains on the population. \"You've been jaunting?\" I asked -- his eyes were too sharp for him to have missed an instant's experience to deadheading."   
-    authorDict["Author Cannon Doyle"] = "To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position. He never spoke of the softer passions, save with a gibe and a sneer. They were admirable things for the observer--excellent for drawing the veil from men's motives and actions. But for the trained reasoner to admit such intrusions into his own delicate and finely adjusted temperament was to introduce a distracting factor which might throw a doubt upon all his mental results. Grit in a sensitive instrument, or a crack in one of his own high-power lenses, would not be more disturbing than a strong emotion in a nature such as his. And yet there was but one woman to him, and that woman was the late Irene Adler, of dubious and questionable memory. I had seen little of Holmes lately. My marriage had drifted us away from each other. My own complete happiness, and the home-centred interests which rise up around the man who first finds himself master of his own establishment, were sufficient to absorb all my attention, while Holmes, who loathed every form of society with his whole Bohemian soul, remained in our lodgings in Baker Street, buried among his old books, and alternating from week to week between cocaine and ambition, the drowsiness of the drug, and the fierce energy of his own keen nature. He was still, as ever, deeply attracted by the study of crime, and occupied his immense faculties and extraordinary powers of observation in following out those clues, and clearing up those mysteries which had been abandoned as hopeless by the official police. From time to time I heard some vague account of his doings: of his summons to Odessa in the case of the Trepoff murder,"
-    authorDict["Charles Dickens"] = "Whether I shall turn out to be the hero of my own life, or whether that station will be held by anybody else, these pages must show. To begin my life with the beginning of my life, I record that I was born (as I have been informed and believe) on a Friday, at twelve o'clock at night.  It was remarked that the clock began to strike, and I began to cry, simultaneously. In consideration of the day and hour of my birth, it was declared by the nurse, and by some sage women in the neighbourhood who had taken a lively interest in me several months before there was any possibility of our becoming personally acquainted, first, that I was destined to be unlucky in life; and secondly, that I was privileged to see ghosts and spirits; both these gifts inevitably attaching, as they believed, to all unlucky infants of either gender, born towards the small hours on a Friday night. I need say nothing here, on the first head, because nothing can show better than my history whether that prediction was verified or falsified by the result.  On the second branch of the question, I will only remark, that unless I ran through that part of my inheritance while I was still a baby, I have not come into it yet. But I do not at all complain of having been kept out of this property; and if anybody else should be in the present enjoyment of it, he is heartily welcome to keep it. I was born with a caul, which was advertised for sale, in the newspapers, at the low price of fifteen guineas.  Whether sea-going people were short of money about that time, or were short of faith and preferred cork jackets, I don't know; all I know is, that there was but one solitary bidding, and that was from an attorney connected with the bill-broking business, who offered two pounds in cash, and the balance in sherry, but declined to be guaranteed from drowning on any higher bargain.  Consequently the advertisement was withdrawn at a dead loss - for as to sherry, my poor dear mother's own sherry was in the market then - and ten years afterwards, the caul was put up in a raffle down in our part of the country," 
+
+    for entry in dict:
+        author = entry["user_id"]
+        if authorDict.keys().count(author):
+            authorDict[author].append((entry["timestamp"], entry["text"]))
+        else:
+            authorDict[author] = [(entry["timestamp"], entry["text"])]
     
-    finalDict = makeAuthors(authorDict)
-    document = "5 May. The Castle. The gray of the morning has passed, and the sun is high over the distant horizon, which seems jagged, whether with trees or hills I know not, for it is so far off that big things and little are mixed. I am not sleepy, and, as I am not to be called till I awake, naturally I write till sleep comes. There are many odd things to put down, and, lest who reads them may fancy that I dined too well before I left Bistritz, let me put down my dinner exactly \"robber steak\" bits I dined on what they called of bacon, onion, and beef, seasoned with red pepper, and strung on sticks, and roasted over the fire, in simple style of the London cat's meat! The wine was Golden Mediasch, which produces a queer sting on the tongue, which is, however, not disagreeable. I had only a couple of glasses of this, and nothing else."    
+    newAuthorDict = {}
+    for key in authorDict.keys():
+        author = authorDict[key]
+        newAuthorDictTemp = {}
+        for entry in author:
+            (time, text) = entry
+            tg = ngram([text])
+            gramfied = tg.ngramify([text])
+            newAuthorDictTemp[time] = (text, gramfied)
+        newAuthorDict[key] = newAuthorDictTemp
     
-    compareAuthors(finalDict, document)
+    save_JSON_file(fileToSave_name, newAuthorDict)
+    
+def combine_ngrams(author):
+    finalDict = {}
+    for authorKey in author:
+        print authorKey
+        tempDict = {}
+        val = author[authorKey]
+        for postKeys in val.keys():
+            (text, gram) = val[postKeys]
+            gram = gram[0]
+            for entryKey in gram.keys():
+                thisNumber = gram[entryKey]["grams"]
+                number = 0
+                
+                if (tempDict.has_key(entryKey)):
+                    number = tempDict[entryKey] + thisNumber
+                else:
+                    number = thisNumber                
+                tempDict[entryKey] = number
+        finalDict[authorKey] = tempDict
+    return finalDict
+
+def read_JSON_file(filename):
+    FILE = open(filename,"r")
+    file_str = StringIO()
+    
+    for line in FILE:
+        file_str.write(line)
+
+    FILE.close()
+    dict = json.loads(file_str.getvalue())
+    return dict
+
+def save_JSON_file(filename, dict):
+    fileToSave = json.dumps(dict)
+    FILE_TO_SAVE = open(filename,"w")
+    FILE_TO_SAVE.write(fileToSave)
+    FILE_TO_SAVE.close()
+
+def merge_author_data(filename, merged_filename):
+    dict = read_JSON_file(filename)
+    newAuthorDict = combine_ngrams(dict)
+    save_JSON_file(merged_filename, newAuthorDict)
+    
+def getAndMerge():
+    filename = "testData.json"
+    fileToSave_name = "data_save_test.json"  
+    fileToSave_final = "data_temp_save_test.json"
+    fileToSave_listed = "data_listify_test.json"
+    makeJsonFile(filename, fileToSave_name)
+    merge_author_data(fileToSave_name, fileToSave_final)
+    listify(fileToSave_final, fileToSave_listed)
+
+if __name__ == "__main__":
+    getAndMerge()
