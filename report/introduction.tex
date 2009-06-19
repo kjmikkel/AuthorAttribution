@@ -1,6 +1,11 @@
 \section{Introduction}
 \label{introduction}
-Authorship Attribution is the science of attributing one or more texts to a list of potential authors. This is done by carefully analysing a corpora of text from each author, and then comparing the information gleaned to the text in question. The canonical case in Author Attribution is 12 of the essays written in the \q{The Federalist Papers} series, whom both Alexander Hamilton and James Madison claimed to have written. The introduction of computers and the advent of the Internet (and the anonymity on it), has only served to make Author Attribution a more important field of study. I will in this paper try to apply a chosen Author Attribution technique to posts found on \forum s, and try to evaluate the quality of the result.  
+Authorship Attribution is the science of attributing the ownership of a text t given a list of potential authors. This is done by carefully analysing subsection of texts (a so called corpora) from each author, and using the information gained from this to find the author most likely to have written t.\\
+
+The most famous case of Author Attribution is the attribution of 12 essays written in the \q{The Federalist Papers} series, whom both Alexander Hamilton and James Madison claimed to have written. Most modern Authorship Analysis believes that James Madison wrote them.  \fixme{Find citation}\\
+ The introduction of computers, and the advent of the Internet (and the anonymity on it), has only served to increase the importance of Author Attribution \fixme{Why? say something about plagiarism and crimes}. I will in this paper try to apply an already developed Author Attribution technique to posts found on forums, and try to evaluate the quality of the result.\\
+
+The justification for \fixme{Should this have its own section?}  trying this on web forums, is that as a rule, most posts on web forums are short, informal, and full of bad spelling and grammar\footnote{One would also be remiss to forget the many strange abbreviations, and features unique to the Internet (such as hyperlinks or embedded pictures)}, unlike the works of established authors. 
 
 \subsection{Scope and Limitations}
 \label{scope}
@@ -20,6 +25,11 @@ After having completed this assignment I will have learned
 \item Apply a simple technique for authorship attribution on a limited and specific domain with texts, which have special syntactical characteristics.
 \item To be able to implement and test the above in a practical manner.
 \end{itemize}
+
+\subsection{Reader guide}
+\fixme{Make sure that this is updated to the current version}
+Section \ref{introduction} - The introduction to the report, which will introduce the subject and 
+Section \ref{method} - Explanation of the method used in my project 
 
 \subsection{Various techniques used for Author attribution}
 \label{techniques}
@@ -124,12 +134,12 @@ From this we must conclude that the best choice would be to use the character ba
 \fixme{help}
 
 
-\subsubsection{nr3}
+\subsubsection{\cite{nr3}}
 \cite{nr3} first selects the most important n-grams, using a number of rules (which, due to their complexity, will not be included here). In order to compare whether or not a certain author has written a certain text, another involved formula is then used, to gauge the information gain given the corpora of the author.
 
 I find this n-gram analysis way of analysing off putting - not only does the functions themselves seem rather advanced, but the ``out-sourcing'' of key concepts to other papers (which may contain even more implementation details is disturbing. Another problem is that the gauging of the glue function seems to require that it is tuned manually for language specific additions - even if one only intends to use it on one language, this might still prove a problem if one wish to use the model on older languages - where the glue has other values than the current. 
 
-\subsubsection{nr2}
+\subsubsection{\cite{nr2}}
 This paper uses a improved version of the algorithm found in \cite{Bennet}, which uses the basic idea that an authors profile can be found by calculating the difference between the frequency of a character in the English language (based on some standard frequency) and the frequency of the author.\\
 
 The Authors of \cite{nr2} then use the following formula
@@ -140,7 +150,7 @@ to calculate the dissimilarity between the document we wish to assign an author 
 
 This method has the clear advantage that it is rather straightforward, and unlike \cite{Bennet} it does not require standard frequencies for the English language (which there could be multiple versions off - and therefore lead to different results depending on the version used).
 
-
+\subsubsection{Final choice}
 
 In the end I choose \cite{nr4} for several reasons:
 \begin{itemize}
