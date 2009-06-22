@@ -45,25 +45,22 @@
 \newcommand{\ngr}[1]{$\mid$#1$\mid$}
 \newcommand{\ann}[2]{$^{#1}$[#2]}
 \newcommand{\method}[5]{
-\subsubsection{#1}
+\subsection{#1}
 #2 
-\emph{Example:}\\
+\ \\\\\emph{Example:}
 #3
-\\\\
-\emph{Advantages and Disadvantages:}\\
+\ \\\\\emph{Advantages and Disadvantages:}
 \ad{#4}{#5}
 }
 \newcommand{\ad}[2]{
-\begin{description}
-\item[Advantages:]
+\subsubsection*{Advantages:}
 \begin{itemize}
 #1
 \end{itemize}
-\item[Disadvantages:]
+\subsubsection*{Disadvantages:}
 \begin{itemize}
 #2
 \end{itemize}
-\end{description}
 }
 \newcommand{\q}[1]{``#1''}
 \newcommand{\forum}{web forums}

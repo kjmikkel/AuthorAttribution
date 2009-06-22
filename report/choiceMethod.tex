@@ -1,0 +1,128 @@
+\section{Various techniques used for Author attribution}
+\label{choiceMethod}
+I will in this section discuss the major different types of Author Attribution that exists, and debate the advantages and disadvantages of using each for this project.
+
+To give an example of the different techniques, I will try to use a text extract from ``The Federalist Papers'' \cite{federalist} \footnote{The first essay of the series, that both Axelander Hamilton and James Madison have claimed to write} in the examples. It should be noted that in many of the instances there is no canonical way or method. The example should therefore be seen as nothing more than an example of the method mentioned in the chosen paper - and not be generalized to the entire technique.
+
+I will use the following criteria for judging the method's effectiveness:
+\begin{itemize}
+\item It should work on reasonably sized amount of text
+\item The time complexity inherent in the algorithm should not be too large
+\item I should be practically able to implement the solution without using an unreasonable amount of time implementing it
+\item I should not be required to be an expert in natural language processing to be able to implement the solution
+\item The solution should work on languages using a character alphabet, though it would be a plus if it could also be used on pictogram based languages.
+\end{itemize}
+
+\method{Character}
+{\label{character}
+Lexical analysis works on the character as the basic unit. Of the methods that can be found at the lexical level, I have focused on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, they are used in a statistical analysis with the corpora of the possible authors.
+}
+{
+I have in the following\footnote{Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.} chosen to represent whitespace by the $\_$ character:
+\q{His proposition is,}
+which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ngr{\_pr}, \ngr{pro}, \ngr{rop}, \ngr{opo}, \ngr{pos}, \ngr{osi}, \ngr{sit}, \ngr{iti}, \ngr{tio}, \ngr{ion}, \ngr{on\_}, \ngr{n\_i}, \ngr{\_is}, \ngr{is,}. 
+}
+{
+\item Does not require specialised tools or much in the way prepossessing
+\item Gives very good results in practice - see \cite{nr4} and \cite{nr3}.
+\item The text does not need to be spelled correctly (as long as words are spelled consistently)
+\item Ignores problems with word or sentence boundaries.
+}
+{
+\item Can create very large data sets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters - though many of these are bound to be the same.
+\item Might not be applicable on alphabets based on symbols or pictogram's instead of individual letters (though it should avoid any word barrier problem).
+\item It is not inherently simple to implement, as the statistical method might be very complex.
+}
+
+\method{Syntactic Features}
+{\label{syntactic}
+Syntactic features tries to identify the author through the syntactic
+features that are prevalent through the corpus of the authors
+work. The underlying assumption is that each author has a certain way of writing, that they subconsciously use this through their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A naunphrase is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
+} 
+{
+In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phrase, ADVP a adverbial phrase and CON conjunction.\\
+\q{\ann{NP}{His proposition is}, "\ann{CON}{that whenever any two of \ann{NP}{the three branches of government} \ann{VP}{shall concur in opinion}, \ann{NP}{each by the voices of two thirds of their whole number}, \ann{NP}{that a convention is} \ann{VP}{necessary for altering the constitution},\ann{CON}{or CORRECTING BREACHES OF IT}, \ann{VP}{a convention shall be called for the purpose.}}
+}
+}
+{
+\item Could very well be very accurate.
+}{
+\item Requires advanced software that can identify the different parts of the sentence - which is beyond the scope of this project.
+
+}
+
+\method{Stylistic information}
+{\label{stylistic}
+Looking at the style of a text seems like an obvious choice when trying to identify the author (and indeed, not only the name, but also other data, like age and sex). In order to do, the text must be parsed to identify and mark parts of the text for certain predefined categories. \cite{style} mentions 3 top categories: 
+\begin{description}
+\item[Cohesion:] How a Text is constructed. Is constructed out of ``Elaboration'', ``Extension'' and ``Enhancement''.
+\item[Assessment:] How a text \q{constructs propositions as statements of belief, obligation, or necessity}\footnote{\cite{style}, p. 804} - constructed out of  ``Type'', ``Value'', ``Orientation'', ``Objective'', ``Manifestation'', each with further subcategories, all hung on certain words.
+\item[Appraisal:] Qualifiers
+\end{description}
+}
+{
+I have annotated the words that I believe might have been annotated by the system. However, I would like to note that this is only an approximation, and should not be taken as a qualification of the system described in \cite{style}:\\
+\q{His proposition is, "that \ann{Value}{whenever} any two of the three branches of government shall concur in opinion, \ann{Elaboration}{each by the voices of two thirds of their whole number}, \ann{Orientation}{that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT}, a convention \ann{Type}{shall} be called for the purpose.}
+}  
+{
+\item Does not care about word or phrase boundaries.
+\item Given that the system could differentiate between the different cases, it is likely that information about the text could be used to construct a profile.
+}{
+\item For optimal efficiency it would require the entire text to be spelled correctly. Since I intend to create my corpora from text from Internet forums - this requirement cannot be guarantied to be satisfied.
+\item Furthermore the system seems to require that the specific words must be identified and tied to categories. This would mean that it cannot be applied to another language without a prohibitively amount of work.
+} 
+
+\method{Application Specific}
+{\label{application}
+Instead of trying to fit a general model on on every text, the application specific takes care to use information about the medium in question - such as HTML tags for message on Internet forums, indentation, the use of signature, fonts, size etc.
+}
+{
+\fixme{Add example and remove this tripe}
+Since this method is mainly for use for web based applications, it is unsuitable an example such as the Federalist papers, and I will therefore not try to analyse it. 
+%\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
+}
+{
+\item Might be applicable since this project this with Internet forums, which are known to use different structures when writing their posts.
+\item Would most likely boost the attribution, as many forum regulars (who are the only ones that leave enough information to be identified) tend to have signatures and/or signature styles, as well as the use of links, bold and italic etc. .
+}{
+\item Might very well become too specific, and will thus only work on a subsection of forums or wikis (and not on those that have their own style or formatting).
+\item Is described very vaguely - there is not much information on how the information should be processed or gathered (which in this case might be non-trivial).
+\item Requires more advanced pattern recognition 
+}
+
+\subsection{Conclusion}
+\label{technique:conclusion}
+From this I have concluded that the best choice would be to use the character based n-gram approach - since it is both simpler and less labour intense than some of the other attribution models, while giving good results. Since the data I have to use is in Danish, I will not try to accommodate languages whose alphabet is pictogram based - e.g. Chinese.
+
+
+\subsection{Choice of n-gram analysis}
+\fixme{help}
+
+\subsubsection{\cite{nr3}}
+\cite{nr3} first selects the most important n-grams, using a number of rules (which, due to their complexity, will not be included here). In order to compare whether or not a certain author has written a certain text, another involved formula is then used, to gauge the information gain given the corpora of the author.
+
+I find this n-gram analysis way of analysing off putting - not only does the functions themselves seem rather advanced, but the ``out-sourcing'' of key concepts to other papers (which may contain even more implementation details is disturbing). Another problem is that the glue function requires much manual tuning, which is language specific, which is one of the things I mentioned above I would like to avoid. 
+
+\subsubsection{\cite{nr2}}
+This paper uses a improved version of the algorithm found in \cite{Bennet}. \cite{Benet} uses the basic idea that an authors profile can be found by calculating the difference between the frequency of a character in the English language (based on some standard frequency) and the frequency of the author.\\
+
+The Authors of \cite{nr2} however use the following formula
+$$
+\sum_{n \in profile}\left(\frac{2 \cdot (f_1(n) - f_2(n))}{f_1(n) + f_2(n)}\right)^2
+$$
+which calculates the dissimilarity between the text t and one of the potential authors. $f_1(n)$ and $f_2(n)$ is the frequency of n-gram n in the document and the corpora of the author, respectively. 
+
+This method has the clear advantage that it is rather straightforward, and unlike \cite{Bennet} it does not require standard frequencies for the English language (which there could be multiple versions off - and therefore lead to different results depending on the version used).
+
+\subsection{\cite{nr4}}
+The method found in \cite{nr4} is a method based on statistical analysis, which implements its own algorithm to rater the similarity of the different authors. The underlying assumption is that the chance of the i'th gram being something is a function being based on all the i - 1 preceding grams. Since it is practically unfeasibly to base it on the i - 1 preceding grams, the implemented method only looks on the last n grams, where $n \in \{3,4,5,6 \}$. 
+
+\subsection{Final choice}
+
+In the end I choose \cite{nr4} for several reasons:
+\begin{itemize}
+\item The algorithm looked like it could be implemented without too much work
+\item The authors had reported good results on the English language, as well as Chinese and Greek
+\item The good results had been reported on famous Authors with a very specific way of writing - and the Authors themselves note that it would be interesting to apply their methods on less distinct corpora. 
+\end{itemize}
