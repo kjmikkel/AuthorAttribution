@@ -6,11 +6,11 @@ In this section I will explain the method I used for author attribution - and ho
 
 \subsection{The method}
 \fixme{Make a proper introduction}
-The method in \cite{4} tries to find the author with the greatest probability of having written a given text t. It does so by calculating the probability of each author having written the text, and then chooses the one with the greatest probability.
+The method in \cite{nr4} tries to find the author with the greatest probability of having written a given text t. It does so by calculating the probability of each author having written the text, and then chooses the one with the greatest probability.
 
-It should be mentioned that my implementation looks only on characters while the solution proposed in \cite{nr4} uses words\footnote{Thus the each ``gram'' would consist of a word}. Since the alphabet of all letters in the Danish language is smaller than the alphabet of Danish words, I could, from a purely space oriented perspective, use larger grams, I have decided against it, since speed then becomes the primary bottleneck. \fixme{Should this be here? - should be in the report at all}.
+My implementation differs from the one in \cite{nr4} since it uses characters as the basic unit, instead of the words.
 
-In the following $c_n$ is the n'th character in the text. As stated before \fixme{stated where?}, the probability of the value of i'th character is based on the past i - 1 characters (with the more recent characters counting for more \fixme{is this true}). However, calculating this probability would be prohibitory expensive. With n-grams, we only use the probability for the last n characters - so the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.
+In the following $c_m$ is the m'th character in the text. As stated before \fixme{stated where?}, the probability of the value of i'th character is based on the past i - 1 characters (with the more recent characters counting for more \fixme{is this true}). However, calculating this probability would be prohibitory expensive. With n-grams, we only use the probability for the last n characters - so the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.
 
 \begin{equation}
 \label{eq:probNorm}
@@ -18,7 +18,7 @@ Pr(c_{i - n + 1} \ldots c_{i}) = \left\{
 \begin{array}{rl}
 \hat{P}r(c_{i - n + 1} \ldots c_{i}), \text{if } \#(c_{i - n + 1} \ldots c_{i}) > 0\\
 \beta(c_{i - n + 1} \ldots c_{i-1}) \cdot Pr(c_{i - n + 2} \ldots c_{i}), \mathrm{otherwise}\\
-0, \mathrm{if\ nothing\ in\ the\ n-gram\ appears\ in\ the\ corpus}
+0, \mathrm{if\ no\ consequently\ subsection\ appears\ in\ the\ corpus}
 \end{array} \right.
 \end{equation}
 
@@ -36,16 +36,20 @@ where
 {1 - \sum_{x \in (c_{i - n + 1} \ldots c_{i-1})}\hat{P}r(c_{i - n + 2} \ldots c_{i-1} x)}
 \end{equation}.
 
-In \ref{eq:probNorm} there are 2 cases. The first case is when the n-gram appears in the corpus, which means it is meaningful to ask abouts it probability of it appearing the corpus. In the second case it does not appear, and we then attempt to calculate the probability of having the (n-1)-gram appearing in the corpus. To ensure that the value is correct, we need to multiply with the normalization constant $\beta$. Since the edge case where all the characters have been removed has not been described in the article, I have chosen to just return 0, as it clearly has no relation to the corpus.
-
-In \ref{eq:probHat} $discount\#(c_{i - n + 1} \ldots c_{i})$ 
-is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on against the corpora for the author we are calculating against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora. This was especially relevant when the n-grams consist of words, as it did in \cite{nr4}, since the alphabet of words in the English language than the alphabet of letters. \fixme{Decide whether it is worth explaining the division.}. The division in \ref{eq:probHat} of the number of occurrences of $c_{i - n + 1} \ldots c_{i - 1}$ in the corpora is done . Since the probability of the i'th character appearing is dependent on the former n-1 character leading up to it, its probability must its chance of appearing in the corpora, divided by the number of times the build up appears \fixme{Describe this better}.\\
-
-$\beta (w_{i - n + 1}\ldots w_{i -1})$ in \ref{eq:beta} is the normalization constant, needed to ensure that the area under the graph is 1.  
+In (\ref{eq:probNorm}) there are 3 cases:
+\begin{enumerate}
+\item A n-gram appears in the corpus, which means it is meaningful to ask abouts it probability of it appearing the corpus.
+\item  A n-gram does not appear, and we then attempt to calculate the probability of having the (n-1)-gram appearing in the corpus. To ensure that the value is correct, we need to multiply with the normalization constant $\beta$. 
+\item In case we have to test whether the empty n-gram appears, I have decided that the algorithm should return 0. This is not covered in \cite{nr4}. The justification for this is that, since the empty n-gram does not appear in the corpus, then its probability must be 0
+\end{enumerate}
+In ( \ref{eq:probHat} ) $discount\#(c_{i - n + 1} \ldots c_{i})$ 
+is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on against the corpora for the author we are calculating against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora. This was especially relevant when the n-grams consist of words, as it did in (\cite{nr4}), since the alphabet of words in the English language than the alphabet of letters. \fixme{Decide whether it is worth explaining the division.}. The division in \ref{eq:probHat} of the number of occurrences of $c_{i - n + 1} \ldots c_{i - 1}$ in the corpora is done . Since the probability of the i'th character appearing is dependent on the former n-1 character leading up to it, its probability must its chance of appearing in the corpora, divided by the number of times the build up appears \fixme{Describe this better}.
+$\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization constant, needed to ensure that the area under the graph is 1. It should be mentioned that the $\hat{P}r$ in both the dividend and the divisor is $\hat{P}$ in \cite{nr4}, but since this particular function is not mentioned anywhere in the text, I have assumed that it is $\hat{P}r$.
 
 
 \subsection{Good-Turing smoothing}
 \label{Good-Turing}
-Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams (or indeed any objects for that matter) not yet observed, has a non-zero chance of appearing.\fixme{Better explanation needed}
+Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams not yet observed, has a non-zero chance of appearing, and that the probability of all n-grams add up to 1.\\
 
-Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}.
+
+Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
