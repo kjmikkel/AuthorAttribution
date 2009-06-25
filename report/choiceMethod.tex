@@ -13,6 +13,10 @@ I will use the following criteria for judging the method's effectiveness:
 \item The solution should work on languages using a character alphabet, though it would be a plus if it could also be used on pictogram based languages.
 \end{itemize}
 
+\subsection{Example text}
+The example text used will be:\\
+\q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
+
 \method{Character}
 {\label{character}
 Lexical analysis works on the character as the basic unit. Of the methods that can be found at the lexical level, I have focused on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive characters. Once all the n-grams for a text have been computed, they are used in a statistical analysis with the corpora of the possible authors. 
@@ -39,7 +43,7 @@ which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ng
 {\label{syntactic}
 This category of methods tries to identify the author through the syntactic
 features prevalent in the corpus of the authors
-work. The underlying assumption is that each author has a certain way of writing, a style (though not in the way found in \ref{style}), that they subconsciously in their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A naunphrase is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
+work. The underlying assumption is that each author has a certain way of writing, a style (though not in the way found in \ref{stylistic}), that they subconsciously in their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A naunphrase is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
 } 
 {
 In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phrase, ADVP a adverbial phrase and CON conjunction.\\

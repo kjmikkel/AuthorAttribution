@@ -51,5 +51,37 @@ $\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization c
 \label{Good-Turing}
 Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams not yet observed, has a non-zero chance of appearing, and that the probability of all n-grams add up to 1.\\
 
+In order to calculate the proberbility of each n-gram (not only the ones not appearing), the Good-Turing algorithm calculates the frequency (denoted by $N_r$)of all frequencies (denoted r). So for instance, there are precisely 3 n-gram that appears once - then the frequency of n-grams that appears once would be 3. For example, let us assume we find the n-grams of the text ``abcdabceabc c'' have the following set of n-grams\footnote{We do not use the n-grams calculated in \ref{character}, as all of those only appears once, and thus would not be very illustrative for the method}:\\
+$$
+\{\nga{XXa}, \nga{Xab}, \nga{abc}, \nga{bcd}, \nga{cda}, \nga{dab}, \nga{abc}, \nga{bce}, \nga{cea}, \nga{eab}, \nga{abc}, \nga{bc\_}, \nga{c\_c}, \nga{\_cX}, \nga{cXX} \}
+$$
+which gives us the table\\
+\begin{tabular}{|cc|}
+\hline
+Frequency & Frequency of frequency \\
+\hline
+r & $N_{r}$ \\
+1 & 12\\
+3 & 1\\
+\hline
+\end{tabular}
+\\
+We can then calculate the probabilty for all those n-grams that does not appear in the text. We first have to caculdate N, where 
+$$
+N = \sum r * N_r
+$$
+, so in this case N = 1 * 12 + 3 * 1 = 15. The frequency of the n-grams that does not appear is then given by 
+$$
+\frac{N_1}{N} = \frac{12}{15} = 0.8
+$$
+
+The probability of having the a n-gram that appears r times is then 
+$$p_r = r^*/N$$
+, where 
+$$r^* = (r+1)\frac{E(N_{r+1})}{E(N_r)}$$
+, where E(x) is the expectation of x appearing. So in this case 
+$$p_1 = \frac{(1 + 1) * \frac{3}{12}}{15} = \frac{\frac{1}{2}}{15} = \frac{1}{30}$$ and  
+$$p_3 = \frac{(3 + 1) * \frac{0}{1}}{15} = 0$$
+
 
 Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
