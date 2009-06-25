@@ -65,6 +65,7 @@ class ngram:
       self.__ngram_len  = 3
       self.__padding    = self.__ngram_len - 1
       self.__corp       = None
+      self.__rememberDict = None
 
       if kwargs.has_key('min_sim'):    self.min_sim(kwargs['min_sim'])
       if kwargs.has_key('warp'):       self.warp(kwargs['warp'])
@@ -75,11 +76,22 @@ class ngram:
       if kwargs.has_key('noise'):      self.noise(kwargs['noise'])
 
       if type(haystack) is ListType:
-         self.__ngram_index = self.ngramify(haystack)
+         self.__ngram_index = self.total_ngram(haystack)
       else:
          raise TypeError, "Comparison base must be a list of strings"
 
-   def ngramify(self, haystack, ic = None, only_alnum = None, padding = None, noise = None):
+   def total_ngram(self, haystack):
+        gram = {}
+        list = []
+        for i in range(1, self.__ngram_len):
+            (newGram, newList) = self.ngramify(haystack, i)
+            for key in newGram.keys():
+                gram[key] = newGram[key]
+            for item in newList:
+                list.append(item)
+        return (gram, list)
+
+   def ngramify(self, haystack, ngram_length = 3, ic = None, only_alnum = None, padding = None, noise = None):
       """
       Takes list of strings and puts them into an index of ngrams. KEY is a
       ngram, VALUE a list of strings containing that ngram. VALUE has two KEYS:
@@ -109,16 +121,16 @@ class ngram:
       if only_alnum is None:  only_alnum = self.__only_alnum
       if padding is None:     padding = 'X' * self.__padding
       if noise is None:       noise   = self.__noise
-
+        
       seen  = {}
       grams = {}
       list = []
-
-      for string in haystack:
+    
+      for stri in haystack:
          # start modified -fixit
-         string = re.sub('[0-9]','\v', string)
+         stri = re.sub('[0-9]','\v', stri)
          # end modified
-         tmpstr = string
+         tmpstr = stri
          if only_alnum: raise NotImplementedError
          if ic:         tmpstr = tmpstr.lower()
          for char in noise:
@@ -129,12 +141,12 @@ class ngram:
          # start modified by me
          tmpstr = padding + tmpstr + padding
          length = len(tmpstr)
-         for i in xrange( length - self.__ngram_len + 1 ):
-            ngram = tmpstr[i:i+self.__ngram_len]
+         for i in xrange( length - ngram_length + 1 ):
+            ngram = tmpstr[i:i+ ngram_length]
             if not grams.has_key(ngram):
                grams[ngram] = {'grams':0}
-           # if not grams[ngram].has_key(string):
-           #    grams[ngram][string] = {'grams':0}
+           # if not grams[ngram].has_key(stri):
+           #    grams[ngram][stri] = {'grams':0}
             grams[ngram]['grams'] += 1
             list.append(ngram)
       # end modified by me
@@ -344,6 +356,9 @@ class ngram:
          raise ValueError, "padding must be bigger than 1"
       self.__ngram_len = args[0]
 
+   def newRemember(self):
+    self.__rememberDict = {}
+
    def compare(self, s1, s2):
       """
       Simply compares two strings and returns the similarity score.
@@ -372,24 +387,33 @@ class ngram:
    #methods written by me
    def probabilityNorm(self, words):
        prob = 1
+       self.__rememberDict = {}
        for i in range(0, len(words) -1):
            prob *= probability(words[i],words[0:i-1])
        return prob
    
    def propability(self, word, number):
+       if self.__rememberDict.has_key(word):
+        #print "return stored value: " + str(self.__rememberDict[word]) + " for", word 
+        return self.__rememberDict[word]
+       #else:
+        #print "find new value for", word
        divValue = 0
        # I look through every n-gram of the corpus, to see whether the
        # word appers
        newWord = word[:-1]
        for corp in self.corp:
-           divValue += corp.count(newWord)           
+           divValue += corp.count(word)
        if divValue > 0:
-           return self.probHat(word, number, divValue)
+           self.__rememberDict[word] = self.probHat(word, number)
+           return self.__rememberDict[word]
        else:
            newWord = word[1:]
            if len(newWord) > 0:
-               return self.beta(word) * self.propability(newWord, number)
+               self.__rememberDict[word] = self.beta(word) * self.propability(newWord, number)
+               return self.__rememberDict[word]
            else:
+               self.__rememberDict[word] = 0
                return 0
       
    def beta(self, words):
@@ -397,38 +421,39 @@ class ngram:
        index = 0
        for i in range(0, len(words)):
            x = words[i]
-           divValue = words.count(x)
-           upperSum += self.probHat(words, i, divValue)
+           upperSum += self.probHat(words + x, i)
        lowerSum = 0
        
        lessWords = words[1:]
        for i in range(0, len(lessWords)):
            x = lessWords[i]
-           divVaule = lessWords.count(x)
-           lowerSum += self.probHat(lessWords, i, divValue)
+           lowerSum += self.probHat(lessWords + x, i)
         
        upper = float(1 - upperSum)
        lower = float(1 - lowerSum)
        # print "beta ", lower, upper, upper / lower
        return upper / lower
 
-   def probHat(self, words, number, divValue):
+   def probHat(self, words, number):
+        #print words
+        #print self.corp
         freq = prob.FreqDist(self.corp)
         goodTur = prob.GoodTuringProbDist(freq)
         upper = 0
-        for word in words:
-            for cor in self.corp:
-                upper += cor.count(word)
-        sum = 0
-     #   list = []
-     #   print words
-        #for i in range(0, len(words)):
-        #    sum += goodTur.prob(words[i])
-        #upper = float(goodTur.prob(words))
+        list = []
+        #print words
+      #  for i in range(0, len(words)):
+        upper += goodTur.prob(words)
+        #print str(upper) + " '" + words + "'"
         #if upper > 0:
-         #   print words, ":", str(upper), ":", divValue
-        return (upper / float(divValue))
-   
+        #    print words, ":", str(upper), ":", divValue
+        divValue = 0
+        for corp in self.corp:
+           divValue += corp.count(words[:-1])
+        if divValue != 0:
+            return (float(upper) / float(divValue))
+        else:
+            return 0
 
 def ngram_to_list(grams):
     list = []
@@ -444,8 +469,9 @@ def makeAuthor(texts):
     for text in texts:
         base.append(text)
     tg = ngram(base, min_sim=0.0)
-    (gram, list) = tg.ngramify(base)
+    (gram, list) = tg.total_ngram(base)
     tg.corp = list
+    tg.newRemember()
     return tg
 
 def makeAuthors(authorDict):
@@ -458,11 +484,12 @@ def compareAuthors(authors, textToCompare):
     sum = 0
     compareTo = [textToCompare]
     com = ngram(compareTo, min_sin=0.0)
-    (gram, workList) = com.ngramify(compareTo)
+    (gram, workList) = com.total_ngram(compareTo)
     dataDist = {}
-    for author in finalDict:
-        tg = finalDict[author]
-        for word in workList: 
+    for author in authors:
+        tg = makeAuthor(authors[author])
+        tg.newRemember()
+        for word in workList:
             sum += tg.propability(word, 0)
         dataDist[author] = sum
     print dataDist
@@ -473,14 +500,21 @@ def largestDictKey(resultDict):
     max_key = b[max(b.keys())]
     return (max_key, resultDict[max_key])
 
-def listify(fileLoad, fileSave):
-    dict = read_JSON_file(fileLoad)
+def listify(fileLoad, fileSave, firstDict = None):
+    if not firstDict:
+        dict = read_JSON_file(fileLoad)
+    else:
+        dict = firstDict
+    
     saveDict = {}
     for author in dict:
         list =  ngram_to_list(dict[author])
         saveDict[author] = list
     
-    save_JSON_file(fileSave, saveDict)
+    if not firstDict:
+        save_JSON_file(fileSave, saveDict)
+    
+    return saveDict
 
 def makeJsonFile(filename, fileToSave_name):
     dict = read_JSON_file(filename)
@@ -500,7 +534,7 @@ def makeJsonFile(filename, fileToSave_name):
         for entry in author:
             (time, text) = entry
             tg = ngram([text])
-            gramfied = tg.ngramify([text])
+            (gramfied, list) = tg.total_ngram([text])
             newAuthorDictTemp[time] = (text, gramfied)
         newAuthorDict[key] = newAuthorDictTemp
     
@@ -509,12 +543,12 @@ def makeJsonFile(filename, fileToSave_name):
 def combine_ngrams(author):
     finalDict = {}
     for authorKey in author:
-        print authorKey
+        #print authorKey
         tempDict = {}
         val = author[authorKey]
         for postKeys in val.keys():
             (text, gram) = val[postKeys]
-            gram = gram[0]
+            #gram = gram[0]
             for entryKey in gram.keys():
                 thisNumber = gram[entryKey]["grams"]
                 number = 0
@@ -544,19 +578,63 @@ def save_JSON_file(filename, dict):
     FILE_TO_SAVE.write(fileToSave)
     FILE_TO_SAVE.close()
 
-def merge_author_data(filename, merged_filename):
-    dict = read_JSON_file(filename)
+def merge_author_data(filename, merged_filename, firstDict = None):
+    #print "Merge!"
+    if not firstDict:
+        dict = read_JSON_file(filename)
+        #print filename +"\n\n\n"
+    else:
+        dict = firstDict
     newAuthorDict = combine_ngrams(dict)
-    save_JSON_file(merged_filename, newAuthorDict)
-    
-def getAndMerge():
-    filename = "testData.json"
-    fileToSave_name = "data_save_test.json"  
-    fileToSave_final = "data_temp_save_test.json"
-    fileToSave_listed = "data_listify_test.json"
-    makeJsonFile(filename, fileToSave_name)
-    merge_author_data(fileToSave_name, fileToSave_final)
-    listify(fileToSave_final, fileToSave_listed)
+    if not firstDict:
+        save_JSON_file(merged_filename, newAuthorDict)
+    return newAuthorDict
 
+def getAndMerge():
+    filename = "testData.json"  
+    fileToSave_name = "data_save_test2.json"  
+    fileToSave_final = "data_temp_save_test2.json"
+    fileToSave_listed = "data_listify_test2.json"
+    makeJsonFile(filename, fileToSave_name)
+    dict = merge_author_data(fileToSave_name, fileToSave_final)
+    dict = listify(fileToSave_final, fileToSave_listed, dict)
+    text = "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos."
+    #dict = read_JSON_file(fileToSave_listed)
+    compareAuthors(dict, text)    
+    
 if __name__ == "__main__":
-    getAndMerge()
+#    getAndMerge()
+    tg = ngram(["abcdabceabc c"])
+    (grams, list) = tg.ngramify(["abcdabceabc c"])
+    
+    printList = []
+    for item in list:
+        stri = "\ngr{" + item + "}"
+        stri.replace(" ","\_")
+        stri.replace("'","")
+        printList.append(str)
+    print printList
+        
+    freqDict = {}
+    for item in list:
+        if freqDict.has_key(item):
+            freqDict[item] = freqDict[item] + 1
+        else: 
+            freqDict[item] = 1
+    
+    freqfreqDict = {}
+    for key in freqDict.keys():
+        value = freqDict[key]
+        if freqfreqDict.has_key(value):
+            freqfreqDict[value] += 1
+        else: 
+            freqfreqDict[value] = 1
+    print "\\begin{tabular}{|cc|}"
+    print "\\hline"
+    print "Frequency & Frequency of frequency \\\\"
+    print "\\hline"
+    print "r & N_r \\\\"
+    for key in freqfreqDict.keys():
+        print str(key) + " & " + str(freqfreqDict[key]) + "\\\\"
+    print "\\hline"
+    print "\\end{tabular}"
