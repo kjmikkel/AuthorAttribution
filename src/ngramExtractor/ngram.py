@@ -480,20 +480,28 @@ def makeAuthors(authorDict):
         finalDict[name] = makeAuthor(authorDict[name])
     return finalDict
 
-def compareAuthors(authors, textToCompare):
-    sum = 0
-    compareTo = [textToCompare]
-    com = ngram(compareTo, min_sin=0.0)
-    (gram, workList) = com.total_ngram(compareTo)
-    dataDist = {}
-    for author in authors:
-        tg = makeAuthor(authors[author])
-        tg.newRemember()
-        for word in workList:
-            sum += tg.propability(word, 0)
-        dataDist[author] = sum
-    print dataDist
-    print largestDictKey(dataDist)
+def compareAuthors(authors, compareDict):
+    authorMade = {}
+    for id in compareDict:
+        textToCompare = compareDict[id]["title"]
+        sum = 0
+        compareTo = [textToCompare]
+        com = ngram(compareTo, min_sin=0.0)
+        (gram, workList) = com.total_ngram(compareTo)
+        dataDist = {}
+        for author in authors:
+            tg = makeAuthor(authors[author])
+            tg.newRemember()
+            for word in workList:
+                sum += tg.propability(word, 0)
+            dataDist[author] = sum
+        print dataDist
+        (author, time) = largestDictKey(dataDist)
+        if not authorMade.has_key(author):
+            authorMade[author] = []
+        authorMade[author].append(id)
+    
+    return authorMade
 
 def largestDictKey(resultDict):
     b = dict(map(lambda item: (item[1],item[0]),resultDict.items()))
@@ -519,18 +527,24 @@ def listify(fileLoad, fileSave, firstDict = None):
 def makeJsonFile(filename, fileToSave_name):
     dict = read_JSON_file(filename)
     authorDict = {}
-
+    authorWrittenDict = {}
+    
     for entry in dict:
         author = entry["user_id"]
+        
         if authorDict.keys().count(author):
             authorDict[author].append((entry["timestamp"], entry["text"]))
+            authorWrittenDict[author].append(entry["post_id"])
         else:
             authorDict[author] = [(entry["timestamp"], entry["text"])]
+            authorWrittenDict[author] = [entry["post_id"]]
     
     newAuthorDict = {}
+    
     for key in authorDict.keys():
         author = authorDict[key]
         newAuthorDictTemp = {}
+        
         for entry in author:
             (time, text) = entry
             tg = ngram([text])
@@ -539,6 +553,9 @@ def makeJsonFile(filename, fileToSave_name):
         newAuthorDict[key] = newAuthorDictTemp
     
     save_JSON_file(fileToSave_name, newAuthorDict)
+    
+        
+    return authorWrittenDict
     
 def combine_ngrams(author):
     finalDict = {}
@@ -579,7 +596,6 @@ def save_JSON_file(filename, dict):
     FILE_TO_SAVE.close()
 
 def merge_author_data(filename, merged_filename, firstDict = None):
-    #print "Merge!"
     if not firstDict:
         dict = read_JSON_file(filename)
         #print filename +"\n\n\n"
@@ -595,17 +611,71 @@ def getAndMerge():
     fileToSave_name = "data_save_test2.json"  
     fileToSave_final = "data_temp_save_test2.json"
     fileToSave_listed = "data_listify_test2.json"
-    makeJsonFile(filename, fileToSave_name)
-    dict = merge_author_data(fileToSave_name, fileToSave_final)
-    dict = listify(fileToSave_final, fileToSave_listed, dict)
-    text = "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos."
-    #dict = read_JSON_file(fileToSave_listed)
-    compareAuthors(dict, text)    
+    result = makeJsonFile(filename, fileToSave_name)
+    mergeDict = merge_author_data(fileToSave_name, fileToSave_final)
+    listifyDict = listify(fileToSave_final, fileToSave_listed, mergeDict)
+    compareDict = {"412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6": {"user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}}
+    id = compareAuthors(listifyDict, compareDict)   
+    produceResultTable(result, id)
     
-if __name__ == "__main__":
-#    getAndMerge()
-    tg = ngram(["abcdabceabc c"])
-    (grams, list) = tg.ngramify(["abcdabceabc c"])
+def produceResultTable(authorMade, attributedList):
+    averageFMeasure = 0.0
+    
+    authorAttri = produceResults(authorMade, attributedList)    
+    
+    for authorName in authorAttri.keys():
+        (attributed, correctlyAtributed, precision, recall, fMeasure) = authorAttri[authorName]
+        averageFMeasure += float(fMeasure)
+    
+    if len(authorAttri):
+        averageFMeasure = averageFMeasure / float(len(authorAttri))
+    else:
+        averageFMeasure = 0
+    
+    print averageFMeasure    
+
+def produceResults(authorMade, attributedDict):
+    authorAttri = {}
+    for name in authorMade.keys(): 
+        authorAttri[name] = producreAuthorResult(name, attributedDict, authorMade[name])
+    return authorAttri
+    
+def producreAuthorResult(authorName, attributedList, authorList):
+    
+    writtenByAuthor = float(len(authorList))
+    correctlyAttributed = 0.0
+    attributed = 0.0
+
+    for entry in attributedList:
+        if authorName == entry:
+            attributed += 1.0
+            if authorList.count(entry):
+                correctlyAttributed += 1.0
+    
+    if attributed:
+        precision = correctlyAttributed / attributed
+    else:
+        precision = 0.0
+    
+    if writtenByAuthor:    
+        recall = correctlyAttributed / writtenByAuthor
+    else:
+        recall = 0.0
+    
+    if (precision and recall):
+        fMeasure = (2.0 * precision * recall) / (precision + recall)
+    else:
+        fMeasure = 0.0
+    
+    return (attributed, correctlyAttributed, precision, recall, fMeasure)
+
+def makeExample():
+    exampleStr = "abcdabceabc c"
+    produceExample(exampleStr)
+
+def produceExample(exampleStr):
+    tg = ngram([exampleStr])
+    (grams, list) = tg.ngramify([exampleStr])
     
     printList = []
     for item in list:
@@ -638,3 +708,6 @@ if __name__ == "__main__":
         print str(key) + " & " + str(freqfreqDict[key]) + "\\\\"
     print "\\hline"
     print "\\end{tabular}"
+    
+if __name__ == "__main__":
+    getAndMerge()
