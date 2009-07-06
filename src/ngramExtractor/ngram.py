@@ -66,6 +66,8 @@ class ngram:
       self.__padding    = self.__ngram_len - 1
       self.__corp       = None
       self.__rememberDict = None
+      self.__rememberBetaDict = None
+      self.__GoodTur = None
 
       if kwargs.has_key('min_sim'):    self.min_sim(kwargs['min_sim'])
       if kwargs.has_key('warp'):       self.warp(kwargs['warp'])
@@ -85,10 +87,8 @@ class ngram:
         list = []
         for i in range(1, self.__ngram_len):
             (newGram, newList) = self.ngramify(haystack, i)
-            for key in newGram.keys():
-                gram[key] = newGram[key]
-            for item in newList:
-                list.append(item)
+            gram.update(newGram)
+            list.extend(newList)
         return (gram, list)
 
    def ngramify(self, haystack, ngram_length = 3, ic = None, only_alnum = None, padding = None, noise = None):
@@ -144,10 +144,10 @@ class ngram:
          for i in xrange( length - ngram_length + 1 ):
             ngram = tmpstr[i:i+ ngram_length]
             if not grams.has_key(ngram):
-               grams[ngram] = {'grams':0}
+               grams[ngram] = 0
            # if not grams[ngram].has_key(stri):
            #    grams[ngram][stri] = {'grams':0}
-            grams[ngram]['grams'] += 1
+            grams[ngram] += 1
             list.append(ngram)
       # end modified by me
       return (grams, list)
@@ -197,8 +197,7 @@ class ngram:
 
          for match in matches:
             actName = match
-            actMatch = matches[match]
-            ngram_count = actMatch['grams']
+            ngram_count = matches[match]
             if not ngram_buf.has_key(ngram): ngram_buf[ngram] = {}
             if not ngram_buf[ngram].has_key(actName):
                ngram_buf[ngram][actName] = ngram_count
@@ -358,6 +357,7 @@ class ngram:
 
    def newRemember(self):
     self.__rememberDict = {}
+    self.__rememberBetaDict = {}
 
    def compare(self, s1, s2):
       """
@@ -388,120 +388,132 @@ class ngram:
    def probabilityNorm(self, words):
        prob = 1
        self.__rememberDict = {}
-       for i in range(0, len(words) -1):
+       for i in rangef(0, len(words) -1):
            prob *= probability(words[i],words[0:i-1])
        return prob
    
    def propability(self, word, number):
-       if self.__rememberDict.has_key(word):
-        #print "return stored value: " + str(self.__rememberDict[word]) + " for", word 
+    # If we have already calculated the value, then we can just return that
+    if self.__rememberDict.has_key(word):
+        #print "hit:", self.__rememberDict[word]
         return self.__rememberDict[word]
-       #else:
-        #print "find new value for", word
-       divValue = 0
-       # I look through every n-gram of the corpus, to see whether the
-       # word appers
-       newWord = word[:-1]
-       for corp in self.corp:
-           divValue += corp.count(word)
-       if divValue > 0:
-           self.__rememberDict[word] = self.probHat(word, number)
-           return self.__rememberDict[word]
-       else:
-           newWord = word[1:]
-           if len(newWord) > 0:
-               self.__rememberDict[word] = self.beta(word) * self.propability(newWord, number)
-               return self.__rememberDict[word]
-           else:
-               self.__rememberDict[word] = 0
-               return 0
+    divValue = 0
+    newWord = word[:-1]
+    divValue = self.corp.count(word)
+    #for corp in self.corp:
+    #    divValue += corp.count(word)
+    if divValue > 0:
+        self.__rememberDict[word] = self.probHat(word)
+        return self.__rememberDict[word]
+    else:
+        newWord = word[1:]
+        if len(newWord) > 0:
+            self.__rememberDict[word] = self.beta(word) * self.propability(newWord, number)
+            return self.__rememberDict[word]
+        else:
+            self.__rememberDict[word] = 0
+            return 0
       
    def beta(self, words):
+       
        upperSum = 0
        index = 0
        for i in range(0, len(words)):
-           x = words[i]
-           upperSum += self.probHat(words + x, i)
+            x = words[i]
+            if not self.__rememberBetaDict.has_key(words + x):
+                result = self.probHat(words + x)
+                self.__rememberBetaDict[words + x] = result
+                upperSum += result
+            else:
+                upperSum += self.__rememberBetaDict[words + x]
        lowerSum = 0
        
        lessWords = words[1:]
        for i in range(0, len(lessWords)):
            x = lessWords[i]
-           lowerSum += self.probHat(lessWords + x, i)
+           if not self.__rememberBetaDict.has_key(lessWords + x):
+                result = self.probHat(lessWords + x)
+                self.__rememberBetaDict[lessWords + x] = result
+                lowerSum += result
+           else:
+                lowerSum += self.__rememberBetaDict[lessWords + x]
         
        upper = float(1 - upperSum)
        lower = float(1 - lowerSum)
-       # print "beta ", lower, upper, upper / lower
        return upper / lower
 
-   def probHat(self, words, number):
-        #print words
-        #print self.corp
-        freq = prob.FreqDist(self.corp)
-        goodTur = prob.GoodTuringProbDist(freq)
+   def probHat(self, words):
+        if not self.__GoodTur:
+            freq = prob.FreqDist(self.corp)
+            self.__GoodTur = prob.GoodTuringProbDist(freq)
         upper = 0
         list = []
-        #print words
-      #  for i in range(0, len(words)):
-        upper += goodTur.prob(words)
-        #print str(upper) + " '" + words + "'"
-        #if upper > 0:
-        #    print words, ":", str(upper), ":", divValue
+        upper = self.__GoodTur.prob(words)
         divValue = 0
-        for corp in self.corp:
-           divValue += corp.count(words[:-1])
-        if divValue != 0:
+        divValue = self.corp.count(words[:-1])
+#       for corp in self.corp:
+ #          divValue += corp.count(words[:-1])
+        
+        if divValue > 0:
             return (float(upper) / float(divValue))
         else:
-            return 0
+            return 0.0
 
 def ngram_to_list(grams):
     list = []
     for val in grams:
-        for i in range(0, grams[val]):
-            list.append(val)
-    return  list
+        tempList = [val for i in range(0, grams[val])]
+        list.extend(tempList)
+    return list
 
 #end methods written by me
 #begin toplevel methods written by me
-def makeAuthor(texts):
-    base = []
-    for text in texts:
-        base.append(text)
+def makeAuthor(base):
     tg = ngram(base, min_sim=0.0)
     (gram, list) = tg.total_ngram(base)
     tg.corp = list
     tg.newRemember()
     return tg
 
-def makeAuthors(authorDict):
-    finalDict = {}
-    for name in authorDict:
-        finalDict[name] = makeAuthor(authorDict[name])
-    return finalDict
 
-def compareAuthors(authors, compareDict):
+def compareAuthors(authors, compareDict, authorDict):
     authorMade = {}
-    for id in compareDict:
-        textToCompare = compareDict[id]["title"]
+    resultDict = {}    
+    for value in compareDict:
+        textToCompare = value["text"]
+        realAuthor = value["user_id"]
         sum = 0
+            
+        # Compare value
         compareTo = [textToCompare]
         com = ngram(compareTo, min_sin=0.0)
         (gram, workList) = com.total_ngram(compareTo)
         dataDist = {}
-        for author in authors:
+            # We do the actual testing
+        for author in authors: 
             tg = makeAuthor(authors[author])
-            tg.newRemember()
             for word in workList:
                 sum += tg.propability(word, 0)
             dataDist[author] = sum
-        print dataDist
+            print "Done with", author
+            
         (author, time) = largestDictKey(dataDist)
+        print dataDist
+        print author        
+        print "Real author:", authorDict[realAuthor]
         if not authorMade.has_key(author):
-            authorMade[author] = []
-        authorMade[author].append(id)
-    
-    return authorMade
+            authorMade[author] = [id]
+        else:
+            authorMade[author].append(realAuthor)
+            
+        if not resultDict.has_key(realAuthor):
+            resultDict[realAuthor] = {author : 1}
+        else:
+            if resultDict[realAuthor].has_key(author):
+                resultDict[realAuthor] = {author : 1}
+            else:
+                resultDict[realAuthor][author] += 1
+    return (authorMade, resultDict)
 
 def largestDictKey(resultDict):
     b = dict(map(lambda item: (item[1],item[0]),resultDict.items()))
@@ -516,8 +528,7 @@ def listify(fileLoad, fileSave, firstDict = None):
     
     saveDict = {}
     for author in dict:
-        list =  ngram_to_list(dict[author])
-        saveDict[author] = list
+        saveDict[author] =  ngram_to_list(dict[author])
     
     if not firstDict:
         save_JSON_file(fileSave, saveDict)
@@ -528,53 +539,63 @@ def makeJsonFile(filename, fileToSave_name):
     dict = read_JSON_file(filename)
     authorDict = {}
     authorWrittenDict = {}
-    
+
+    authorNameDirec = {}
+    num = 0
+
     for entry in dict:
         author = entry["user_id"]
-        
-        if authorDict.keys().count(author):
-            authorDict[author].append((entry["timestamp"], entry["text"]))
-            authorWrittenDict[author].append(entry["post_id"])
+        if authorNameDirec.has_key(author):
+            author = authorNameDirec[author]
         else:
-            authorDict[author] = [(entry["timestamp"], entry["text"])]
-            authorWrittenDict[author] = [entry["post_id"]]
+            authorNameDirec[author] = "A" + str(num)
+            author = "A" + str(num)
+            num += 1
+        
+        value = {"user_id": author, "text": entry["text"], "timestamp": entry["timestamp"]}
+        id = entry["post_id"]
+        if authorDict.has_key(author):
+            authorDict[author].append(value)
+            authorWrittenDict[author].append(id)
+        else:
+            authorDict[author] = [value]
+            authorWrittenDict[author] = [id]
     
     newAuthorDict = {}
     
-    for key in authorDict.keys():
-        author = authorDict[key]
+    for authorName in authorDict.keys():
+        author = authorDict[authorName]
         newAuthorDictTemp = {}
         
-        for entry in author:
-            (time, text) = entry
-            tg = ngram([text])
-            (gramfied, list) = tg.total_ngram([text])
-            newAuthorDictTemp[time] = (text, gramfied)
-        newAuthorDict[key] = newAuthorDictTemp
-    
+        listOfEntries = [entry["text"] for entry in author]
+        print authorName,":", listOfEntries
+        #for entry in author:
+        #    listOfEntries.append(entry["text"])
+            
+        tg = ngram(listOfEntries)
+        (gramfied, list) = tg.total_ngram(listOfEntries)
+        newAuthorDict[authorName] = list
+        
     save_JSON_file(fileToSave_name, newAuthorDict)
     
-        
-    return authorWrittenDict
+    return (authorDict, newAuthorDict, authorNameDirec)
     
-def combine_ngrams(author):
+def combine_ngrams(author): 
     finalDict = {}
     for authorKey in author:
         #print authorKey
         tempDict = {}
-        val = author[authorKey]
-        for postKeys in val.keys():
-            (text, gram) = val[postKeys]
-            #gram = gram[0]
-            for entryKey in gram.keys():
-                thisNumber = gram[entryKey]["grams"]
-                number = 0
+        gram = author[authorKey]
+ 
+        for entryKey in gram.keys():
+            thisNumber = gram[entryKey]
+            number = 0
                 
-                if (tempDict.has_key(entryKey)):
-                    number = tempDict[entryKey] + thisNumber
-                else:
-                    number = thisNumber                
-                tempDict[entryKey] = number
+            if (tempDict.has_key(entryKey)):
+                number = tempDict[entryKey] + thisNumber
+            else:
+                number = thisNumber                
+            tempDict[entryKey] = number
         finalDict[authorKey] = tempDict
     return finalDict
 
@@ -607,31 +628,53 @@ def merge_author_data(filename, merged_filename, firstDict = None):
     return newAuthorDict
 
 def getAndMerge():
-    filename = "testData.json"  
+    filename = "data.json"     
     fileToSave_name = "data_save_test2.json"  
     fileToSave_final = "data_temp_save_test2.json"
     fileToSave_listed = "data_listify_test2.json"
-    result = makeJsonFile(filename, fileToSave_name)
-    mergeDict = merge_author_data(fileToSave_name, fileToSave_final)
-    listifyDict = listify(fileToSave_final, fileToSave_listed, mergeDict)
-    compareDict = {"412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6": {"user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}}
-    id = compareAuthors(listifyDict, compareDict)   
-    produceResultTable(result, id)
+    (result, ngramLists, authorNameDict) = makeJsonFile(filename, fileToSave_name)
     
-def produceResultTable(authorMade, attributedList):
+    # TODO remove code
+    #mergeDict = merge_author_data(fileToSave_name, fileToSave_final)
+    
+#    listifyDict = listify(fileToSave_name, fileToSave_listed, newAuthorDict)
+    
+    compareDict = [{"post_id": "412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6", "user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}]
+    print "Compare\n"
+    (id, authorData) = compareAuthors(ngramLists,  compareDict, authorNameDict) # result)   
+    print "Produce\n"
+    produceResultTable(result, id, authorData)
+    
+    
+def produceResultTable(authorMade, attributedList, authorData):
     averageFMeasure = 0.0
     
-    authorAttri = produceResults(authorMade, attributedList)    
+    finalResults = {}
+    
+    authorAttri = produceResult(authorData, authorMade)
+#    authorAttri = produceResults(authorMade, attributedList)    
     
     for authorName in authorAttri.keys():
-        (attributed, correctlyAtributed, precision, recall, fMeasure) = authorAttri[authorName]
+        (precision, recall, fMeasure) = authorAttri[authorName]
+        finalResults[authorName] = {"precision": precision, "recall": recall, "fMeasure": fMeasure}
+        #finalResults[authorName]["recall"] = recall
+        #finalResults[authorName]["fMeasure"] = fMeasure
         averageFMeasure += float(fMeasure)
-    
+        
     if len(authorAttri):
         averageFMeasure = averageFMeasure / float(len(authorAttri))
     else:
         averageFMeasure = 0
     
+    stringResult = ""
+    for authorName in authorAttri.keys():
+        stringResult += authorName + " &"
+    
+    stringResult += "Precision & & "
+    for authorName in authorAttri.keys():
+        stringResult += str(finalResults[authorName]["precision"]) + " & "
+    stringResult += " & & & \\"
+    stringResult += "Overall Accuracy: " + "PLACEHOLDER" + " Macro-average F-measure: " + str(averageFMeasure) + " \\"
     print averageFMeasure    
 
 def produceResults(authorMade, attributedDict):
@@ -639,6 +682,40 @@ def produceResults(authorMade, attributedDict):
     for name in authorMade.keys(): 
         authorAttri[name] = producreAuthorResult(name, attributedDict, authorMade[name])
     return authorAttri
+    
+def produceResult(authorData, authorList):
+    endResults = {}
+    for authorName in authorData.keys():
+        
+        writtenByAuthor = len(authorList)
+        if authorData[authorName].has_key(authorName):
+            correctlyAttributed = authorData[authorName][authorName]
+        else:
+            correctlyAttributed = 0
+            
+        attributed = 0.0
+
+        for entry in authorData[authorName].keys():
+            attributed += float(authorData[authorName][entry])
+            
+        if attributed:
+            precision = correctlyAttributed / attributed
+        else:
+            precision = 0.0
+        
+        if writtenByAuthor:    
+            recall = correctlyAttributed / writtenByAuthor
+        else:
+            recall = 0.0
+        
+        if (precision and recall):
+            fMeasure = (2.0 * precision * recall) / (precision + recall)
+        else:
+            fMeasure = 0.0
+        
+        endResults[authorName] = (precision, recall, fMeasure)
+    
+    return endResults
     
 def producreAuthorResult(authorName, attributedList, authorList):
     
@@ -663,7 +740,7 @@ def producreAuthorResult(authorName, attributedList, authorList):
         recall = 0.0
     
     if (precision and recall):
-        fMeasure = (2.0 * precision * recall) / (precision + recall)
+            fMeasure = (2.0 * precision * recall) / (precision + recall)
     else:
         fMeasure = 0.0
     
