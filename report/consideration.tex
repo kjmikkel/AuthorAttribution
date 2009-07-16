@@ -1,6 +1,86 @@
 \section{Considerations}
 \label{considerations}
 
-In this section I will discuss the various tests that I will preform, and why they are interesting. 
+In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably I will perform each test multiple times (with multiple different texts) in order to gain a better overview of how effective the process is. Unless specifically noted I will run each test 3 times. \fixme{Should I test more times? Or should I perhaps mention the times I want to test locally at the different tests?}
 
-\subsection{}
+\subsection{Initial smoke tests}
+\label{smokeTest}
+Some of the initial smoke tests showed some problems with the algorithm. 
+One of the problems I found was that some shorter, bogus texts, would be given the greatest probability, even when the text in question was present in the corps that was analysed. A possible explanation for this is that the shorter text, has a greater probability for each word (and thus also for the \fixme{is this entire correct?} words that does not appear - as per Good-Turing smoothing).
+
+\subsection{Limitations of the tests}
+%In this study I have not been able to find texts from any of the authors from outside the source material that I have been working on. Therefore the only way
+
+\test{
+StressTest1
+}{
+Take a post from an author appearing in the corpora with a single, long text, and see if the author can be correctly attributed compared to the rest of the corpora.
+}{
+Check the limits of the algorithm. This is likely to fail.
+}
+
+\test{
+StressTest2
+}{
+As above, but only against 100 posts
+}{
+Check the limits of the algorithm. This is likely to fail
+}
+
+\test{
+StressTest3
+}{
+As above, but only against 10 posts
+}{
+Check the limits of the algorithm. This has a chance of succeding
+}
+
+\test{
+StressTest4
+}{
+As above, but each author is only allowed one post.
+}{
+Check the limits of the algorithms. There is a non-trivial likelyhood that this will succeed.
+}
+
+\test{
+ShortBogusTest
+}{
+Take a post from an author A with multiple long posts, and create a corpora with a short bogus post from a bogus author, together with real posts from A and others, and then try to see whether or not the bogus post is chosen
+}{
+A test to see whether the algorithm is suseptiable to give a heigher rank to posts with very little information (even if the bogus post is very dissimilar to the post that it is being cheked against)
+}
+
+\test{
+Author10Post
+}{
+Take a post from an author A, who have written over 10 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 10 posts.
+}{
+A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written several posts
+}
+
+\test{
+Author50Post
+}{
+Take a post from an author A, who have written over 50 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 50 posts.
+}{
+A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written many posts
+}
+
+\test{
+Author100Post
+}{
+Take a post from an author A, who have written over 100 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 100 posts.
+}{
+A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written many posts
+}
+
+
+\test{
+
+}{
+Take a 
+}{
+
+
+}

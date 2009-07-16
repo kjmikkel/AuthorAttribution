@@ -1,2 +1,20 @@
 \section{Tests}
 \label{tests}
+
+In this section I detail the tests, that I will use in order to study the effectiveness of my implementation of the algorithm.
+
+In order to do so, I have found no other way than to try to identify the author of [num of texts to identify] texts from the dataset I have been given. In order to have data that is comparable to that found in \cite{nr4} (and thus be able to evaluate whether the algorithm might be used for short texts), I will use the same values for comparison as they have used. These are: 
+
+
+\begin{description}
+\item[Overall Average] Which is the number of correctly identified authors divided by the number of texts that have had an author identified. E.g. if 8 texts have been identified correctly, and 10 texts have been identified, then the overall average would be 0.8 
+
+\item[Precision] The number of correctly identified texts for an author, divided by the total number of texts that have been identified by that author. E.g. If the author has had 8 texts correctly identified, and 10 texts have been attributed to him, then the Precision would be 0.8. Thus, this is essentially local accuracy.
+
+\item[Recall] Recall is the number of correctly identified texts for an author, divided by the by the number of texts, that have been included in the process, that the author has written.
+
+\item[F-measure] F-measure is a combination of Recall and Precision like so: $\frac{2 \times precision \times recall}{precision+recall}$ 
+
+\item[Macro-average F-measure] The Macro-average F-measure is all the authors F-measures summed together, and then divided by the number of authors. 
+\end{description}
+
