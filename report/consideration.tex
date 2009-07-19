@@ -8,13 +8,45 @@ In this section I will describe the different tests that I will use to gauge the
 Some of the initial smoke tests showed some problems with the algorithm. 
 One of the problems I found was that some shorter, bogus texts, would be given the greatest probability, even when the text in question was present in the corps that was analysed. A possible explanation for this is that the shorter text, has a greater probability for each word (and thus also for the \fixme{is this entire correct?} words that does not appear - as per Good-Turing smoothing).
 
-\subsection{Limitations of the tests}
-%In this study I have not been able to find texts from any of the authors from outside the source material that I have been working on. Therefore the only way
+\subsection{Explanation of test description}
+\test{
+The name of the test
+}{
+The description of how the test will be done - including which kind of post that will be used in the corpus, and which kinds of posts that will be used for the author. 
+}{
+The purpose of the test - what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and the code.
+}
+
+\subsection{Values}
+In order to make my results more independent of the dataset I will introduce the following values:
+
+\subsubsection*{Number of posts}
+$Axx_{\alpha} = $the number of posts author xx has written\\ 
+$\Omega = max(A0_\alpha, A1_\alpha, \ldots A89_\alpha, A90_\alpha)$. In this case $\Omega = 137$\\
+
+Let $\tau_x = \rm{ceil}(\Omega \times \frac{x}{4})$ and let the predicate $\#(a, \rm{num})$ be true if the author a has posted at least num papers. Let 
+
+$$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ posts }\in\rm{ author }: \{\rm{posts }\mid \#(a, \tau_x)\}$$ 
+ 
+And then we have to check for $\Phi_1$ (few), $\Phi_2$ (some), $\Phi_3$ (many) - which in this case will be 35 posts, 69 posts and 103 posts respectively.
+
+\subsubsection*{Length of posts}
+Short post: A post that contains 100 characters or less\\
+Medium post: A post that contains between 100 to 1000 characters\\
+Long post: A post that contains between 1000 to 3000 characters or less\\
+Rant post: A post of more than 3000 characters
+
+
+\subsection{Selection of authors}
+In order to select the authors I wrote a python script that found all of the authors in a selected corpus (for example only having texts from authors who have written a certain number of texts). It then randomly selects n of these, and saves it to a file, so that while the authors were randomly chosen, they values could be reused later. When the test are run, the post from these authors will be extracted from the corpus and tested one after the other.
+
+
+\subsection{Tests}
 
 \test{
 StressTest1
 }{
-Take a post from an author appearing in the corpora with a single, long text, and see if the author can be correctly attributed compared to the rest of the corpora.
+Take a post from an author appearing in the corpora with a single, long text, and see if the author can be correctly attributed compared to the entire corpus.
 }{
 Check the limits of the algorithm. This is likely to fail.
 }
@@ -22,7 +54,7 @@ Check the limits of the algorithm. This is likely to fail.
 \test{
 StressTest2
 }{
-As above, but only against 100 posts
+As above, but only against authors who have written few posts
 }{
 Check the limits of the algorithm. This is likely to fail
 }
@@ -30,47 +62,58 @@ Check the limits of the algorithm. This is likely to fail
 \test{
 StressTest3
 }{
-As above, but only against 10 posts
+As above, but only against authors who have written many posts
 }{
-Check the limits of the algorithm. This has a chance of succeding
+Check the limits of the algorithm. This has a chance of succeeding
 }
 
 \test{
 StressTest4
 }{
-As above, but each author is only allowed one post.
+As above, but each author is only allowed 1 post.
 }{
-Check the limits of the algorithms. There is a non-trivial likelyhood that this will succeed.
+Check the limits of the algorithms. There is a non-trivial likelihood that this will succeed.
 }
 
-\test{
+\test{ 
 ShortBogusTest
 }{
 Take a post from an author A with multiple long posts, and create a corpora with a short bogus post from a bogus author, together with real posts from A and others, and then try to see whether or not the bogus post is chosen
 }{
-A test to see whether the algorithm is suseptiable to give a heigher rank to posts with very little information (even if the bogus post is very dissimilar to the post that it is being cheked against)
+A test to see whether the algorithm is susceptible to give a higher rank to posts with very little information (even if the bogus post is very dissimilar to the post that it is being checked against)
 }
 
 \test{
-Author10Post
+AuthorFewPost
 }{
-Take a post from an author A, who have written over 10 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 10 posts.
+Take all the posts from an author A, where $\#(A, \tau_1)$ is true, and let the corpora be $\Phi_1$.
 }{
-A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written several posts
+A simple test to see whether the algorithm will work better  texts that are longer, and have authors who have written several posts
 }
 
 \test{
-Author50Post
+AuthorSomePost
 }{
-Take a post from an author A, who have written over 50 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 50 posts.
+Take all the posts from an author A, where $\#(A, \tau_2)$ is true, and let the corpora be $\Phi_2$.
 }{
-A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written many posts
+A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written some posts
 }
 
-%\test{
-%Author100Post
-%}{
-%Take a post from an author A, who have written over 100 posts, and create a corpora with multiple long texts, including texts from author A. All authors must have written over 100 posts.
-%}{
-%A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written many posts
-%}
+\test{
+AuthorManyPost
+}{
+Take all post from an author A, where $\#(A, \tau_3)$ is true, and let the corpora be $\Phi_3$
+}{
+A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written some posts
+}{
+d
+}
+
+\test{
+UltimateStressTest
+}{
+Take a random selection of authors, who have made over half the posts in the entire corpora, and test it on the rest of the corpora. Since they are choosen at random, some of the runs may have many authors, while some will only have few.
+}{
+This test is to check the overall quality of the algorithm - i.e. if it can attribute the posts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}.
+}{
+}
