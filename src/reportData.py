@@ -4,28 +4,10 @@ from operator import itemgetter
 from decimal import *
 import pprint
 import json
+import workOnJSON as JSON
 
-def read_JSON_file(filename):
-    FILE = open(filename,"r")
-    file_str = StringIO()
-    
-    for line in FILE:
-        file_str.write(line)
-
-    FILE.close()
-    dict = json.loads(file_str.getvalue())
-    return dict
-
-def save_JSON_file(filename, dict):
-    fileToSave = json.dumps(dict)
-    FILE_TO_SAVE = open(filename,"w")
-    FILE_TO_SAVE.write(fileToSave)
-    FILE_TO_SAVE.close()
-
-def produceStatisticalData():
-    filename = "data.json"
-    filename_save = "dataSave.json"
-    result = read_JSON_file(filename)
+def produceStatisticalData(filename, filename_save):
+    result = JSON.read_JSON_file(filename)
     
     authorData = {}
     for entry in result:
@@ -86,7 +68,14 @@ def produceStatisticalData():
     for entry in authorData:
         name = entry[0]
         entry = entry[1]
-        FILE_TO_SAVE.write(str(name[0:15]) + " & " + str(entry["textNumber"]) + " & " + str(entry["min"]) + " & " +  str(entry["max"]) + " & " + str(entry["average"]) + "\\\\\n")
+        number = str(entry["textNumber"])
+        if (number > 1 and number < 10):
+            number = "\\emph{" + number + "}"
+        elif (number >= 10 and number < 100):
+            number = "\\texttt{" + number + "}"
+        elif number >= 100:
+            number = "\\texttt{\\emph{" + number + "}}"
+        FILE_TO_SAVE.write(str(name[0:15]) + " & " + number + " & " + str(entry["min"]) + " & " +  str(entry["max"]) + " & " + str(entry["average"]) + "\\\\\n")
         
         if count == endCount:
             FILE_TO_SAVE.write("\\end{tabular}\n")
@@ -105,7 +94,7 @@ def produceStatisticalData():
     FILE_TO_SAVE.close()
 
 def fixAuthorNames(fileName, fileNameToSave):
-    list = read_JSON_file(fileName)
+    list = JSON.read_JSON_file(fileName)
     print dict
     returnList = []
     compareDict = {}
@@ -121,8 +110,35 @@ def fixAuthorNames(fileName, fileNameToSave):
         
     
     print list[0], list[1], list[50]
-    save_JSON_file(fileNameToSave, list)    
-        
-#produceStatisticalData()
+    JSON.save_JSON_file(fileNameToSave, list)    
 
-fixAuthorNames("data.json", "newData.json")
+def getAuthorWithOverXPosts(data_file, metadata_file, number):
+    postFiles = "authorsWithOver"
+    file_data = JSON.read_JSON_file(data_file)
+    file_metadata = JSON.read_JSON_file(metadata_file)
+    
+    listOfAuthors = []
+    texts = []
+    
+    # I find the authors who have written over the needed number of texts
+    for entry in file_metadata:
+        authorName = entry[0]
+        entry = entry[1]
+        if entry["textNumber"] >= number:
+            listOfAuthors.append(authorName)
+    
+    # With the list of authors I now find all the texts they have written 
+    for entry in file_data:
+        authorName = entry["user_id"]
+        if listOfAuthors.count(authorName):
+            texts.append(entry)
+    
+    JSON.save_JSON_file(postFiles + str(number) + ".json", texts)
+    
+startFile = "data.json"
+newFile = "newData.json"
+saveStats = "dataSave.json"
+number = 50
+#fixAuthorNames(startFile, newFile)
+produceStatisticalData(newFile, saveStats)
+getAuthorWithOverXPosts(newFile, saveStats, number)
