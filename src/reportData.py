@@ -5,8 +5,8 @@ from decimal import *
 import pprint
 import json
 import workOnJSON as JSON
+from cStringIO import StringIO
 import ngram
-import testCreator
 
 def ngram_to_list(grams):
     list = []
@@ -18,7 +18,7 @@ def ngram_to_list(grams):
 #end methods written by me
 #begin toplevel methods written by me
 def makeAuthor(base):
-    tg = ngram(base, min_sim=0.0)
+    tg = ngram.ngram(base, min_sim=0.0)
     (gram, list) = tg.total_ngram(base)
     tg.corp = list
     tg.newRemember()
@@ -27,7 +27,7 @@ def makeAuthor(base):
 
 def compareAuthors(authors, compareDict, authorDict):
     authorMade = {}
-    resultDict = {}    
+    resultDict = {}        
     for value in compareDict:
         textToCompare = value["text"]
         realAuthor = value["user_id"]
@@ -35,7 +35,8 @@ def compareAuthors(authors, compareDict, authorDict):
             
         # Compare value
         compareTo = [textToCompare]
-        com = ngram(compareTo, min_sin=0.0)
+        com = ngram.ngram(compareTo, min_sin=0.0)
+        
         (gram, workList) = com.total_ngram(compareTo)
         dataDist = {}
             # We do the actual testing
@@ -47,11 +48,11 @@ def compareAuthors(authors, compareDict, authorDict):
             print "Done with", author
             
         (author, time) = largestDictKey(dataDist)
-        print dataDist
-        print author        
-        print "Real author:", authorDict[realAuthor]
+      
+        print "Most likely author:", author
+        print "Real author:", realAuthor
         if not authorMade.has_key(author):
-            authorMade[author] = [id]
+            authorMade[author] = [realAuthor]
         else:
             authorMade[author].append(realAuthor)
             
@@ -62,6 +63,7 @@ def compareAuthors(authors, compareDict, authorDict):
                 resultDict[realAuthor] = {author : 1}
             else:
                 resultDict[realAuthor][author] += 1
+    
     return (authorMade, resultDict)
 
 def largestDictKey(resultDict):
@@ -102,9 +104,9 @@ def makeJsonFile(filename, fileToSave_name):
         newAuthorDictTemp = {}
         
         listOfEntries = [entry["text"] for entry in author]
-        print authorName,":", listOfEntries
+        #print authorName,":", listOfEntries
             
-        tg = ngram(listOfEntries)
+        tg = ngram.ngram(listOfEntries)
         (gramfied, list) = tg.total_ngram(listOfEntries)
         newAuthorDict[authorName] = list
         
@@ -155,7 +157,7 @@ def makeCompareAgainst(list):
         listOfEntries = [entry["text"] for entry in author]
         print authorName,":", listOfEntries
             
-        tg = ngram(listOfEntries)
+        tg = ngram.ngram(listOfEntries)
         (gramfied, list) = tg.total_ngram(listOfEntries)
         newAuthorDict[authorName] = list
         
@@ -229,18 +231,56 @@ def produceResultTable(authorMade, attributedList, authorData):
         averageFMeasure = averageFMeasure / float(len(authorAttri))
     else:
         averageFMeasure = 0
+ 
+   # produce the table to contain the information
+    stringResult = StringIO()
+    numElements = len(authorAttri.keys())
+    next = "\\\\"    
+    stringResult.write("\\begin{tabular}{|c||" + "c|" * numElements + "}\n")
+    stringResult.write("\\hline" + next + "\n" )
+    stringResult.write(" & \\multicolumn{" + str(numElements)+ "}{|c|}{Computer Estimate}" + next + "\n")
     
-    stringResult = ""
+    stringResult.write("True Label & ")
     for authorName in authorAttri.keys():
-        stringResult += authorName + " &"
+        stringResult.write(authorName + " & ")
+    stringResult.write("Recall " + next + "\n")
+    stringResult.write("\hline \n")
+
+    totalAuthors = {}
+    #I find all the interesting 
+
+    alist = sorted(authorAttri.iteritems(), key=lambda (k,v): (v,k))
+
+    for authorName in alist:
+        authorNameOuter = authorName[0]
+        stringResult.write(authorNameOuter + " & ")
+        # Go through a line - this is the main part
+        for an in alist:
+            authorNameInner = an[0]
+            print "I", str(authorData.has_key(authorNameInner))
+            print "O", str(authorData[authorNameInner].has_key(authorNameOuter)) + "\n"
+            
+            if not (authorData.has_key(authorNameInner) and authorData[authorNameInner].has_key(authorNameOuter)):
+                stringResult.write(" &")
+            else:
+                value = authorData[authorNameInner][authorNameOuter]
+                stringResult.write(str(value) + " &")
+        # print the result
+        stringResult.write("111" + next + "\n")
+ 
+    stringResult.write("Precision & ")
     
-    stringResult += "Precision & & "
-    for authorName in authorAttri.keys():
-        stringResult += str(finalResults[authorName]["precision"]) + " & "
-    stringResult += " & & & \\"
-    stringResult += "Overall Accuracy: " + "PLACEHOLDER" + " Macro-average F-measure: " + str(averageFMeasure) + " \\"
+    for authorName in alist:
+        authorName = authorName[0]
+        precision = finalResults[authorName]["precision"]
+        stringResult.write(str(precision) + " &")
+    stringResult.write(next + "\n")
+        
+    stringResult.write("\\multicolumn{" + str(numElements)+ "}{|c|}{Overall Accuracy: " + "PLACEHOLDER" + "\t Macro-average F-measure: " + str(averageFMeasure) + next + "}\n")
+    stringResult.write("\\end{tabular}")
     print averageFMeasure    
-    print stringResult
+    print stringResult.getvalue()
+    print attributedList["A2"]
     return finalResults
     
 def produceResults(authorMade, attributedDict):
@@ -486,7 +526,7 @@ def getAuthorWithOverXPosts(data_file, metadata_file, number):
     
 def runTest(compareDict):
     # files to work on
-    filename = "newData.json"     
+    filename = "testData.json"     
     fileToSave_name = "data_save_test2.json"  
     #fileToSave_final = "data_temp_save_test2.json"
     #fileToSave_listed = "data_listify_test2.json"

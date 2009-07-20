@@ -106,9 +106,9 @@ def findSingleAuthors(num):
     value = []
     for i in range(0, num):
         while value == []:
-            writeAuthors("newData.json", "singleAuthor" + str(i + 1) + ".json", 1)
+            writeAuthors("testData.json", "singleAuthor" + str(i + 1) + ".json", 1)
             worker = JSON.workOnJSON()
-            author = worker.read_JSON_file("singleAuthor" + str(i + 1) + ".json")[0]
+            author = worker.read_JSON_file("singleAuthorData" + str(i + 1) + ".json")[0]
             list = worker.read_JSON_file("newData.json")
             value = findLongPost(author, list, 1)
 
@@ -118,7 +118,7 @@ def singleAuthorTest(num, filename_save):
     for i in range(0, num):
         index = i + 1
         worker = JSON.workOnJSON()
-        authorText = worker.read_JSON_file("singleAuthor" + str(index) + ".json")
+        authorText = worker.read_JSON_file("singleAuthorData" + str(index) + ".json")
         value = reportData.runTest(authorText)
         worker.save_JSON_file(filename_save, value)
         
