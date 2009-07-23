@@ -1234,7 +1234,7 @@ class GoodTuringProbDist(ProbDistI):
         # avoid divide-by-zero errors for sparse datasets
         if nc == 0 or self._freqdist.N() == 0:
             return 0.0
-
+        
         return float(c + 1) * ncn / (nc * self._freqdist.N())
 
     def max(self):
