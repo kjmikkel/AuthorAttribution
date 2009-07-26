@@ -3,6 +3,7 @@ from cStringIO import StringIO
 from operator import itemgetter
 from decimal import *
 import pprint
+import pprint
 import json
 import workOnJSON as JSON
 from cStringIO import StringIO
@@ -74,7 +75,7 @@ def largestDictKey(resultDict):
     max_key = b[max(b.keys())]
     return (max_key, resultDict[max_key])
 
-def makeJsonFile(filename, fileToSave_name):
+def makeJsonFile(filename):
     dict = read_JSON_file(filename)
     authorDict = {}
     authorWrittenDict = {}
@@ -112,7 +113,6 @@ def makeJsonFile(filename, fileToSave_name):
         (gramfied, list) = tg.total_ngram(listOfEntries)
         newAuthorDict[authorName] = list
         
-    save_JSON_file(fileToSave_name, newAuthorDict)    
     return (authorDict, newAuthorDict, authorNameDirec)
     
 def combine_ngrams(author): 
@@ -202,12 +202,10 @@ def save_JSON_file(filename, dict):
 
 def getAndMerge():
     # files to work on
-    filename = "data.json"     
-    fileToSave_name = "data_save_test2.json"  
-    fileToSave_final = "data_temp_save_test2.json"
-    fileToSave_listed = "data_listify_test2.json"
+    filename = reportData.location + "newData.json"     
+ 
     # we load the comparisons
-    (result, ngramLists, authorNameDict) = makeJsonFile(filename, fileToSave_name)
+    (result, ngramLists, authorNameDict) = makeJsonFile(filename)
     
     # the list of posts we want to compare to the corpus
     compareDict = [{"post_id": "412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6", "user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}]
@@ -562,31 +560,15 @@ def getAuthorWithOverXPosts(data_file, metadata_file, number):
     
 def runTest(compareDict, name, num):
     # files to work on
-    filename = "data/newData.json"     
-    fileToSave_name = "data/data_save_test2.json"  
-    #fileToSave_final = "data_temp_save_test2.json"
-    #fileToSave_listed = "data_listify_test2.json"
+    filename = reportData.location + "newData.json"     
+
     # we load the comparisons
-    (result, ngramLists, authorNameDict) = makeJsonFile(filename, fileToSave_name)
+    (result, ngramLists, authorNameDict) = makeJsonFile(filename)
     
     # the list of posts we want to compare to the corpus
     (id, authorData) = compareAuthors(ngramLists,  compareDict, authorNameDict)   
     print "Produce\n"
     return produceResultTable(result, id, authorData, name, num)
-
-    # files to work on
-    filename = "data.json"     
-    fileToSave_name = "data_save_test2.json"  
-    fileToSave_final = "data_temp_save_test2.json"
-    fileToSave_listed = "data_listify_test2.json"
-    # we load the comparisons
-    (result, ngramLists, authorNameDict) = makeJsonFile(filename, fileToSave_name)
-    
-    # the list of posts we want to compare to the corpus
-    compareDict = [{"post_id": "412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6", "user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}]
-    print "Compare\n"
-    (id, authorData) = compareAuthors(ngramLists,  compareDict, authorNameDict)   
-    print "Produce\n"
 
 def produceStats():    
     startFile = "data.json"
@@ -596,3 +578,4 @@ def produceStats():
     produceStatisticalData(newFile, saveStats)
     getAuthorWithOverXPosts(newFile, saveStats, number)
     
+location = "data/"
