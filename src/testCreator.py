@@ -17,17 +17,21 @@ def OnePost():
     for entry in list:
         author = entry["user_id"]
         text = entry["text"]
+        id = entry["post_id"]
+        value = {"text": text, "post_id": id}
         if authorDict.has_key(author):
-            authorDict[author].append(text)
+            authorDict[author].append(value)
         else:
-            authorDict[author] = [text]
+            authorDict[author] = [value]
     
     finalTexts = []
     for author in authorDict.keys():
         textList = authorDict[author]
         ran.seed()
         index = ran.randint(0, len(textList) - 1)
-        finalTexts.append(textList[index])
+        entry = textList[index]
+        value = {"user_id": author, "text":  entry["text"], "post_id": entry["post_id"]}
+        finalTexts.append(value)
     
     worker.save_JSON_file(corpora + "singlePostCorpora.json", finalTexts) 
     
@@ -134,19 +138,29 @@ def findSingleAuthors(filename, filename_save, num, length):
 """
 Preform the test of the single Authors and save the result as a text table in the folder designated below
 """
-def AuthorTest(num, filename, filename_save):
-    folder = "../report/tabeller/"
-    for i in range(0, num):
-        index = i + 1
+def AuthorTest(num, filename_test, corpora_name, foldername, filename_save):
+    print filename_test
+    folder = "../report/tabeller/" + foldername + "/"
+    if (corpora_name != "newData" and corpora_name != "testData"):
+        corpora_name = corpora + corpora_name
+    else:
+        corpora_name = location + corpora_name
+    print "corpora:", corpora_name
+    if filename_test.count("Ul"):
         worker = JSON.workOnJSON()
-        authorText = worker.read_JSON_file(location + filename + str(index) + ".json")
-        value = reportData.runTest(authorText, folder + filename_save, index)
+        authorText = worker.read_JSON_file(tests + filename_test + ".json")
+        value = reportData.runTest(authorText, corpora_name + ".json", folder + filename_save, 0 )
+    else:
+        for i in range(0, num):
+            index = i + 1
+            worker = JSON.workOnJSON()
+            authorText = worker.read_JSON_file(tests + filename_test + str(index) + ".json")
+            value = reportData.runTest(authorText, corpora_name + ".json", folder + filename_save, index)
 
 """
 Find out how many posts each author has made, and then choose one of these randomly
 """
 def chooseAuthorFromNumber(filename_save, num, number_of_posts):
-    
     worker = JSON.workOnJSON()
     list =worker.read_JSON_file(location + "newData.json")
     
@@ -162,7 +176,6 @@ def chooseAuthorFromNumber(filename_save, num, number_of_posts):
             
     authorList = []
     authorKeyList = authorDict.keys()
-    maxi = 0
     for author in authorKeyList:
         number = authorDict[author][0] 
         if (number >= number_of_posts[0] and number <= number_of_posts[1]):
@@ -179,6 +192,32 @@ def chooseAuthorFromNumber(filename_save, num, number_of_posts):
         (number, texts) = authorDict[choosenAuthor]
         print texts
         worker.save_JSON_file(corpora + filename_save + str(refNumber) + ".json", texts)
+
+def chooseAuthorsWithNumber(filename_save, number_of_posts):
+    worker = JSON.workOnJSON()
+    list =worker.read_JSON_file(location + "newData.json")
+    
+    authorDict = {}
+    for entry in list:
+        author = entry["user_id"]
+        value = {"text": entry["text"], "user_id": author, "post_id": entry["post_id"]}
+        if authorDict.has_key(author):
+            (number, texts) = authorDict[author]
+            texts.append(value)
+            authorDict[author] = (number + 1, texts)
+        else:
+            authorDict[author] = (1, [value])
+            
+    authorList = []
+    textList = []
+    authorKeyList = authorDict.keys()
+    for author in authorKeyList:
+        number = authorDict[author][0] 
+        if (number >= number_of_posts[0] and number <= number_of_posts[1]):
+            authorList.append(author)
+            textList.extend(authorDict[author][1])
+    
+    worker.save_JSON_file(corpora + filename_save + ".json", textList)
     
 """ 
 * Find random authors who combined have written over half the texts in the corpus
@@ -222,9 +261,9 @@ def findUtimateTexts(filename_save, num):
         extractRandomAuthorTexts(location + "newData.json", authors + "UltimateAuthors" + str(refNumber) + ".json", filename_save + str(refNumber) + ".json")
 
 def createLengthCorpora():
-    chooseAuthorFromNumber(corpora + "few", 3, fewPosts)
-    #chooseAuthorFromNumber(corpora + "some", 3, somePosts)
-    #chooseAuthorFromNumber(corpora + "many", 3, manyPosts)
+    #chooseAuthorFromNumber(corpora + "few", 3, fewPosts)
+    chooseAuthorsWithNumber("Some",  somePosts)
+    chooseAuthorsWithNumber("Many",  manyPosts)
 
 def shortBogusCorp(num) :
         worker = JSON.workOnJSON()
@@ -235,11 +274,12 @@ def shortBogusCorp(num) :
             
             finalList = []
             for text in list:
-                finalList.append({"user_id": idList[i], "text": text})
+                print te
+                finalList.append({"user_id": idList[i], "text": text,})
             
-            finalList.append({"user_id": "Bogus", "text": "hello"})
-            finalList.append({"user_id": "Bogus", "text": "Why, hello again!"})
-            worker.save_JSON_file(corpora + "shortBogusText" + str(index) + ".json", finalList)
+            finalList.append({"user_id": "Bogus", "text": "hello", "post_id": b1})
+            finalList.append({"user_id": "Bogus", "text": "Why, hello again!", "post_id": b2})
+            worker.save_JSON_file(corpora + "shortBogusCorpora" + str(index) + ".json", finalList)
 
 def shortBogusTest(num):
     worker = JSON.workOnJSON()
@@ -264,8 +304,45 @@ def makeAllTexts():
     findUtimateTexts("UltimateTexts", 3)
 
 def doAllTests():
-    AuthorTest(3, "utilmateTexts", "UltimateTest")
+    num = 3
+    #doStressTest(num)
+    
+    #Short Bogus Test
+    #AuthorTest(num, "ShortBogusText", "shortBogusCorpora", "shortBogusText", "shortBogusText") 
+    
+    doNumberTest(num)
+    
+    #UltimateTexts
+    
+    AuthorTest(num, "testUl", "testData" ,"UltimativeTest", "UltimativeTest")
 
+    AuthorTest(num, "UltimateTexts", "testData" ,"UltimateTest", "UltimateTest")
+
+def doNumberTest(num):
+    #AuthorSomePost
+    #AuthorTest(num, "AuthorSomePost", "Some", "AuthorSomePost", "AuthorSomePost")
+    
+    #AuthorManyPost/
+    AuthorTest(num, "AuthorManyPost", "Many", "AuthorManyPost", "AuthorManyPost")
+
+def doStressTest(num):
+
+    # StressTest1
+    AuthorTest(num, "singleAuthorData", "newData" ,"StressTest", "StressTest1")
+    
+    # StressTest2
+    # No one in this category
+    #AuthorTest(num, "singleAuthorData", "few" ,"StressTest", "StressTest"
+    
+    #StressTest 3
+    AuthorTest(num, "singleAuthorData", "Some" ,"StressTest", "StressTest3")
+        
+    # StressTest 4
+    AuthorTest(num, "singleAuthorData", "Many" ,"StressTest", "StressTest4")
+       
+    # StressTest5
+    AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
+    
 def makeCorpora():
     makeShortBogusText(3) 
     AuthorTest(3, "singleAuthorData", "savefile.json")
@@ -281,12 +358,15 @@ def AuthorLengthTestCorpora(length, name, num):
     list = worker.read_JSON_file(location + "newData.json")
     authorDict = {}
     for entry in list:
+        
         text = entry["text"]
         author = entry["user_id"]
+        postId = entry["post_id"]
+        value = {"text": text, "user_id": author, "post_id": postId} 
         if authorDict.has_key(author):
-            authorDict[author].append(text)
+            authorDict[author].append(value)
         else:
-            authorDict[author] = [text]
+            authorDict[author] = [value]
     
     # I only keep the authors who has the correct number of posts
     newAuthorDict = {}
@@ -310,7 +390,7 @@ def AuthorLengthTestCorpora(length, name, num):
             worker.save_JSON_file(tests + "Author" + name +"Post" + str(index) + ".json", newAuthorDict[author])
 
 def makeLengthTests():
-    AuthorLengthTestCorpora(fewPosts, "Few", 3)
+  #  AuthorLengthTestCorpora(fewPosts, "Few", 3)
     AuthorLengthTestCorpora(somePosts, "Some", 3)
     AuthorLengthTestCorpora(manyPosts, "Many", 3)
     
@@ -319,6 +399,5 @@ authors = location + "Authors/"
 corpora = location + "Corpora/"
 tests = location + "Tests/"
 #createLengthCorpora()
-#OnePost()
-#shortBogusTest(3)
-#makeLengthTests()
+
+doAllTests()

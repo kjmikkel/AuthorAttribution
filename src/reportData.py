@@ -26,11 +26,12 @@ def makeAuthor(base):
     return tg
 
 
-def compareAuthors(authors, compareDict, authorDict):
+def compareAuthors(authors, compareDict):
     # this dict contains how many texts (that we are comparing against the corpus) each author has written
     authorMade = {}
     # The dict that contains which authors have had their text attributed to whom
     resultDict = {}        
+    
     for value in compareDict:
         textToCompare = value["text"]
         realAuthor = value["user_id"]
@@ -54,20 +55,19 @@ def compareAuthors(authors, compareDict, authorDict):
       
         print "Most likely author:", author
         print "Real author:", realAuthor
+        
         if not authorMade.has_key(author):
             authorMade[author] = [realAuthor]
         else:
             authorMade[author].append(realAuthor)
             
         # We take score of the attributions
-        if not resultDict.has_key(realAuthor):
-            resultDict[author] = {realAuthor : 1}
+        if not resultDict.has_key(author) :
+            resultDict[author] = {realAuthor: 1}
+        elif not resultDict[author].has_key(realAuthor):
+            resultDict[author][realAuthor] = 1
         else:
-            if resultDict[author].has_key(realAuthor):
-                resultDict[author] = {realAuthor : 1}
-            else:
-                resultDict[author][realAuthor] += 1
-    
+            resultDict[author][realAuthor] += 1
     return (authorMade, resultDict)
 
 def largestDictKey(resultDict):
@@ -85,15 +85,18 @@ def makeJsonFile(filename):
 
     for entry in dict:
         author = entry["user_id"]
-        if authorNameDirec.has_key(author):
-            author = authorNameDirec[author]
-        else:
-            authorNameDirec[author] = "A" + str(num)
-            author = "A" + str(num)
-            num += 1
-        
-        value = {"user_id": author, "text": entry["text"], "timestamp": entry["timestamp"]}
         id = entry["post_id"]
+        
+        #if authorNameDirec.has_key(author):
+        #    author = authorNameDirec[author]
+        #else:
+        #    print author
+        #    authorNameDirec[author] = "A" + str(num)
+        #    author = "A" + str(num)
+        #  num += 1
+        
+        value = {"user_id": author, "text": entry["text"]}
+        
         if authorDict.has_key(author):
             authorDict[author].append(value)
             authorWrittenDict[author].append(id)
@@ -113,7 +116,7 @@ def makeJsonFile(filename):
         (gramfied, list) = tg.total_ngram(listOfEntries)
         newAuthorDict[authorName] = list
         
-    return (authorDict, newAuthorDict, authorNameDirec)
+    return (authorDict, newAuthorDict)
     
 def combine_ngrams(author): 
     finalDict = {}
@@ -139,7 +142,7 @@ def makeCompareAgainst(list):
     
     listOfEntries = []
     for entry in list:
-        value = {"user_id": author, "text": entry["text"], "timestamp": entry["timestamp"]}
+        value = {"user_id": author, "text": entry["text"]}
         id = entry["post_id"]
         if authorDict.has_key(author):
             authorDict[author].append(value)
@@ -205,12 +208,12 @@ def getAndMerge():
     filename = reportData.location + "newData.json"     
  
     # we load the comparisons
-    (result, ngramLists, authorNameDict) = makeJsonFile(filename)
+    (result, ngramLists) = makeJsonFile(filename)
     
     # the list of posts we want to compare to the corpus
-    compareDict = [{"post_id": "412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6", "user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "timestamp": 1061545161, "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}]
+    compareDict = [{"post_id": "412f267787a9d496ee6afe13722754f441555b6679928bcc0820fccc196b8bc6", "user_id": "f910fcc9118d65480b0f7fd459115bcbf6035743e9d4ec402a036181f865c766", "title": "det nye board", "text": "s\u00e5 er det nye board ved at fungere ligesom jeg gerne vil have det og \\r\\ndet vil derfor snart v\u00e6re tilg\u00e6ngeligt for alle danske juggalos.", "thread_id": 917564}]
     print "Compare\n"
-    (id, authorData) = compareAuthors(ngramLists,  compareDict, authorNameDict)   
+    (id, authorData) = (ngramLists,  compareDic)   
     print "Produce\n"
     produceResultTable(result, id, authorData)
     
@@ -253,8 +256,11 @@ def produceResultTable(authorMade, attributedList, authorData, name, num):
     stringResult.write("\\multicolumn{" + str(numElements + 2)+ "}{|c|}{Computer Estimate}" + next + "\n")
     stringResult.write(line)
     stringResult.write("True Label & ")
-    for authorName in authorNameDict:
+
+    for an in alist:
+        authorName = an[0]
         stringResult.write(authorName + " & ")
+    
     stringResult.write("Recall " + next + "\n")
     stringResult.write(line)
 
@@ -306,16 +312,16 @@ def produceResultTable(authorMade, attributedList, authorData, name, num):
     else:
         overall = 0.00
         
-    stringResult.write("\\multicolumn{" + str(numElements + 2)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + " } \n")
-#    stringResult.write(line)
+    stringResult.write("\\multicolumn{" + str(numElements + 2)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + "}" + next + "\n")
+    stringResult.write(line)
     stringResult.write("\\end{tabular} \n")
 
     FILE_TO_SAVE = open(name + str(num) + ".tex","w")
     
-    FILE_TO_SAVE.write("\\documentclass[letter, 12pt, english]{article}\n")
-    FILE_TO_SAVE.write("\\begin{document}\n")
+#  FILE_TO_SAVE.write("\\documentclass[letter, 12pt, english]{article}\n")
+#    FILE_TO_SAVE.write("\\begin{document}\n")
     FILE_TO_SAVE.write(stringResult.getvalue())
-    FILE_TO_SAVE.write("\\end{document}")
+#    FILE_TO_SAVE.write("\\end{document}")
     FILE_TO_SAVE.close()
         
     return finalResults
@@ -329,11 +335,14 @@ def produceResult(authorData, authorList):
     endResults = {}
     for authorName in authorData.keys():
         
-        writtenByAuthor = len(authorList)
         if authorData[authorName].has_key(authorName):
             correctlyAttributed = authorData[authorName][authorName]
         else:
             correctlyAttributed = 0
+        
+        writtenByAuthor = len(authorList)
+        print "Written:", writtenByAuthor
+        print "correctly:", correctlyAttributed
             
         attributed = 0.0
 
@@ -341,13 +350,14 @@ def produceResult(authorData, authorList):
             attributed += float(authorData[authorName][entry])
             
         if attributed:
-            precision = correctlyAttributed / attributed
+            precision = float(correctlyAttributed) / float(attributed)
         else:
             precision = 0.0
         
         if writtenByAuthor:    
-            recall = correctlyAttributed / writtenByAuthor
+            recall = float(correctlyAttributed) / float(writtenByAuthor)
         else:
+            print "Set recall to zero"
             recall = 0.0
         
         if (precision and recall):
@@ -510,7 +520,7 @@ def produceStatisticalData(filename, filename_save):
         
     FILE_TO_SAVE.write("& & & & & \\\\ \n")
     FILE_TO_SAVE.write("& Total Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
-    FILE_TO_SAVE.write(" & " + str(len(authorData)) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(float(length) / float(numberTexts), 3)) + "\\\\\n")
+    FILE_TO_SAVE.write(" & " + str(len(authorData)) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(float(length) / float(numberTexts), 3)) + "\\\\ \n")
     FILE_TO_SAVE.write("\\end{tabular}\n")
     FILE_TO_SAVE.write("\\end{document}\n")
     FILE_TO_SAVE.close()
@@ -558,18 +568,27 @@ def getAuthorWithOverXPosts(data_file, metadata_file, number):
     JSON.save_JSON_file(postFiles + str(number) + ".json", texts)
     
     
-def runTest(compareDict, name, num):
+def runTest(compareDict, filename, name, num):
     # files to work on
-    filename = reportData.location + "newData.json"     
-
+    tempName = name.rpartition("/")[-1]
+    print resultDir + tempName
+    
     # we load the comparisons
-    (result, ngramLists, authorNameDict) = makeJsonFile(filename)
+    print  filename
+    (result, ngramLists) = makeJsonFile(filename)
     
     # the list of posts we want to compare to the corpus
-    (id, authorData) = compareAuthors(ngramLists,  compareDict, authorNameDict)   
+    (id, authorData) = compareAuthors(ngramLists,  compareDict)   
+
     print "Produce\n"
+    save_JSON_file(resultDir + tempName + str(num) + ".json", (result, id, authorData, name, num))
+    
     return produceResultTable(result, id, authorData, name, num)
 
+def makeTable(filename, foldername, givenNum):
+    (result, id, authorData, name, num) = read_JSON_file(resultDir + filename + str(givenNum) + ".json")
+    produceResultTable(result, id, authorData, "../report/tabeller/" + foldername + "/" + filename, num)
+    
 def produceStats():    
     startFile = "data.json"
     newFile = "newData.json"
@@ -579,3 +598,4 @@ def produceStats():
     getAuthorWithOverXPosts(newFile, saveStats, number)
     
 location = "data/"
+resultDir = location + "Results/"
