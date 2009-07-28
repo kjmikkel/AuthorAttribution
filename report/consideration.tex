@@ -16,9 +16,9 @@ The description of how the test will be done - including which kind of post that
 }{
 The purpose of the test - what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and the code.
 }{
-The forum entries that we are trying to attribute to what we find in the corpus
+The entries whose author we are trying to attribute
 }{
-What the corpus is going to contain - how many entries, how large each of these is going to be, etc. \ldots
+What the corpus is going to contain - how many entries, their size, etc. \ldots
 }
 
 \subsection{Values}
@@ -32,13 +32,13 @@ Let $\tau_x = \rm{ceil}(\Omega \times \frac{x}{4})$ and let the predicate $\#(a,
 
 $$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ posts }\in\rm{ author }: \{\rm{posts }\mid \#(a, \tau_x)\}$$ 
  
-And then we have to check for $\Phi_1$ (few), $\Phi_2$ (some), $\Phi_3$ (many) - which in this case will be 35 posts, 69 posts and 103 posts respectively.
+And then we have to check for $\Phi_1$ (\postAmount{few} = 35), $\Phi_2$ (\postAmount{some} = 69), $\Phi_3$ (\postAmount{many} = 103).
 
 \subsubsection*{Length of posts}
-Short post: A post that contains 100 characters or less\\
-Medium post: A post that contains between 100 to 1000 characters\\
-Long post: A post that contains between 1000 to 3000 characters\\
-Rant post: A post of more than 3000 characters
+\postSize{Short} post: A post that contains 100 characters or less\\
+\postSize{Medium} post: A post that contains between 100 to 1000 characters\\
+\postSize{Long} post: A post that contains between 1000 to 3000 characters\\
+\postSize{Rant} post: A post of more than 3000 characters
 
 
 \subsection{Selection of authors}
@@ -50,11 +50,11 @@ In order to select the authors I wrote a python script that found all of the aut
 \test{
 StressTest1
 }{
-Take a post from an author appearing in the corpora with a single, long text, and see if the author can be correctly attributed compared to the entire corpus.
+Take a post from an author appearing in the corpora with a single, \postSize{Long} text, and see if the author can be correctly attributed compared to the entire corpus.
 }{
-Check the limits of the algorithm. This is likely to fail.
+Check the limits of the algorithm. It will most likely not be able to attribute the author correctly.
 }{
-1 Long post
+1 \postSize{Long} post
 }{
 The entire corpus.
 }
@@ -62,29 +62,41 @@ The entire corpus.
 \test{
 StressTest2
 }{
-As above, but only against authors who have written few posts
+As above, but only against authors who have written \postAmount{Few} posts
 }{
-Check the limits of the algorithm. This is likely to fail
+Check the limits of the algorithm. It will most likely not be able to attribute the author correctly.
 }{
 The same post as above
 }{
-All texts from authors who have written few posts
+All texts from authors who have written \postAmount{Few} posts
 }
 
 \test{
 StressTest3
 }{
-As above, but only against authors who have written many posts
+As above, but only against authors who have written \postAmount{Some} posts
+}{
+To check the limits of the algorithm. This  limits of the algorithm. This has a chance of succeeding
+}{
+The same post as above
+}{
+All texts from authors who have written \postAmount{Some} posts
+}
+
+\test{
+StressTest4
+}{
+As above, but only against authors who have written \postAmount{Some} posts
 }{
 Check the limits of the algorithm. This has a chance of succeeding
 }{
 The same post as above
 }{
-All texts from authors who have written many posts
+All texts from authors who have written \postAmount{Many} posts
 }
 
 \test{
-StressTest4
+StressTest5
 }{
 As above, but each author is only allowed 1 post.
 }{
@@ -98,7 +110,7 @@ The same post as above
 \test{ 
 ShortBogusTest
 }{
-Take a post from an author A with multiple long posts, and create a corpora from all the texts of A, and a short bogus post from a bogus author, and then try to see whether or not the bogus post is chosen
+Take a post from an author A with multiple \postSize{Long} posts, and create a corpora from all the texts of A, and a short bogus post from a bogus author, and then try to see whether or not the bogus post is chosen
 }{
 A test to see whether the algorithm is susceptible to give a higher rank to posts with very little information (even if the bogus post is very dissimilar to the post that it is being checked against)
 }{
@@ -112,7 +124,7 @@ AuthorFewPost
 }{
 Take all the posts from an author A, where $\#(A, \tau_1)$ is true, and let the corpora be $\Phi_1$.
 }{
-A simple test to see whether the algorithm will work better  texts that are longer, and have authors who have written several posts
+A simple test to see whether the algorithm will work better texts that are longer, and have authors who have written several posts
 }{
 All posts from an author A, where $\#(A, \tau_1)$ is true
 }{
