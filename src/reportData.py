@@ -8,6 +8,11 @@ import json
 import workOnJSON as JSON
 from cStringIO import StringIO
 import ngram
+import time
+import copy
+from datetime import datetime
+
+tg_dict = {}
 
 def ngram_to_list(grams):
     list = []
@@ -36,7 +41,7 @@ def compareAuthors(authors, compareDict):
         textToCompare = value["text"]
         realAuthor = value["user_id"]
         sum = 0
-            
+        
         # Compare value
         compareTo = [textToCompare]
         com = ngram.ngram(compareTo, min_sin=0.0)
@@ -45,14 +50,27 @@ def compareAuthors(authors, compareDict):
         dataDist = {}
             # We do the actual testing
         for author in authors: 
-            tg = makeAuthor(authors[author])
+            if tg_dict.has_key(author):
+                break
+   #         timeStart = time.time()
+            tg_dict[author] = makeAuthor(authors[author])
+   #         endTime = time.time()
+#            print "Start:", timeStart 
+#            print "End:", endTime
+#            print "compareTo_tgr:", str(endTime - timeStart)
+
+        for author in authors:
+            timeStart = time.time()
+            tg = copy.deepcopy(tg_dict[author])
             for word in workList:
                 sum += tg.propability(word, 0)
-            dataDist[author] = sum
-            #print "Done with", author
             
-        (author, time) = largestDictKey(dataDist)
-      
+            dataDist[author] = sum
+            endTime = time.time()
+            print "Done with", author, "took", str(endTime - timeStart), "seconds"
+        
+        (author, usedTime) = largestDictKey(dataDist)
+        
         print "Most likely author:", author
         print "Real author:", realAuthor
         
@@ -578,6 +596,7 @@ def runTest(compareDict, filename, name, num):
     (result, ngramLists) = makeJsonFile(filename)
     
     # the list of posts we want to compare to the corpus
+    tg_dict.clear()
     (id, authorData) = compareAuthors(ngramLists,  compareDict)   
 
     print "Produce\n"

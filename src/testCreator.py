@@ -1,6 +1,7 @@
 import workOnJSON as JSON
 import random as ran
 import reportData
+from time import time
 
 """
     The number of posts
@@ -382,7 +383,7 @@ def AuthorLengthTestCorpora(length, name, num):
     for i in range(0, num):
         author = None
         index = i + 1
-        ran.seed()
+        ran.seed ()
         if len(authorKeys) != 0:
             ranIndex = ran.randint(0, len(authorKeys) -1)
             author = authorKeys[ranIndex]
