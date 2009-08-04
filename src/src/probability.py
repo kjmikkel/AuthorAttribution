@@ -174,8 +174,11 @@ class FreqDist(dict):
 
         # Special case for Nr(0):
         if r == 0:
-            if bins is None: return 0
-            else: return bins-self.B()
+            #modified for clarity
+            if bins is None: 
+                return 0
+            else: 
+                return bins-self.B()
 
         # We have to search the entire distribution to find Nr.  Since
         # this is an expensive operation, and is likely to be used
@@ -1231,10 +1234,17 @@ class GoodTuringProbDist(ProbDistI):
         nc = self._freqdist.Nr(c, self._bins)
         ncn = self._freqdist.Nr(c + 1, self._bins)
 
+        
+        #added by me for better debugging
+ #       print "c:", c, "ncn:", ncn, "len(freqdist):", len(self._freqdist)
+     #  if ncn == 0:
+     #       return 0.0
+        #end added by me 
+
         # avoid divide-by-zero errors for sparse datasets
         if nc == 0 or self._freqdist.N() == 0:
             return 0.0
-
+        
         return float(c + 1) * ncn / (nc * self._freqdist.N())
 
     def max(self):
