@@ -85,5 +85,8 @@ $$p_3 = \frac{(3 + 1) * \frac{0}{1}}{15} = 0$$
 \fixme{This cannot be right}
 Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
 
+\subsection{Implementation changes}
+Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, due to the way that Good-Turing Smoothing works.
+
 \subsection{Architecture}
 \fixme{add image of architecture}

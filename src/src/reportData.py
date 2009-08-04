@@ -269,7 +269,8 @@ def produceExample(exampleStr):
     print "\\end{tabular}"
     
 def produceStatisticalData(filename, filename_save):
-    result = JSON.read_JSON_file(filename)
+    worker = JSON.workOnJSON()
+    result = worker.read_JSON_file(filename)
     
     authorData = {}
     for entry in result:
@@ -310,12 +311,12 @@ def produceStatisticalData(filename, filename_save):
         
     authorData = sorted(authorData.iteritems(), key=itemgetter(1))
 
-    save_JSON_file(filename_save, authorData)
+    worker.save_JSON_file(filename_save, authorData)
 
-    FILE_TO_SAVE = open("reportFile.tex","w")
+    FILE_TO_SAVE = open(constants.tableSave + "reportFile.tex","w")
     
-    FILE_TO_SAVE.write("\\documentclass[letter, 12pt, english]{article}\n")
-    FILE_TO_SAVE.write("\\begin{document}\n")
+ #   FILE_TO_SAVE.write("\\documentclass[letter, 12pt, english]{article}\n")
+  #  FILE_TO_SAVE.write("\\begin{document}\n")
 
     FILE_TO_SAVE.write("\\begin{tabular}{cccccc}\n")
     FILE_TO_SAVE.write("Name & Number of Texts & Min & Max & Average\\\\\n")
@@ -327,12 +328,12 @@ def produceStatisticalData(filename, filename_save):
         name = entry[0]
         entry = entry[1]
         number = str(entry["textNumber"])
-        if (number > 1 and number < 10):
-            number = "\\emph{" + number + "}"
-        elif (number >= 10 and number < 100):
-            number = "\\texttt{" + number + "}"
-        elif number >= 100:
-            number = "\\texttt{\\emph{" + number + "}}"
+       # if (number > 1 and number < 10):
+       # number = "\\emph{" + number + "}
+       # elif (number >= 10 and number < 100):
+       #     number = "\\texttt{" + number + "}"
+       # elif number >= 100:
+       #     number = "\\texttt{\\emph{" + number + "}}"
         FILE_TO_SAVE.write(str(name[0:15]) + " & " + number + " & " + str(entry["min"]) + " & " +  str(entry["max"]) + " & " + str(entry["average"]) + "\\\\\n")
         
         if count == endCount:
@@ -348,7 +349,7 @@ def produceStatisticalData(filename, filename_save):
     FILE_TO_SAVE.write("& Total Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
     FILE_TO_SAVE.write(" & " + str(len(authorData)) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(Decimal(length) / Decimal(numberTexts), 3)) + "\\\\ \n")
     FILE_TO_SAVE.write("\\end{tabular}\n")
-    FILE_TO_SAVE.write("\\end{document}\n")
+   # FILE_TO_SAVE.write("\\end{document}\n")
     FILE_TO_SAVE.close()
 
 def fixAuthorNames(fileName, fileNameToSave):
@@ -371,10 +372,10 @@ def fixAuthorNames(fileName, fileNameToSave):
     JSON.save_JSON_file(fileNameToSave, list)    
       
 # Produce stats    
-def produceStats():    
-    startFile = "data.json"
-    newFile = "newData.json"
-    saveStats = "dataSave.json"
+def produceStats():
+    startFile = constants.location + "data.json"
+    newFile = constants.location + "newData.json"
+    saveStats = constants.location + "dataSave.json"
     number = 50
     produceStatisticalData(newFile, saveStats)
     getAuthorWithOverXPosts(newFile, saveStats, number)
@@ -407,4 +408,4 @@ location = "data/"
 resultDir = location + "Results/"
 
 if __name__ == '__main__':          
-    doTables()
+    produceStats()

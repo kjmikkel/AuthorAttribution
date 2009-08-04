@@ -88,7 +88,7 @@ class ngram:
    def total_ngram(self, haystack):
         gram = {}
         list = []
-        for i in range(1, self.__ngram_len):
+        for i in range(1, self.__ngram_len + 1):
             (newGram, newList) = self.ngramify(haystack, i)
             gram.update(newGram)
             list.extend(newList)
