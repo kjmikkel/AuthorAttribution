@@ -346,8 +346,8 @@ def produceStatisticalData(filename, filename_save):
         count += 1
         
     FILE_TO_SAVE.write("& & & & & \\\\ \n")
-    FILE_TO_SAVE.write("& Total Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
-    FILE_TO_SAVE.write(" & " + str(len(authorData)) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(Decimal(length) / Decimal(numberTexts), 3)) + "\\\\ \n")
+    FILE_TO_SAVE.write("Total Number of Authors & Total Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
+    FILE_TO_SAVE.write(str(len(authorData)) + " & " + str(numberTexts) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(Decimal(length) / Decimal(numberTexts), 3)) + "\\\\ \n")
     FILE_TO_SAVE.write("\\end{tabular}\n")
    # FILE_TO_SAVE.write("\\end{document}\n")
     FILE_TO_SAVE.close()
