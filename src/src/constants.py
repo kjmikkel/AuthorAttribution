@@ -3,7 +3,7 @@ Constant values
 """
 
 # paths
-folderLocation = "C:\\Documents and Settings/Administrator/Desktop/AuthorAttribution/"
+folderLocation = "/home/mikkel/Documents/AuthorAttribution/"
 location = folderLocation + "src/data/"
 authors = location + "Authors/"
 corpora = location + "Corpora/"
