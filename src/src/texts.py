@@ -2,6 +2,7 @@ import workOnJSON as JSON
 import random as ran
 import constants
 
+
 def makeAllTexts():
     findUtimateTexts(3)
     

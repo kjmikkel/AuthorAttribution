@@ -119,6 +119,23 @@ def chooseAuthorsWithNumber(filename_save, number_of_posts, num):
             author = authorList[ranIndex]
             authorList.remove(author)
             worker.save_JSON_file(constants.tests + "Author" + name +"Post" + str(index) + ".json", authorDict[author][1])
+
+def makeTimeTest():
+    i = 100
+    worker = JSON.workOnJSON()
+    fromDirectory = constants.corpora + "newData.json"
+    posts = worker.read_JSON_file(fromDirectory)    
+    while i < 1400:
+        saveFile = constants.corpora + "timeTest" + str(i) + ".json"
+        listToSave = posts[0: i - 1]
+        worker.save_JSON_file(saveFile, listToSave)
+        i += 100
+    
+    i = 1329
+    saveFile = constants.corpora + "timeTest" + str(i) + ".json"
+    listToSave = posts[0: i - 1]
+    worker.save_JSON_file(saveFile, listToSave)
             
 if __name__ == '__main__':          
+    #makeTimeTest()
     makeCorpora()

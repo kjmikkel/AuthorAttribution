@@ -8,6 +8,10 @@ import reportData
 import time
 from operator import itemgetter
 
+
+runTimeTest = 0
+corpNumber = 0
+
 """
 Do the test
 """
@@ -52,7 +56,18 @@ def doStressTest(num):
        
     # StressTest5
     AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
-        
+
+def timeTest():
+    corpora = [i * 100 for i in range(1,14)]
+    corpora.append(1329)
+    runTimeTest = 1
+    
+    for corp in corpora:
+        corpNumber = corp
+        AuthorTest(0, "singleAuthorData", "timeTest" + str(corp), ,"UltimateTest", "junkData")
+    
+    runTimeTest = 0
+
 #Perform the test of the single Authors and save the result as a text table in the folder designated below
 def AuthorTest(num, filename_test, corpora_name, foldername, filename_save):
     print "Test:", filename_test
@@ -81,12 +96,30 @@ def runTest(compareDict, filename, name, num):
     tempName = name.rpartition("/")[-1]
     
     # we load the comparisons
-    (ngramLists, tg_dict) = makeNgram(filename)
-    # the list of posts we want to compare to the corpus
-    (id, authorData) = compareAuthors(ngramLists,  compareDict, tg_dict)   
+    if runTimeTest:
+        startTime = time.time()
+        print startTime
 
+    (ngramLists, tg_dict) = makeNgram(filename)
     worker = JSON.workOnJSON()
-    print authorData
+    if runTimeTest:
+        ngramTime = time.time() - startTime
+        file = open(constants.results + "ngramTime.dat", "a")
+        file.write(str(corpNumber)+  "\t" + str(ngramTime) + "\n")
+        file.close()
+
+    # the list of posts we want to compare to the corpus
+    if runTimeTest:
+        startTime = time.time()
+        
+    (id, authorData) = compareAuthors(ngramLists,  compareDict, tg_dict)   
+    
+    if runTimeTest:
+        compareTime = time.time() - startTime
+        file = open(constants.results + "workTime.dat", "a")
+        file.write(str(corpNumber)+  "\t" + str(compareTime) + "\n")
+        file.close()
+
     worker.save_JSON_file(constants.resultDir + tempName + str(num) + ".json", (id, authorData, name, num))            
             
 def compareAuthors(authors, compareDict, tg_dict):

@@ -16,15 +16,15 @@ from datetime import datetime
 def doTables():
     num = 3
     
-  #  makeTable("ShortBogusText", "ShortBogusTest", num) 
+    makeTable("ShortBogusText", "ShortBogusTest", num) 
     
     #All of the number tests
-    doNumberTables(num)
+  #  doNumberTables(num)
     
-    doStressTable(num)
+  #  doStressTable(num)
     
     #Do the ultimate tests
-    makeTable("UltimateTest", "UltimateTest", num)
+ #   makeTable("UltimateTest", "UltimateTest", num)
     
 def doNumberTables(num):
     #AuthorSomePost
@@ -346,7 +346,7 @@ def produceStatisticalData(filename, filename_save):
         count += 1
         
     FILE_TO_SAVE.write("& & & & & \\\\ \n")
-    FILE_TO_SAVE.write("Total Number of Authors & Total Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
+    FILE_TO_SAVE.write("Number of Authors & Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
     FILE_TO_SAVE.write(str(len(authorData)) + " & " + str(numberTexts) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(Decimal(length) / Decimal(numberTexts), 3)) + "\\\\ \n")
     FILE_TO_SAVE.write("\\end{tabular}\n")
    # FILE_TO_SAVE.write("\\end{document}\n")
