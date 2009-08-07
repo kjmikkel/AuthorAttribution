@@ -1,12 +1,17 @@
 \section{Considerations}
 \label{considerations}
 
-In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably I will perform each test multiple times (with multiple different texts) in order to gain a better overview of how effective the process is. Unless specifically noted I will run each test 3 times. \fixme{Should I test more times? Or should I perhaps mention the times I want to test locally at the different tests?}
+In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably I will perform each test multiple times (with different author texts) in order to gain a better overview of the effectiveness of the algorithm. Unless otherwise noted, I  will run each test 3 times.
 
 \subsection{Initial smoke tests}
 \label{smokeTest}
-Some of the initial smoke tests showed some problems with the algorithm. 
-One of the problems I found was that some shorter, bogus texts, would be given the greatest probability, even when the text in question was present in the corps that was analysed. A possible explanation for this is that the shorter text, has a greater probability for each word (and thus also for the \fixme{is this entire correct?} words that does not appear - as per Good-Turing smoothing).
+In the initial smoke tests I detected the following problems with the algorithm:
+\begin{enumerate}
+\item In the first toy problem I tested, the algorithm was unable to correctly attribute the text, even though there were only 2 authors, who both had only one single text in the corpora - the first a sting of a's, the second a string of b's. The text to be attributed was a string of a's.
+
+\item Authors of short bogus texts, would be given a far greater probability than they warranted, and their authors were often chosen as the most probable author. A possible explanation for this is that due to the way that Good-Turing smoothing works\footnote{} the probability given to the n-grams that do not appear in text is greater, which gives the short texts an unfair advantaged. 
+\end{enumerate}
+ 
 
 \subsection{Explanation of test description}
 \test{
@@ -47,9 +52,7 @@ In order to select the authors I wrote a python script that found all of the aut
 
 \subsection{Tests}
 
-\test{
-StressTest1
-}{
+\test{StressTest1}{
 Take a post from an author appearing in the corpora with a single, \postSize{Long} text, and see if the author can be correctly attributed compared to the entire corpus.
 }{
 Check the limits of the algorithm. It will most likely not be able to attribute the author correctly.
@@ -59,9 +62,7 @@ Check the limits of the algorithm. It will most likely not be able to attribute 
 The entire corpus.
 }
 
-\test{
-StressTest2
-}{
+\test{StressTest2}{
 As above, but only against authors who have written \postAmount{Few} posts
 }{
 Check the limits of the algorithm. It will most likely not be able to attribute the author correctly.
@@ -71,9 +72,7 @@ The same post as above
 All texts from authors who have written \postAmount{Few} posts
 }
 
-\test{
-StressTest3
-}{
+\test{StressTest3}{
 As above, but only against authors who have written \postAmount{Some} posts
 }{
 To check the limits of the algorithm. This  limits of the algorithm. This has a chance of succeeding
@@ -83,9 +82,7 @@ The same post as above
 All texts from authors who have written \postAmount{Some} posts
 }
 
-\test{
-StressTest4
-}{
+\test{StressTest4}{
 As above, but only against authors who have written \postAmount{Some} posts
 }{
 Check the limits of the algorithm. This has a chance of succeeding
@@ -95,9 +92,7 @@ The same post as above
 All texts from authors who have written \postAmount{Many} posts
 }
 
-\test{
-StressTest5
-}{
+\test{StressTest5}{
 As above, but each author is only allowed 1 post.
 }{
 Check the limits of the algorithms. There is a non-trivial likelihood that this will succeed. It should however be mentioned, that this test should give authors who have only written a single post much greater weight, then if we had used the normal distribution.
@@ -107,9 +102,7 @@ The same post as above
 1 post from each author in the corpora
 }
 
-\test{ 
-ShortBogusTest
-}{
+\test{ShortBogusTest}{
 Take a post from an author A with multiple \postSize{Long} posts, and create a corpora from all the texts of A, and a short bogus post from a bogus author, and then try to see whether or not the bogus post is chosen
 }{
 A test to see whether the algorithm is susceptible to give a higher rank to posts with very little information (even if the bogus post is very dissimilar to the post that it is being checked against)
@@ -119,9 +112,7 @@ A test to see whether the algorithm is susceptible to give a higher rank to post
 All the posts from A, plus 2 bogus post.
 }
 
-\test{
-AuthorFewPost
-}{
+\test{AuthorFewPost}{
 Take all the posts from an author A, where $\#(A, \tau_1)$ is true, and let the corpora be $\Phi_1$.
 }{
 A simple test to see whether the algorithm will work better texts that are longer, and have authors who have written several posts
@@ -131,9 +122,7 @@ All posts from an author A, where $\#(A, \tau_1)$ is true
 $\Phi_1$.
 }
 
-\test{
-AuthorSomePost
-}{
+\test{AuthorSomePost}{
 Take all the posts from an author A, where $\#(A, \tau_2)$ is true, and let the corpora be $\Phi_2$.
 }{
 A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written some posts
@@ -143,9 +132,7 @@ All posts from an author A, where $\#(A, \tau_2)$ is true
 $\Phi_2$.
 }
 
-\test{
-AuthorManyPost
-}{
+\test{AuthorManyPost}{
 Take all post from an author A, where $\#(A, \tau_3)$ is true, and let the corpora be $\Phi_3$
 }{
 A simple test to see whether the algorithm will work better on texts that are longer, and have authors who have written some posts
@@ -155,10 +142,8 @@ All posts from an author A, where $\#(A, \tau_3)$ is true
 $\Phi_3$.
 }
 
-\test{
-UltimateStressTest
-}{
-Take a random selection of authors, who have made over half the posts in the entire corpora, and test it on the rest of the corpora. Since they are choosen at random, some of the runs may have many authors, while some will only have few.
+\test{UltimateStressTest}{
+Take a random selection of authors, who have made over half the posts in the entire corpora, and test it on the rest of the corpora. Since they are chosen at random, some of the runs may have many authors, while some will only have few.
 }{
 This test is to check the overall quality of the algorithm - i.e. if it can attribute the posts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}.
 }{

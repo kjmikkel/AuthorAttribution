@@ -23,44 +23,45 @@ Since no test contain every author, I will diferentiate author who I test agains
 \subsection{Test results}
 
 \subsubsection{StressTest1}
-A single post is compared against the entire corpora - for more information \pref{StressTest1}.
+A single post is compared against the entire corpora - for more information \pref{StressTest1}.\\
 \input{tabeller/StressTest/StressTest11}
 
 \subsubsection{StressTest3}
-A single post from an author who has written \postAmount{Some} posts are checked against the entire corpora \pref{StressTest3} 
-\texttt{Stress Test 3.1:}\\
+A single post from an author who has written \postAmount{Some} posts are checked against the entire corpora \pref{StressTest2}.\\
+\texttt{Stress Test 2.1:}\\
 
 \input{tabeller/StressTest/StressTest31}\\ \\
 
-\texttt{Stress Test 3.2:}\\
+\texttt{Stress Test 2.2:}\\
 \input{tabeller/StressTest/StressTest32}\\ \\
 
-\texttt{Stress Test 3.3:}\\
+\texttt{Stress Test 2.3:}\\
 \input{tabeller/StressTest/StressTest33}
 
-\subsubsection{StressTest4}
-One post from an author who has written \postAmount{Many} posts are checked against the entire corpora \pref{StressTest4} 
-\texttt{Stress Test 4.1:}\\
+\subsubsection{StressTest3}
+One post from an author who has written \postAmount{Many} posts are checked against the entire corpora \pref{StressTest4}.\\
+\texttt{Stress Test 3.1:}\\
 \input{tabeller/StressTest/StressTest41}\\
 
-\texttt{Stress Test 4.2:}\\
+\texttt{Stress Test 3.2:}\\
 \input{tabeller/StressTest/StressTest42}\\
 
-\texttt{Stress Test 4.3:}\\
+\texttt{Stress Test 3.3:}\\
 \input{tabeller/StressTest/StressTest43}
 
-\subsubsection{StressTest5}
-A single text from an author is checked against alle 
-\texttt{Stress Test 5.1:}\\
+\subsubsection{StressTest4}
+A single text from an author is checked against all the texts \pref{StressTest5} .\\
+\texttt{Stress Test 4.1:}\\
 \input{tabeller/StressTest/StressTest51}\\
 
-\texttt{Stress Test 5.2:}\\
+\texttt{Stress Test 4.2:}\\
 \input{tabeller/StressTest/StressTest52}\\
 
-\texttt{Stress Test 5.3:}\\
+\texttt{Stress Test 4.3:}\\
 \input{tabeller/StressTest/StressTest53}
 
 \subsubsection{AuthorSomePost}
+All the posts from a random author who has written \postAmount{Some} posts is checked against all the posts from all authors who have written \postAmount{Some} posts \pref{AuthorSomePost}.\\  
 \texttt{AuthorSomePost 1:}\\
 \input{tabeller/AuthorSomePost/AuthorSomePost1}\\
 
@@ -71,6 +72,8 @@ A single text from an author is checked against alle
 \input{tabeller/AuthorSomePost/AuthorSomePost3}
 
 \subsubsection{AuthorManyPost}
+All the posts from a random author who has written \postAmount{Many} posts is checked against all the posts from all authors who have written \postAmount{Many} posts \pref{AuthorManyPost}.\\  
+
 \texttt{AuthorManyPost 1:}\\
 \input{tabeller/AuthorManyPost/AuthorManyPost1}\\
 
@@ -81,16 +84,17 @@ A single text from an author is checked against alle
 \input{tabeller/AuthorManyPost/AuthorManyPost3}
 
 \subsubsection{ShortBogusTest}
-\texttt{Short Bogus Test 1:}:\\
+\texttt{Short Bogus Test 1:}\\
 \input{tabeller/ShortBogusTest/ShortBogusText1}\\
 
-\texttt{Short Bogus Test 2:}:\\
+\texttt{Short Bogus Test 2:}\\
 \input{tabeller/ShortBogusTest/ShortBogusText2}\\
 
-\texttt{Short Bogus Test 3:}:\\
+\texttt{Short Bogus Test 3:}\\
 \input{tabeller/ShortBogusTest/ShortBogusText3}\\
 
-\subsubsection{UltimateTest}
+\subsubsection{UltimateStressTest}
+A random half of the corpora is checked against the entire corpora \pref{UltimateStressTest}.\\
 \texttt{Ultimate Test 1:}\\
 \input{tabeller/UltimateTest/UltimateTest1}\\
 

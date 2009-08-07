@@ -1,4 +1,5 @@
 \section{Implementation}
+\label{implementation}
 
 In this section I will try to describe some of the more interesting implementation choices I have made during this project.
 
@@ -8,7 +9,7 @@ I choose to write my project in Python, on the grounds that there was no need fo
 \subsection{Creation of n-grams}
 Since the creation of n-grams themselves was not a critical part of the project, I opted not to write my own code (which would have meant that I should have taken care of a lot of possible edge conditions). Therefore I choose python-ngram (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/. To make it fit the program better I have altered some of the code, and even added my own. There is no overarching pattern - but I have clearly labeled the changes in the code itself.
 \subsubsection{Numbers}
-Since numbers are bound to appear in a text, I have had to take care of how to present them. Since there is little chance of the same number appearing again and again, and the pattern therefore is more interesting, I have opted to turn all numbers into the same escape character: ``\backspace v''
+Since numbers are bound to appear in a text, I have had to take care of how to present them. Since there is little chance of the same number appearing again and again, and the pattern therefore is more interesting, I have opted to turn all numbers into the same escape character: ``$\backslash$ v''
 \subsubsection{Padding}
 The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the (n-1) first and the (n-1) last characters would have their own n-grams. However, since I also create 1 and 2 grams (see below), I do not find any use for this feature, and since the padding was made by plain capital X's, I choose to un-comment the part of the code.
 
@@ -16,4 +17,4 @@ The code would originally add padding to the start and the end of the text. This
 Like above, I did not choose to write my own Good-Turing smoothing, but did rather use the ``Natural Language Toolkit'' for python, version 0.9.9, which can be found at www.nltk.org.
 
 \subsection{Implementation changes}
-Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, in order to get a probability that is greater than 0. If this correction is not done, the $N_{r+1}$ that caused $p_3$ in \pref{Good-Turing} to become 0 will likewise make all the results 0. However, there is another advantage of making both the 1- and 2-grams. There is a part of the algorithm that counts the number of occurrences of the gram in the text. If I use the built-in python count function on the text, I might end up with a smaller number due to its implementation. For instance, if I had the text ``sss'' and I had to check for the text ``
+Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, in order to get a probability that is greater than 0. If this correction is not done, the $N_{r+1}$ that caused $p_3$ in \pref{Good-Turing} to become 0 will likewise make all the results 0. However, there is another advantage of making both the 1- and 2-grams. There is a part of the algorithm that counts the number of occurrences of the gram in the text. If I use the built-in python1 count function on the text, I might end up with a smaller number due to its implementation. For instance, if I had the text ``sss'' and I had to check for the text ``

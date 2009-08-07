@@ -35,7 +35,7 @@ which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ng
 }
 {
 \item Can create very large data sets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters.
-\item Might not be applicable on alphabets based on symbols or pictogram's instead of individual letters (though it should avoid any word barrier problem - which is not a trivial problem in, for example Chinese\footnote{See \ref{nr1} p. 540}).
+\item Might not be applicable on alphabets based on symbols or pictogram's instead of individual letters (though it should avoid any word barrier problem - which is not a trivial problem in, for example Chinese\footnote{See \cite{nr1} p. 540}).
 \item The statistical method might be very complex.
 }
 
@@ -102,7 +102,6 @@ From this I have concluded that the best choice would be to use the character ba
 
 
 \subsection{Choice of n-gram analysis}
-\fixme{help}
 
 \subsubsection{\cite{nr3}}
 \cite{nr3} first selects the most important n-grams, using a number of rules (which, due to their complexity, will not be included here). In order to compare whether or not a certain author has written a certain text, another involved formula is then used, to gauge the information gain given the corpora of the author.

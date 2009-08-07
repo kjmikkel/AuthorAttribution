@@ -2,15 +2,34 @@
 \label{method}
 
 \subsection{Introduction}
-In this section I will explain the method I used for author attribution - and how and why it works.
+In this section I will go in greater detail about the method I have choosen to use for Author Attribution. I will explain how and why it works, as well as touching shortly introducing Good-Turing smoothing, which is used in the choosen method.
+
+\subsection{Notation}
+In the following I will use $c_i$ to denote the i'th character in the text.
 
 \subsection{The method}
-\fixme{Make a proper introduction}
 The method in \cite{nr4} tries to find the author of a given text \texttt{t}. It does so by calculating the probability of each author having written \texttt{t}, and then chooses the one with the greatest probability.
 
-My implementation differs from the one in \cite{nr4} since it uses characters as the basic unit, instead of the words.
+My implementation differs from the one in \cite{nr4} since it uses characters as the basic unit, instead of the words. 
 
-In the following $c_m$ is the m'th character in the text. As stated before \fixme{stated where?}, the probability of the value of i'th character is based on the past (i - 1) characters (with the more recent characters counting for more \fixme{is this true}). However, calculating this probability would be prohibitory expensive. With n-grams, we only use the probability for the last n characters - so the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.
+The idea in the choosen method is that the probability of having a character being a certian value, is based on the previous characters. So, for instance, the probabilty of having $c_i$ being an ``a'' is based on the past (i - 1) characters. Since there may be multiple ``a'''s, there may be multiple stirngs of characters, each with a probability attached to them. Furtermore it is clear that the longer the stirng of characters, the smaller the probability (since it has to match exactly). However there are 2 problems with this technique:
+\begin{enumerate}
+\item It is not very good to test agianst other texts, since there is no real chance of having a real match
+\item It is prohibitory expensive, since given a text of n characters has to check against O($n^2$) characters  
+\end{enumerate}
+So instead we retain the last n characters for each gram: thus the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.\\
+
+\subsubsection{The Algorithm}
+In this section I will describe the algorithm used to find the probability of an author having written the text.\\
+
+In order to find the most probable author, the following algorithm is executed:
+
+\begin{enumerate}
+\item All the n-grams for the text \texttt{t} we want to attribute an author to calculated
+\item All the n-grams for each author in the corpus is calculated
+\item For each author we take each n-gram and applies it to the Pr algorithm below in (\ref{eq:probNorm}). This returns the culimatively probabilty for the n-grams of the author appearing in \texttt{t}'s n-grams. 
+\item Once this has been done for all authors, the most likely author is stored.
+\end{enumerate}
 
 \begin{equation}
 \label{eq:probNorm}
@@ -43,7 +62,10 @@ In (\ref{eq:probNorm}) there are 3 cases:
 \item In case we have to test whether the empty n-gram appears, I have decided that the algorithm should return 0. This is not covered in \cite{nr4}. The justification for this is that, since the empty n-gram does not appear in the corpus, then its probability must be 0
 \end{enumerate}
 In ( \ref{eq:probHat} ) $discount\#(c_{i - n + 1} \ldots c_{i})$ 
-is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on the corpora of the author we are testing against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora. This was especially relevant when the n-grams consist of words, as it did in (\cite{nr4}), since the alphabet of words in the English language than the alphabet of letters. \fixme{Decide whether it is worth explaining the division.}. The division in \ref{eq:probHat} of the number of occurrences of $c_{i - n + 1} \ldots c_{i - 1}$ in the corpora is done . Since the probability of the i'th character appearing is dependent on the former n-1 character leading up to it, its probability must its chance of appearing in the corpora, divided by the number of times the build up appears \fixme{Describe this better}.
+is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on the corpora of the author we are testing against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora.\\
+
+The reason behind the division in \ref{eq:probHat} is that since the probability of the i'th character appearing is dependent on the former n-1 character, its probability of it appearing is the number of times it appears in teh corpus, divided by the number of times last n - 1 characters appears.\\
+
 $\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization constant, needed to ensure that the area under the graph is 1. It should be mentioned that the $\hat{P}r$ in both the dividend and the divisor is $\hat{P}$ in \cite{nr4}, but since this particular function is not mentioned anywhere in the text, I have assumed that it is $\hat{P}r$.
 
 
@@ -53,7 +75,7 @@ Good-Turing smoothing is a statistical method to find out the probability of whe
 
 In order to calculate the probability of each n-gram (not only the ones not appearing), the Good-Turing algorithm calculates the frequency (denoted by $N_r$)of all frequencies (denoted r). So for instance, there are precisely 3 n-gram that appears once - then the frequency of n-grams that appears once would be 3. For example, let us assume we find the n-grams of the text ``abcdabceabc c'' have the following set of n-grams\footnote{We do not use the n-grams calculated in \ref{character}, as all of those only appears once, and thus would not be very illustrative for the method}:\\
 $$
-\{\nga{XXa}, \nga{Xab}, \nga{abc}, \nga{bcd}, \nga{cda}, \nga{dab}, \nga{abc}, \nga{bce}, \nga{cea}, \nga{eab}, \nga{abc}, \nga{bc\_}, \nga{c\_c}, \nga{\_cX}, \nga{cXX} \}
+\{\nga{abc}, \nga{bcd}, \nga{cda}, \nga{dab}, \nga{abc}, \nga{bce}, \nga{cea}, \nga{eab}, \nga{abc}, \nga{bc\_}, \nga{c\_c} \}
 $$
 which gives us the table\\
 \begin{tabular}{|cc|}
@@ -61,7 +83,7 @@ which gives us the table\\
 Frequency & Frequency of frequency \\
 \hline
 r & $N_{r}$ \\
-1 & 12\\
+1 & 8\\
 3 & 1\\
 \hline
 \end{tabular}
@@ -72,7 +94,7 @@ N = \sum r * N_r
 $$
 so in this case N = 1 * 12 + 3 * 1 = 15. The frequency of the n-grams that does not appear is then given by 
 $$
-\frac{N_1}{N} = \frac{12}{15} = 0.8
+\frac{N_1}{N} = \frac{8}{15} = 0.53
 $$
 
 The probability of having the a n-gram that appears r times is then 
@@ -81,15 +103,9 @@ $$p_r = r^*/N$$
 $$r^* = (r+1)\frac{E(N_{r+1})}{E(N_r)}$$
  where E(x) is the expectation of x appearing. So in this case This 
 
-$$p_1 = \frac{(1 + 1) * \frac{3}{12}}{15} = \frac{\frac{1}{2}}{15} = \frac{1}{30}$$ and  
+$$p_1 = \frac{(1 + 1) * \frac{3}{8}}{15} = \frac{\frac{6}{8}}{15} = \frac{6}{120}$$ and  
 $$p_3 = \frac{(3 + 1) * \frac{0}{1}}{15} = 0$$
 
-The most interesting of these two is of course $p_3$, which has become 0, even though one should have thought it would have returned a positive number. \fixme{This part is not good enough}
+The most interesting of these two is of course $p_3$, which has returned 0, even though we intuitively would think it returend a positive number.
 
 Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
-
-\subsection{Implementation changes}
-Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, in order to get a probabilty that is greatgher than 0. If this correction is not done, the $N_{r+1}$ that caused $p_3$ to become 0 will likewise make all the results 0. However, there is another advantadge of making both the 1- and 2-grams. There is a part of the algorithm that counts the number of occurrences of the gram in the text. If I use the built-in python count function on the text, I might end up with a smaller number due to its implementation. For instance, if I had the text ``sss'' and I had to check for the text ``ss'', then count would return 1, while the correct number of course would be 2. This is avoided if all 2-grams are produced.\fixme{Go thorugh and check} 
-
-\subsection{Architecture}
-\fixme{add image of architecture}
