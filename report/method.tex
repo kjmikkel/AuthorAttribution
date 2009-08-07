@@ -79,14 +79,17 @@ The probability of having the a n-gram that appears r times is then
 $$p_r = r^*/N$$
  where 
 $$r^* = (r+1)\frac{E(N_{r+1})}{E(N_r)}$$
- where E(x) is the expectation of x appearing. So in this case 
+ where E(x) is the expectation of x appearing. So in this case This 
+
 $$p_1 = \frac{(1 + 1) * \frac{3}{12}}{15} = \frac{\frac{1}{2}}{15} = \frac{1}{30}$$ and  
 $$p_3 = \frac{(3 + 1) * \frac{0}{1}}{15} = 0$$
-\fixme{This cannot be right}
+
+The most interesting of these two is of course $p_3$, which has become 0, even though one should have thought it would have returned a positive number. \fixme{This part is not good enough}
+
 Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
 
 \subsection{Implementation changes}
-Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, due to the way that Good-Turing Smoothing works.
+Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, in order to get a probabilty that is greatgher than 0. If this correction is not done, the $N_{r+1}$ that caused $p_3$ to become 0 will likewise make all the results 0. However, there is another advantadge of making both the 1- and 2-grams. There is a part of the algorithm that counts the number of occurrences of the gram in the text. If I use the built-in python count function on the text, I might end up with a smaller number due to its implementation. For instance, if I had the text ``sss'' and I had to check for the text ``ss'', then count would return 1, while the correct number of course would be 2. This is avoided if all 2-grams are produced.\fixme{Go thorugh and check} 
 
 \subsection{Architecture}
 \fixme{add image of architecture}
