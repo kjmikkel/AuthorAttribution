@@ -30,7 +30,7 @@ def doAllTests():
   #  AuthorTest(0, "testUl", "testData" ,"UltimativeTest", "UltimativeTest")
     
     #Do the ultimate tests
-    AuthorTest(num, "UltimateTexts", "newData" ,"UltimateTest", "UltimateTest")
+   # AuthorTest(num, "UltimateTexts", "newData" ,"UltimateTest", "UltimateTest")
     
 def doNumberTest(num):
     #AuthorSomePost
@@ -42,20 +42,20 @@ def doNumberTest(num):
 def doStressTest(num):
 
     # StressTest1
-    AuthorTest(num, "singleAuthorData", "newData" ,"StressTest", "StressTest1")
+#    AuthorTest(num, "singleAuthorData", "newData" ,"StressTest", "StressTest1")
     
     # StressTest2
     # No one in this category
     #AuthorTest(num, "singleAuthorData", "few" ,"StressTest", "StressTest"
     
     #StressTest 3
-    AuthorTest(num, "singleAuthorData", "Some" ,"StressTest", "StressTest3")
+    AuthorTest(num, "someStress", "Some" ,"StressTest", "StressTest3")
         
     # StressTest 4
-    AuthorTest(num, "singleAuthorData", "Many" ,"StressTest", "StressTest4")
+    AuthorTest(num, "manyStress", "Many" ,"StressTest", "StressTest4")
        
     # StressTest5
-    AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
+   # AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
 
 def timeTest():
     corpora = [i * 100 for i in range(1,14)]
@@ -64,7 +64,7 @@ def timeTest():
     
     for corp in corpora:
         corpNumber = corp
-        AuthorTest(0, "singleAuthorData", "timeTest" + str(corp), ,"UltimateTest", "junkData")
+        AuthorTest(0, "singleAuthorData", "timeTest" + str(corp), "UltimateTest", "junkData")
     
     runTimeTest = 0
 
@@ -127,7 +127,7 @@ def compareAuthors(authors, compareDict, tg_dict):
     authorMade = {}
     # The dict that contains which authors have had their text attributed to whom
     resultDict = {}        
-        
+            
     for value in compareDict:
         textToCompare = value["text"]
         realAuthor = value["user_id"]
@@ -225,5 +225,3 @@ def makeNgram(filename):
 
 if __name__ == '__main__':          
     doAllTests()
-            
-            

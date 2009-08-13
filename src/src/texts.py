@@ -2,7 +2,6 @@ import workOnJSON as JSON
 import random as ran
 import constants
 
-
 def makeAllTexts():
     findUtimateTexts(3)
     
@@ -66,3 +65,29 @@ def extractRandomAuthorTexts(filename, author_filename, filename_save):
             authorPosts.append(entry)
     
     worker.save_JSON_file(constants.tests + filename_save, authorPosts)
+
+def extractRandomText(filename, filename_save, num):
+    worker = JSON.workOnJSON()
+    filename = constants.corpora + filename + ".json"
+    filename_save = constants.tests + filename_save 
+    
+    posts = worker.read_JSON_file(filename)
+    
+    ran.seed()
+    post = []
+
+    for index in range(0, num):
+        postNum = ran.randint(0, len(posts) - 1)
+        post.append(posts[postNum])
+        del posts[postNum]
+    
+    for index in range(1, num + 1):
+        worker.save_JSON_file(filename_save + str(index) + ".json", [post[index - 1]])
+
+def someAndMany():
+    num = 3
+    extractRandomText("Some",  "someStress",num)
+    extractRandomText("Many", "manyStress",num)
+
+if __name__ == '__main__': 
+    someAndMany()

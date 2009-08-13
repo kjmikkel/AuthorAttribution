@@ -11,6 +11,7 @@ import ngram
 import time
 import copy
 import constants
+import math
 from datetime import datetime
 
 def doTables():
@@ -58,13 +59,12 @@ def makeTable(filename, foldername, givenNum):
     for index in range(1, givenNum + 1):
         (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
         placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename
-        produceTable(id, authorData, placeToSave, num)
-
-def produceTable(attributedList, authorData, name, num):
-    averageFMeasure = Decimal(0)
-    print authorData
-    finalResults = {}
+        (authorAttri, averageFMeasure, authorList, overall) = produceTableData(id, authorData, placeToSave, num)
+        produceTable(authorAttri, averageFMeasure, authorList,id, authorData, placeToSave, num, overall)
     
+def produceTableData(attributedList, authorData, name, num):
+    averageFMeasure = Decimal("0.00")
+    finalResults = {}
     authorDict = {}
     for oAuthor in authorData.keys():
         authorDict[oAuthor] = 1
@@ -80,8 +80,26 @@ def produceTable(attributedList, authorData, name, num):
     if len(authorAttri):
         averageFMeasure = averageFMeasure / Decimal(len(authorAttri))
     else:
-        averageFMeasure = Decimal(0.00)
-         
+        averageFMeasure = Decimal("0.00")
+    
+    totalNumber = 0
+    correctNumber = 0
+    
+    for outerName in authorList:
+        for innerName in authorList:
+            if (authorData.has_key(outerName) and authorData[outerName].has_key(innerName)):
+                totalNumber += authorData[outerName][innerName]
+                if outerName == innerName:
+                    correctNumber += authorData[outerName][innerName]
+    
+    if totalNumber > 0:
+        overall = Decimal(correctNumber) / Decimal(totalNumber)
+    else:
+        overall = Decimal(0.00)
+    
+    return (authorAttri, averageFMeasure, authorList, overall) 
+    
+def produceTable(authorAttri, averageFMeasure, authorList, attributedList, authorData, name, num, overall): 
     authorList.sort()
    # produce the table to contain the information
     stringResult = StringIO()
@@ -105,7 +123,6 @@ def produceTable(attributedList, authorData, name, num):
     stringResult.write(line)
 
     totalAuthors = {}
-    print authorData
     for oAuthor in authorList:
         if authorData.has_key(oAuthor):
             stringResult.write(activeAuthor + oAuthor + "} & ")
@@ -173,9 +190,6 @@ def produceResult(authorData, authorList):
         for name in authorData[authorName].keys():
             writtenByAuthor += authorData[authorName][name]
         
-        print "Written:", writtenByAuthor
-        print "correctly:", correctlyAttributed
-            
         attributed = Decimal(0)
         for name in authorData.keys():
             if authorData[name].has_key(authorName):
@@ -407,5 +421,140 @@ def getAuthorWithOverXPosts(data_file, metadata_file, number):
 location = "data/"
 resultDir = location + "Results/"
 
+def produceXtable():
+    getcontext().prec = 4
+    worker = JSON.workOnJSON()
+    
+    authorList = worker.read_JSON_file(constants.resultDir +"workTime.json")
+    stringResult = StringIO()
+    
+    numElements = len(authorList)
+    next = "\\\\ \n"    
+    line = "\\hline \n"
+    stringResult.write("\\begin{tabular}{|c|" + "c|" * numElements + "}\n")
+    stringResult.write(line )
+
+    keys =  [str(i * 100) for i in range(1, 13)]  
+    
+    for time in keys:
+        stringResult.write(" & " + str(time))
+
+    stringResult.write(next)
+    stringResult.write(line)
+    
+    for time1 in keys:
+        stringResult.write(str(time1))
+        for time2 in keys:
+            result = +Decimal(str(authorList[time2][time1]))
+            stringResult.write(" & " + str(result))
+        
+        stringResult.write(next)
+        stringResult.write(line)
+    
+    stringResult.write("\\end{tabular}")
+    
+    FILE = open(constants.tableSave + "crossSave.tex", "w")  
+    FILE.write(stringResult.getvalue())
+    FILE.close()
+
+    stringResult = StringIO()
+    authorList = worker.read_JSON_file(constants.resultDir +"ngramTime.json")
+    
+    splitPoint = 8
+    stringResult = printPartList(authorList, keys[:splitPoint], stringResult)
+    stringResult.write("\n \n")
+    stringResult = printPartList(authorList, keys[splitPoint:], stringResult)
+    
+    FILE = open(constants.tableSave + "ngramTime.tex", "w")    
+    FILE.write(stringResult.getvalue())
+    FILE.close()
+
+def printPartList(authorList, keyList, stringResult):
+    next = "\\\\ \n"    
+    line = "\\hline \n"
+    stringResult.write("\\begin{tabular}{|c|" + "c|" * len(keyList)+ "}\n")
+    stringResult.write(line)
+    stringResult.write("\# n-grams ")
+
+    for time in keyList:
+        stringResult.write("& " + str(time))
+    stringResult.write(next)
+    stringResult.write(line)
+    
+    stringResult.write("Time")    
+    for time in keyList:
+        dec = +Decimal(str(authorList[time]))
+        stringResult.write("& " + str(dec))
+    
+    stringResult.write(next)
+    stringResult.write(line)
+    
+    stringResult.write("\\end{tabular}")
+    return stringResult
+    
+def doUltimateTable():
+    getcontext().prec = 2
+    worker = JSON.workOnJSON()
+    filename = "UltimateTest"
+    foldername = "UltimateTest"
+    givenNum = 3
+    for index in range(1, givenNum + 1):
+        (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
+        placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename + str(index)
+        (authorAttri, averageFMeasure, authorList, overall) = produceTableData(id, authorData, placeToSave, num)
+        produceTableUltimate(authorAttri, averageFMeasure, authorList,id, authorData, placeToSave, num, overall)
+
+def produceTableUltimate(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall):
+    numberWant = 8
+    numberALine = int(math.ceil(numberWant / 3))
+    numElements = len(authorData)
+    lines = int(math.ceil(numElements / numberALine))
+    
+    keys = list(authorData)
+    keys.sort()
+    stringResult = StringIO()
+        
+    next = "\\\\ \n"    
+    line = "\\hline \n"
+    activeAuthor = "\\aAuthor{"
+    
+    middleLine = ("c|" * 4 + "|") * numberALine
+    middleLine = middleLine[:-1]
+    stringResult.write("\\begin{tabular}{|" +  middleLine + "}\n")
+    stringResult.write(line)
+    stringResult.write(("Name & Recall & Precision & Hits &" * numberALine)[:-1] + next)
+    stringResult.write(line)
+    
+    for i in range(0, lines):        
+        authors = keys[:numberALine]
+        keys = keys[numberALine:]
+        
+        lineStr = StringIO()
+        for authorName  in authors:
+            if authorData.has_key(authorName) and authorData[authorName].has_key(authorName):
+                numberHits = str(authorData[authorName][authorName])
+            else:
+                numberHits = "0"
+                
+            entry = authorAttri[authorName]
+            
+            if authorData.has_key(authorName):
+                authorName = activeAuthor + authorName + "}"
+            
+            lineStr.write(authorName + " & " + str(entry["recall"]) + " & " + str(entry["precision"]) + " & " + numberHits + " & ") 
+        
+        stringResult.write(lineStr.getvalue()[:-2])
+        stringResult.write(next)
+        stringResult.write(line)    
+    
+    stringResult.write("\\multicolumn{" + str(numberALine * 4)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + "}" + next)
+    stringResult.write(line)
+    stringResult.write("\\end{tabular}")
+    
+    FILE = open(placeToSave + ".tex", "w")
+    FILE.write(stringResult.getvalue())
+    FILE.close()
+    
+    
 if __name__ == '__main__':          
-    produceStats()
+    doUltimateTable()

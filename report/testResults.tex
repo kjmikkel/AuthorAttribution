@@ -3,8 +3,7 @@
 
 In this section I detail the tests, that I will use in order to study the effectiveness of my implementation of the algorithm.
 
-In order to do so, I have found no other way than to try to identify the author of [num of texts to identify] texts from the dataset I have been given. In order to have data that is comparable to that found in \cite{nr4} (and thus be able to evaluate whether the algorithm might be used for short texts), I will use the same values for comparison as they have used. These are: 
-
+Having attempted by running the tests I sat up in the last section, I will use the same parameters that the authors of \cite{nr4} used, in order to make them comparable. These parameters are: 
 
 \begin{description}
 \item[Overall Average] Which is the number of correctly identified authors divided by the number of texts that have had an author identified. E.g. if 8 texts have been identified correctly, and 10 texts have been identified, then the overall average would be 0.8 
@@ -18,7 +17,7 @@ In order to do so, I have found no other way than to try to identify the author 
 \item[Macro-average F-measure] The Macro-average F-measure is all the authors F-measures summed together, and then divided by the number of authors. 
 
 \subsection{Key}
-Since no test contain every author, I will diferentiate author who I test against the corpora will look like so: \aAuthor{Axx}, whereas authors who only appear in the corpora will look thusly: Axx.
+Since no test contain every author, I will differentiate author who both appear in the corpora and the test entries, will look thusly: \aAuthor{Axx}, whereas authors who only appear in the corpora will look like so: Axx.
 
 \subsection{Test results}
 
@@ -26,7 +25,7 @@ Since no test contain every author, I will diferentiate author who I test agains
 A single post is compared against the entire corpora - for more information \pref{StressTest1}.\\
 \input{tabeller/StressTest/StressTest11}
 
-\subsubsection{StressTest3}
+\subsubsection{StressTest2}
 A single post from an author who has written \postAmount{Some} posts are checked against the entire corpora \pref{StressTest2}.\\
 \texttt{Stress Test 2.1:}\\
 
@@ -93,15 +92,20 @@ All the posts from a random author who has written \postAmount{Many} posts is ch
 \texttt{Short Bogus Test 3:}\\
 \input{tabeller/ShortBogusTest/ShortBogusText3}\\
 
+\clearpage
 \subsubsection{UltimateStressTest}
 A random half of the corpora is checked against the entire corpora \pref{UltimateStressTest}.\\
-\texttt{Ultimate Test 1:}\\
+Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision and hits.\\
+
+\texttt{Ultimate Test 1:}\\\\
 \input{tabeller/UltimateTest/UltimateTest1}\\
 
-\texttt{Ultimate Test 2:}\\
+\clearpage
+\texttt{Ultimate Test 2:}\\\\
 \input{tabeller/UltimateTest/UltimateTest2}\\
 
-\texttt{Ultimate Test 3:}\\
+\clearpage
+\texttt{Ultimate Test 3:}\\\\
 \input{tabeller/UltimateTest/UltimateTest3}\\
 
 \end{description}

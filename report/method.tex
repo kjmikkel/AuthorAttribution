@@ -2,7 +2,7 @@
 \label{method}
 
 \subsection{Introduction}
-In this section I will go in greater detail about the method I have choosen to use for Author Attribution. I will explain how and why it works, as well as touching shortly introducing Good-Turing smoothing, which is used in the choosen method.
+In this section I will go in greater detail about the method I have chosen to use for Author Attribution. I will explain how and why it works, as well as touching shortly introducing Good-Turing smoothing, which is used in the chosen method.
 
 \subsection{Notation}
 In the following I will use $c_i$ to denote the i'th character in the text.
@@ -12,9 +12,9 @@ The method in \cite{nr4} tries to find the author of a given text \texttt{t}. It
 
 My implementation differs from the one in \cite{nr4} since it uses characters as the basic unit, instead of the words. 
 
-The idea in the choosen method is that the probability of having a character being a certian value, is based on the previous characters. So, for instance, the probabilty of having $c_i$ being an ``a'' is based on the past (i - 1) characters. Since there may be multiple ``a'''s, there may be multiple stirngs of characters, each with a probability attached to them. Furtermore it is clear that the longer the stirng of characters, the smaller the probability (since it has to match exactly). However there are 2 problems with this technique:
+The idea in the chosen method is that the probability of having a character being a certain value, is based on the previous characters. So, for instance, the probability of having $c_i$ being an ``a'' is based on the past (i - 1) characters. Since there may be multiple ``a'''s, there may be multiple strings of characters, each with a probability attached to them. Furthermore it is clear that the longer the string of characters, the smaller the probability (since it has to match exactly). However there are 2 problems with this technique:
 \begin{enumerate}
-\item It is not very good to test agianst other texts, since there is no real chance of having a real match
+\item It is not very good to test against other texts, since there is no real chance of having an exact match
 \item It is prohibitory expensive, since given a text of n characters has to check against O($n^2$) characters  
 \end{enumerate}
 So instead we retain the last n characters for each gram: thus the interesting characters would be $c_{i - n + 1} \ldots c_{i}$.\\
@@ -27,8 +27,8 @@ In order to find the most probable author, the following algorithm is executed:
 \begin{enumerate}
 \item All the n-grams for the text \texttt{t} we want to attribute an author to calculated
 \item All the n-grams for each author in the corpus is calculated
-\item For each author we take each n-gram and applies it to the Pr algorithm below in (\ref{eq:probNorm}). This returns the culimatively probabilty for the n-grams of the author appearing in \texttt{t}'s n-grams. 
-\item Once this has been done for all authors, the most likely author is stored.
+\item For each author we take each n-gram and applies it to the Pr algorithm below in (\ref{eq:probNorm}). This returns the cumulatively probability for the n-grams of the author appearing in \texttt{t}'s n-grams. 
+\item Once this has been done for all authors, the author with the highest probability is attributed as the author.
 \end{enumerate}
 
 \begin{equation}
@@ -37,7 +37,7 @@ Pr(c_{i - n + 1} \ldots c_{i}) = \left\{
 \begin{array}{rl}
 \hat{P}r(c_{i - n + 1} \ldots c_{i}), \text{if } \#(c_{i - n + 1} \ldots c_{i}) > 0\\
 \beta(c_{i - n + 1} \ldots c_{i-1}) \cdot Pr(c_{i - n + 2} \ldots c_{i}), \mathrm{otherwise}\\
-0, \mathrm{if\ no\ consequently\ subsection\ appears\ in\ the\ corpus}
+0, \mathrm{if} c_{i-n+1}\ldots c_i \mathrm{is\ the\ empty\ string}
 \end{array} \right.
 \end{equation}
 
@@ -59,21 +59,24 @@ In (\ref{eq:probNorm}) there are 3 cases:
 \begin{enumerate}
 \item A n-gram appears in the corpus, which means it is meaningful to ask abouts it probability of it appearing the corpus.
 \item  A n-gram does not appear, and we then attempt to calculate the probability of having the (n-1)-gram appearing in the corpus. To ensure that the value is correct, we need to multiply with the normalization constant $\beta$. 
-\item In case we have to test whether the empty n-gram appears, I have decided that the algorithm should return 0. This is not covered in \cite{nr4}. The justification for this is that, since the empty n-gram does not appear in the corpus, then its probability must be 0
+\item In case we have to test whether the empty n-gram appears, I have decided that the algorithm should return 0. This is not covered in \cite{nr4}. The justification for this is that, since the empty n-gram does not contains no information and thus should return 0
 \end{enumerate}
-In ( \ref{eq:probHat} ) $discount\#(c_{i - n + 1} \ldots c_{i})$ 
-is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on the corpora of the author we are testing against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and thus has no real significance for the corpora.\\
+In (\ref{eq:probHat}) $discount\#(c_{i - n + 1} \ldots c_{i})$ 
+is the discounted probability, calculated by using Good-Turing smoothing\footnote{Which the report mentions gives good results in practice, as well as a fair speed \cite{nr4}. For more information on Good-Turing, see \ref{Good-Turing}} on the corpora of the author we are testing against. The discounted smoothing is done to remove some of the n-grams that appears infrequently, and also have a positive value for n-grams not in the corpora (see below for discussion on Good-Turing Smoothing).\\
 
-The reason behind the division in \ref{eq:probHat} is that since the probability of the i'th character appearing is dependent on the former n-1 character, its probability of it appearing is the number of times it appears in teh corpus, divided by the number of times last n - 1 characters appears.\\
+The reason behind the division in (\ref{eq:probHat}) is that since the probability of the i'th character appearing is dependent on the former n-1 character, its probability of it appearing is the number of times it appears in the corpus, divided by the number of times last n - 1 characters appears.\\
 
-$\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization constant, needed to ensure that the area under the graph is 1. It should be mentioned that the $\hat{P}r$ in both the dividend and the divisor is $\hat{P}$ in \cite{nr4}, but since this particular function is not mentioned anywhere in the text, I have assumed that it is $\hat{P}r$.
-
+$\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization constant, needed to ensure that the area under the graph is 1. The version seen here is an interpretation of the one found in \cite{nr4}, as the version found there has some oddities. I have tried, on multiple occasions to contact the authors of \cite{nr4}, but I have had no response, and I have therefore tried to interpret the results myself.
+\begin{description}
+\item[$\hat{P}$:]  In \cite{nr4} $\hat{P}$ is found  both in the dividend and the divisor of (\ref{eq:beta}). Since there is no mention or reference to a $\hat{P}$ in \cite{nr4} besides from (\ref{eq:beta}), I have assumed that it is a typo and that they meant $\hat{P}r$.
+\item[Wayward x's:] In (\ref{eq:beta}) there is also the $\sum_{x \in (c_{i - n + 1} \ldots c_{i-1} x)}$, which I have interpreted as $\sum_{x \in (c_{i - n + 1} \ldots c_{i-1})}$, since I can neither see how x might be in the set it should be chosen from, nor what purpose this might prove.  
+\end{description}
 
 \subsection{Good-Turing smoothing}
 \label{Good-Turing}
 Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams not yet observed, has a non-zero chance of appearing, and that the probability of all n-grams add up to 1.\\
 
-In order to calculate the probability of each n-gram (not only the ones not appearing), the Good-Turing algorithm calculates the frequency (denoted by $N_r$)of all frequencies (denoted r). So for instance, there are precisely 3 n-gram that appears once - then the frequency of n-grams that appears once would be 3. For example, let us assume we find the n-grams of the text ``abcdabceabc c'' have the following set of n-grams\footnote{We do not use the n-grams calculated in \ref{character}, as all of those only appears once, and thus would not be very illustrative for the method}:\\
+In order to calculate the probability of each n-gram (not only the ones not appearing), the Good-Turing algorithm calculates the frequency (denoted by $N_r$)of all frequencies (denoted r). For example, let us assume we find the n-grams of the text ``abcdabceabc c'' have the following set of n-grams\footnote{We do not use the n-grams calculated in \ref{character}, as all of those only appears once, and thus would not be very illustrative for the method}:\\
 $$
 \{\nga{abc}, \nga{bcd}, \nga{cda}, \nga{dab}, \nga{abc}, \nga{bce}, \nga{cea}, \nga{eab}, \nga{abc}, \nga{bc\_}, \nga{c\_c} \}
 $$
@@ -87,14 +90,14 @@ r & $N_{r}$ \\
 3 & 1\\
 \hline
 \end{tabular}
-\\
-We can then calculate the probability for all those n-grams that does not appear in the text. We first have to caculdate N, where 
+\\\\
+We can then calculate the probability for all those n-grams that does not appear in the text. We first have to calculate N, where 
 $$
 N = \sum r * N_r
 $$
-so in this case N = 1 * 12 + 3 * 1 = 15. The frequency of the n-grams that does not appear is then given by 
+so in this case N = 1 * 8 + 3 * 1 = 11. The frequency of the n-grams that does not appear is then given by 
 $$
-\frac{N_1}{N} = \frac{8}{15} = 0.53
+\frac{N_1}{N} = \frac{8}{11} = 0.73
 $$
 
 The probability of having the a n-gram that appears r times is then 
@@ -103,9 +106,9 @@ $$p_r = r^*/N$$
 $$r^* = (r+1)\frac{E(N_{r+1})}{E(N_r)}$$
  where E(x) is the expectation of x appearing. So in this case This 
 
-$$p_1 = \frac{(1 + 1) * \frac{3}{8}}{15} = \frac{\frac{6}{8}}{15} = \frac{6}{120}$$ and  
-$$p_3 = \frac{(3 + 1) * \frac{0}{1}}{15} = 0$$
+$$p_1 = \frac{(1 + 1) * \frac{3}{8}}{11} = \frac{\frac{6}{8}}{11} = \frac{6}{88} = \frac{3}{44}$$ and  
+$$p_3 = \frac{(3 + 1) * \frac{0}{1}}{11} = 0$$
 
-The most interesting of these two is of course $p_3$, which has returned 0, even though we intuitively would think it returend a positive number.
+The most interesting of these two is of course $p_3$, which has returned 0, even though we intuitively would think it returned a positive number.
 
 Many of the recent implementation of Good-Turing smoothing comes from the work done in \cite{Gale94good-turingsmoothing}, which also describes the algorithm in greater detail.
