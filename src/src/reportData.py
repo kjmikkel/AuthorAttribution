@@ -60,7 +60,7 @@ def makeTable(filename, foldername, givenNum):
         (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
         placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename
         (authorAttri, averageFMeasure, authorList, overall) = produceTableData(id, authorData, placeToSave, num)
-        produceTable(authorAttri, averageFMeasure, authorList,id, authorData, placeToSave, num, overall)
+        produceTable(authorAttri, averageFMeasure, authorList,id, authorData, placeToSave + "Test", num, overall)
     
 def produceTableData(attributedList, authorData, name, num):
     averageFMeasure = Decimal("0.00")
@@ -431,6 +431,7 @@ def produceXtable():
     numElements = len(authorList)
     next = "\\\\ \n"    
     line = "\\hline \n"
+    stringResult.write("\\begin{center}\n")
     stringResult.write("\\begin{tabular}{|c|" + "c|" * numElements + "}\n")
     stringResult.write(line )
 
@@ -451,16 +452,22 @@ def produceXtable():
         stringResult.write(next)
         stringResult.write(line)
     
-    stringResult.write("\\end{tabular}")
+    stringResult.write("\\end{tabular}\n")
+    stringResult.write("\\end{center}")
     
     FILE = open(constants.tableSave + "crossSave.tex", "w")  
     FILE.write(stringResult.getvalue())
     FILE.close()
 
+    dict = {}
+    for key in keys:    
+        dict[key] = authorList[key]["1200"]
+    makeGNUplot("ultimateGNUPlot", dict, keys)
+
     stringResult = StringIO()
     authorList = worker.read_JSON_file(constants.resultDir +"ngramTime.json")
     
-    splitPoint = 8
+    splitPoint = 6
     stringResult = printPartList(authorList, keys[:splitPoint], stringResult)
     stringResult.write("\n \n")
     stringResult = printPartList(authorList, keys[splitPoint:], stringResult)
@@ -468,7 +475,20 @@ def produceXtable():
     FILE = open(constants.tableSave + "ngramTime.tex", "w")    
     FILE.write(stringResult.getvalue())
     FILE.close()
+    
+    #make dat table
+    makeGNUplot("ngramGNUPlot", authorList, keys)
 
+def makeGNUplot(name, entry,keys):
+    stringResult = StringIO()
+    stringResult.write("# Number of texts\t Time to identify\n")
+    for key in keys:
+        stringResult.write(str(key) + "\t" + str(entry[str(key)] )+ "\n")
+    
+    FILE = open(constants.tableSave + name +".dat", "w")
+    FILE.write(stringResult.getvalue())
+    FILE.close()
+    
 def printPartList(authorList, keyList, stringResult):
     next = "\\\\ \n"    
     line = "\\hline \n"
@@ -545,8 +565,8 @@ def produceTableUltimate(authorAttri, averageFMeasure, authorList, id, authorDat
         
         stringResult.write(lineStr.getvalue()[:-2])
         stringResult.write(next)
-        stringResult.write(line)    
-    
+        stringResult.write(line) 
+        
     stringResult.write("\\multicolumn{" + str(numberALine * 4)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + "}" + next)
     stringResult.write(line)
     stringResult.write("\\end{tabular}")
@@ -554,7 +574,8 @@ def produceTableUltimate(authorAttri, averageFMeasure, authorList, id, authorDat
     FILE = open(placeToSave + ".tex", "w")
     FILE.write(stringResult.getvalue())
     FILE.close()
-    
-    
+        
 if __name__ == '__main__':          
+    makeTable("UltimateTest", "UltimateTest", 3)
     doUltimateTable()
+    #produceXtable()
