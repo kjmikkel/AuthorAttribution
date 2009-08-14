@@ -74,7 +74,7 @@ $\beta (w_{i - n + 1}\ldots w_{i -1})$ in (\ref{eq:beta}) is the normalization c
 
 \subsection{Good-Turing smoothing}
 \label{Good-Turing}
-Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams not yet observed, has a non-zero chance of appearing, and that the probability of all n-grams add up to 1.\\
+Good-Turing smoothing is a statistical method to find out the probability of whether a given object will appear, given a collection of previous objects. In this case, given that we have observed the n-grams up to a certain point, what is the chance that n-gram x is observed? It is essential that the smoothing technique ensures that n-grams not yet observed (which from now on will be refered to as unseen objects), has a non-zero chance of appearing, and that the probability of all n-grams add up to 1.\\
 
 In order to calculate the probability of each n-gram (not only the ones not appearing), the Good-Turing algorithm calculates the frequency (denoted by $N_r$)of all frequencies (denoted r). For example, let us assume we find the n-grams of the text ``abcdabceabc c'' have the following set of n-grams\footnote{We do not use the n-grams calculated in \ref{character}, as all of those only appears once, and thus would not be very illustrative for the method}:\\
 $$
@@ -91,7 +91,7 @@ r & $N_{r}$ \\
 \hline
 \end{tabular}
 \\\\
-We can then calculate the probability for all those n-grams that does not appear in the text. We first have to calculate N, where 
+We can then calculate the probability for all the unseen n-grams. We first have to calculate N, where 
 $$
 N = \sum r * N_r
 $$

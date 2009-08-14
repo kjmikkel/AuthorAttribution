@@ -26,10 +26,28 @@ In order to measure whether or not the algorithm scales, I have found it necessa
 \item The time it takes to decide which author is most likely to have written a text. This test has 2 parameters: The size of the corpora to test against, and the number of test to make
 \end{enumerate}
 
-In order to get a proper resolution for both tests, I have chosen 12 different corpora and text sizes, and will test each and every combination. The sizes for both the corpora and the texts are as follows 100, 200, 300, $\ldots$, 1100, 1200.
+In order to get a proper resolution for both tests, I have chosen 12 different corpora and text sizes, and will test each and every combination. The sizes for both the corpora and the texts are as follows 100, 200, 300, $\ldots$, 1100, 1200.\\
+
+I have run the tests - serially - on a computer with a 8x3.06Ghz Core i7-950 with 6 GB of RAM. 
 
 \subsubsection{Make n-gram}
-\input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/ngramTime}
+\input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/ngramTime}\\ \\
+
+While it might not be entirely clear from the above table, figure \ref{fig:ngram} clearly shows that time required to create the n-grams from the corpora of author posts, grows liner to the amount of posts in the corpora.
+
+\begin{figure}[!hbp]
+\includegraphics[width=\textwidth]{tabeller/ngram.png}\\
+\caption{Time for n-gram creation\label{fig:ngram}}
+\end{figure}
 
 \subsubsection{Decide authors}
+
+The horizontal values are the number of articles in the corpora, while the vertical values are the amount of articles that have to be attributed.\\
 \input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/crossSave}
+
+Figur \ref{fig:work}, which is based on the 12 horizontal line, clearly showes that the time required to attribute 1200 authors\footnote{I have choosen this particular line, since it is the final line, and given there should be any non-linear time increase from corpora size to corpora size, then this should be the line that showed it best} grows lineary witht the amount of posts in the corpora. 
+
+\begin{figure}[!hbp]
+\includegraphics[width=\textwidth]{tabeller/work.png}
+\caption{Time for article attribution with 1200 articles \label{fig:work}}
+\end{figure}
