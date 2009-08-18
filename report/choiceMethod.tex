@@ -35,7 +35,7 @@ which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ng
 }
 {
 \item Can create very large data sets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters.
-\item Might not be applicable on pictograms or symbol based alphabets (though it avoids the word barrier problem - which occurs in Chinese\footnote{See \cite{nr1} p. 540}).
+\item Might not be applicable on pictogram or symbol based alphabets (though it avoids the word barrier problem - which occurs in Chinese\footnote{See \cite{nr1} p. 540}).
 \item The statistical method might be very complex.
 }
 
@@ -84,7 +84,7 @@ Instead of trying to fit a general model on on every text, the application speci
 }
 {
 \fixme{Find and add example}
-Since this method is mainly for use for web based applications, I cannot use the example from the Federalist papers, and i will therefore use another example, that I have taken from the webpage [something]. 
+Since this method is mainly for use for web based applications, I cannot use the example from the Federalist papers, and i will therefore use another example, that I have taken from the web page [something]. 
 \q{}
 }
 {
@@ -119,7 +119,7 @@ which calculates the dissimilarity between the text t and one of the potential a
 
 This method has the clear advantage that it is rather straightforward, and unlike \cite{Bennet} it does not require standard frequencies for the English language (which there could be multiple versions off - and results, depending on the version used). One might however wonder whether or not this system is too simple.
 
-\subsection{\cite{nr4}}
+\subsubsection{\cite{nr4}}
 The method found in \cite{nr4} is a method based on statistical analysis, which implements its own algorithm to rate the similarity of the different authors. The underlying assumption is that the chance of the i'th gram being something is a function being based on all the i - 1 preceding grams. Since it is practically unfeasibly to base it on the i - 1 preceding grams, the implemented method only looks on the last n grams, where $n \in \{3,4,5,6 \}$. 
 
 \subsection{Final choice}
@@ -130,3 +130,5 @@ In the end I choose \cite{nr4} for several reasons:
 \item The authors had reported good results on the English language, as well as Chinese and Greek, which I presume would also mean good results for Danish.
 \item The good results had been reported on famous Authors with a very specific way of writing - and the Authors themselves note that it would be interesting to apply their methods on less distinct corpora. 
 \end{itemize}
+
+I furthermore choose to set n = 3, on the grounds that it will make the amount of data that must be processed manageable (since, as mentioned earlier the process will need to remember n*m - $n^2$ + n characters.). Since I in the implementation phase found that it also was prudent to calculate all the preceding n-grams (in this case 1- and 2-grams), this has turned out to be prudent.  

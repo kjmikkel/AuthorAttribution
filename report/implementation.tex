@@ -8,9 +8,9 @@ I choose to write my project in Python, on the grounds that there was no need fo
 
 \subsection{Creation of n-grams}
 Since the creation of n-grams themselves was not a critical part of the project, I opted not to write my own code (which would have meant that I should have taken care of a lot of possible edge conditions). Therefore I choose python-ngram (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/\footnote{Address has been tested to work on the 13th of August, 2009}. To make it fit the program better I have altered some of the code, and even added my own. There is no overarching pattern - but I have clearly labeled the changes in the code itself.
-\subsubsection{Numbers}
+\subsubsection*{Numbers}
 Since numbers are bound to appear in a text, I have had to take care of how to present them. Since there is little chance of the same number appearing again and again, and since the usage of numbers themselves are more interesting, I have opted to turn all numbers into the same escape character: ``$\backslash$ v''
-\subsubsection{Padding}
+\subsubsection*{Padding}
 The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the (n-1) first and the (n-1) last characters would have their own n-grams. However, since I also create 1 and 2 grams (see below), I do not find any use for this feature, and since the padding was made by plain capital X's, I choose to un-comment the part of the code.
 
 \subsection{Good-Turing smoothing}

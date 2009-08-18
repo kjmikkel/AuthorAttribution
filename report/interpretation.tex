@@ -19,17 +19,17 @@ One possible explanation might lie in the way that Good-Turing calculates the va
 This is perhaps not so surprising, since \cite{nr4} worked with larger corpora from several well established authors. Such distributions cannot be guarantied on Internet forums or message boards (and will be especially useless if ``sock-puppets'' or anonymous posts are made) 
 
 \subsection{Ultimate tests}
-The ultimate test gives some interesting data. There are quite a few hits, but there is only one pr author - and only when the author has only one text. \fixme{se om hypotesen er korrekt} A possible interpretation of this might be that many of the texts have been attributed to these short texts (just like in ShortBogusTest). Together with ShortBogusTets this is perhaps the most damming test, as this is the closest real-world test - and it systematically fails to correctly attribute any author with who has written more than one post - which is clearly unacceptable.  
+The ultimate test clearly shows that authors with only 1 text (and thus most likely\footnote{Though there are some exceptions, A79-A82 being the most prominent - see \ref{reportTable}} a small part of the corpora) have far too many posts attributed to them, compared to authors who have written a larger part of the corpora. Together with ShortBogusTets this is perhaps the most damming test, as it fails to correctly attribute any author who has written more than 10 posts - something an Authorship Attribution algorithm for an Internet forum should be able to do.  
 
 \subsection{Conclusion}
 From the data found in the different tests, it is clear that the algorithm, or at least the implementation of the algorithm, found in \cite{nr4} is not suitable for attributing authors in a corpora of 1329 forum posts\footnote{\pref{reportTable}}. 
 \begin{itemize}
 \item The StressTests shows that the algorithm is unable to identify an author from only one post (which would be needed if ``sock puppets'' are to be identified). 
 \item ShortBogusTest shows that the algorithm attributes a far greater, and unfair, probability to authors who have written little (i.e. those whose texts )
-\item UltimateTest shows that on datasets that resemble what would be used in real world situations, are rather bad - most likely due to the problems found in ShortBogusTest (and also detected in the initial smoke tests (\pref{smokeTest})
+\item UltimateTest is the tests that mostly resemble a real world situation, and the fact that it pretty utterly fails, due to the problems detected in ShortBogusTest and the initial smoke tests (\pref{smokeTest}), is a good indicator that the algorithm is not suited for usage on Internet forums.
 \item AuthorSomePost likewise returns bad results 
 \item Interestingly AuthorManyPost shows far better results than all of the other test. Given the problems the other tests, possibly, have had with authors with few posts, this is perhaps not surprising, as these do not exist in this case.
 \end{itemize}real-world 
 Furthermore StressTest1 seems to indicate that it would be very hard to identify posts by ``sock puppets'' or anonymous post, since it is unable to correctly identify the author of a singular post, even when the post itself appears in the corpora (and thus would have even greater difficulty if it was to match against its real author, who might have attempted to change his style while writing the post).\\ 
 
-It should be mentioned, however, that most Internet forums or message boards have more than 1329 posts, and as such the results gained from this corpora might be slightly misleading.
+Having said thus, it is important to remember that most Internet forums or message boards have more than 1329 posts, and therefore the real accuracy of the algorithm might be slightly off - due to the small size of the corpora. This does however not change the fact that the conclusion from these tests must be that the algorithm is clearly unsuited for the Authorship Attribution on for Internet forums.

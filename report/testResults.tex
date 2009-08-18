@@ -18,7 +18,7 @@ Having attempted by running the tests I sat up in the last section, I will use t
 \end{description}
 
 \subsection{Key}
-Since no test contain every author, I will differentiate author who both appear in the corpora and the test entries, will look thusly: \aAuthor{Axx}, whereas authors who only appear in the corpora will look like so: Axx.
+In the following I each author will follow the following format: Axx$^{n}$, where xx is the number identifying the number, and n is the number of posts that the author has written. Furthermore, since no test contain every author, the authos who appear both in the corpora and the test results will have the following formatting: \aAuthor{Axx$^{n}$}, whereas authors who only appear in the corpora will have no such formatting. Furthermore all authors who have written only 1 post, will furthermore have the following formatting: \veryFew{Axx$^{n}$}. These formattings may overlap.\\
 
 \subsection{Test results}
 
@@ -28,8 +28,8 @@ A single post is compared against the entire corpora - for more information \pre
 
 \subsubsection{StressTest2}
 A single post from an author who has written \postAmount{Some} posts are checked against the entire corpora \pref{StressTest2}.\\
-\texttt{Stress Test 2.1:}\\
 
+\texttt{Stress Test 2.1:}\\
 \input{tabeller/StressTest/StressTest31}\\ \\
 
 \texttt{Stress Test 2.2:}\\
@@ -40,6 +40,7 @@ A single post from an author who has written \postAmount{Some} posts are checked
 
 \subsubsection{StressTest3}
 One post from an author who has written \postAmount{Many} posts are checked against the entire corpora \pref{StressTest4}.\\
+
 \texttt{Stress Test 3.1:}\\
 \input{tabeller/StressTest/StressTest41}\\
 
@@ -50,7 +51,8 @@ One post from an author who has written \postAmount{Many} posts are checked agai
 \input{tabeller/StressTest/StressTest43}
 
 \subsubsection{StressTest4}
-A single text from an author is checked against all the texts \pref{StressTest5} .\\
+A single text from an author is checked against all the texts \pref{StressTest4} .\\
+
 \texttt{Stress Test 4.1:}\\
 \input{tabeller/StressTest/StressTest51}\\
 
@@ -62,6 +64,7 @@ A single text from an author is checked against all the texts \pref{StressTest5}
 
 \subsubsection{AuthorSomePost}
 All the posts from a random author who has written \postAmount{Some} posts is checked against all the posts from all authors who have written \postAmount{Some} posts \pref{AuthorSomePost}.\\  
+
 \texttt{AuthorSomePost 1:}\\
 \input{tabeller/AuthorSomePost/AuthorSomePost1}\\
 
@@ -96,7 +99,7 @@ All the posts from a random author who has written \postAmount{Many} posts is ch
 \clearpage
 \subsubsection{UltimateStressTest}
 A random half of the corpora is checked against the entire corpora \pref{UltimateStressTest}.\\
-Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision and hits.\\
+Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision, hits, misses (the number texts wrongly attributed the author), the number and percentage of texts attributed to an author with only 1 post).
 
 \texttt{Ultimate Test 1:}\\\\
 \input{tabeller/UltimateTest/UltimateTest1}\\
@@ -107,9 +110,4 @@ Due to the size of the table, I have chosen to not represent the table in the ma
 
 \clearpage
 \texttt{Ultimate Test 3:}\\\\
-\input{tabeller/UltimateTest/UltimateTest3}
-
-\begin{landscape}
-\input{tabeller/UltimateTest/UltimateTestTest1}\\
-\end{landscape}
-
+\input{tabeller/UltimateTest/UltimateTest3}\\
