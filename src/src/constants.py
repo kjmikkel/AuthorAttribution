@@ -10,6 +10,7 @@ corpora = location + "Corpora/"
 tests = location + "Tests/"
 tableSave = folderLocation + "report/tabeller/"
 resultDir = location + "Results/"
+bozo = location + "Bozo/"
 
 #The number of posts
 fewPosts = (35, 68)

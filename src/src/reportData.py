@@ -94,7 +94,7 @@ def makeTableData(attributedList, authorData, name, num):
                     correctNumber += authorData[outerName][innerName]
     
     if totalNumber > 0:
-        overall = Decimal(correctNumber) / Decimal(totalNumber)
+        overall = Decimal(str(correctNumber)) / Decimal(str(totalNumber))
     else:
         overall = Decimal("0.0")
     
@@ -218,15 +218,15 @@ def produceResult(authorData, authorList):
         attributed = Decimal("0.0")
         for name in authorData.keys():
             if authorData[name].has_key(authorName):
-                attributed += Decimal(authorData[name][authorName])
+                attributed += Decimal(str(authorData[name][authorName]))
             
         if attributed:
-            precision = Decimal(correctlyAttributed) / Decimal(attributed)
+            precision = Decimal(str(correctlyAttributed)) / Decimal(str(attributed))
         else:
             precision = Decimal("0.0")
         
         if writtenByAuthor and correctlyAttributed > 0:    
-            recall = Decimal(correctlyAttributed) / Decimal(writtenByAuthor)
+            recall = Decimal(str(correctlyAttributed)) / Decimal(str(writtenByAuthor))
         else:
             recall = 0.0
         
@@ -533,12 +533,15 @@ def doUltimateTable():
     filename = "UltimateTest"
     foldername = "UltimateTest"
     corpora = "newData"
+    placeToSave = folderName + filename
     givenNum = 3
     for index in range(1, givenNum + 1):
         (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
         placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename + str(index)
         (authorAttri, averageFMeasure, authorList, overall) = makeTableData(id, authorData, placeToSave, num)
+        produceUltimateTables(authorAttri, averageFMeasure, authorList, authorList, id, authorData, placeToSave, num, overall, corpora)
 
+def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora): 
         (listOfOne, writtenDict) = getAuthorWrittenData(1, corpora) 
         
         numberALine = 2
@@ -647,7 +650,7 @@ def makeUltimateTable():
     authors = worker.read_JSON_file(newFile)
     authorDict = {}
     for author in authors:
-        authorDict[author["user_id"]] = 1
+g        authorDict[author["user_id"]] = 1
     
     allAuthors = authorDict.keys()
     
@@ -682,11 +685,53 @@ def getAuthorWrittenData(num, corpora):
     
     return (listOfOne, writtenDict)
    
-if __name__ == '__main__':          
-    doTables()
-    produceStats()
-    doUltimateTable()
-    #makeUltimateTable()
-    #makeTable("UltimateTest", "UltimateTest", 3)
+def makeBozoTables(filename, corpora):
+    getcontext().prec = 2
+    folderName = "Bozo"
+    worker = JSON.workOnJSON()
+    placeToSave = folderName + filename
+    authorData = worker.read_JSON_file(constants.bozo + filename + ".json")
+    placeToSave = constants.folderLocation + "report/tabeller/" + folderName + "/" + filename
+    (authorAttri, averageFMeasure, authorList, overall) = makeTableData({}, authorData, placeToSave, 1)
+    produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, -1, overall, corpora)
+
+def bozoTest():
+   
+    doBozoStressTest()
+    
+    #Short Bogus Test
+    makeBozoTables("ShortBogusText", "shortBogusCorpora1") 
+    
+    #All of the number tests
+    doNumberTest()
+    
+    #Do the ultimate tests
+    #makeBozoTables("UltimateTexts1", "newData" ,"UltimateTest", times)
+    
+def doBozoStressTest():
+        # StressTest1
+    makeBozoTables("StressTest1", "newData")
+    
+    #StressTest 3
+    makeBozoTables("StressTest3", "Some")
+        
+    # StressTest 4
+    makeBozoTables("StressTest4", "Many")
+       
+    # StressTest5
+    makeBozoTables("StressTest5", "singlePostCorpora")
+    
+
+def doNumberTest():
+    #AuthorSomePost
+    makeBozoTables("AuthorSomePost", "Some")
+    
+    #AuthorManyPost
+    makeBozoTables("AuthorManyPost", "Many")
+ 
+    
+if __name__ == '__main__':              
+    #doTables()
+    #produceStats()
     #doUltimateTable()
-    #produceXtable()
+        bozoTest()
