@@ -9,21 +9,22 @@ I will use the following criteria for judging the method's effectiveness:
 \item It should work on reasonably sized amount of text
 \item The time complexity inherent in the algorithm should be reasonable and it should scale well
 \item I should be practically able to implement the solution without using an unreasonable amount of time
-\item I should not be required to be an expert in natural language processing to be able to implement the solution
-\item The solution should work on languages using a character alphabet, though it would be a plus if it could also be used on pictogram based languages.
+\item I should not be an expert in natural language processing in order to implement the solution
+\item The solution should work on languages using a character alphabet, though it would be a plus if it could also be used on pictogram based alphabets
+\item The algorithm should need as little manual intervention as possible (i.e. I should preferably only have to implement an algorithm - not setup large databases with rules and language specific probabilities or contexts)  
 \end{itemize}
 
-\subsection{Example text}
+\subsection*{Example text}
 The example text used will be:\\
 \q{His proposition is, "that whenever any two of the three branches of government shall concur in opinion, each by the voices of two thirds of their whole number, that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT, a convention shall be called for the purpose.}
 From \cite{federalist}
 
-\method{Character}
+\method{Lexical}
 {\label{character}
-Lexical analysis works on the character as the basic unit. I will here focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive ``grams''\footnote{A gram could, depending on the algorithm either be a word, character, or other subsection of the text.}. Once all the n-grams for a text have been computed, they are used in a statistical analysis with the corpora of the possible authors. 
+Lexical analysis splits the text into tokes which then can be analysed. I will here focus on n-gram analysis. N-gram analysis is done by taking a text, and breaking it into all possible permutations of n-consecutive tokens called ``grams''\footnote{A gram could, depending on the algorithm either be a word, character, or other subsection of the text.}. Once all the n-grams for a text have been computed, they are used in a statistical analysis with the corpora of the possible authors. 
 }
 {
-I have in the following\footnote{Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.} chosen to represent whitespace by the $\_$ character:
+In this report I have chosen to represent whitespace by the $\_$ character: Since any reasonable large text would create a very large number of 3-grams, I have chosen, unlike all the other examples, to use only the part before the first comma.:\\
 \q{His proposition is,}
 which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ngr{\_pr}, \ngr{pro}, \ngr{rop}, \ngr{opo}, \ngr{pos}, \ngr{osi}, \ngr{sit}, \ngr{iti}, \ngr{tio}, \ngr{ion}, \ngr{on\_}, \ngr{n\_i}, \ngr{\_is}, \ngr{is,}. 
 }
@@ -32,18 +33,16 @@ which would create the following 3-grams: \ngr{His}, \ngr{is\_}, \ngr{s\_p}, \ng
 \item Gives very good results in practice - see \cite{nr4} and \cite{nr3}.
 \item The text does not need to be spelled correctly (as long as words are spelled consistently)
 \item Ignores problems with word or sentence boundaries.
+\item Seems like it might applicable to pictogram based alphabets, though I feel I need more information about the languages before I would put forth any final judgement. It is however certain that it would remove the word barrier problem\footnote{See \cite{nr1} p. 540}.  
 }
 {
 \item Can create very large data sets, since trying to create all n-grams on a text with m characters (given $n < m$) will result in m - n + 1 n-grams - each n characters - resulting in n * (m - n + 1) = n*m - $n^2$ + n characters.
-\item Might not be applicable on pictogram or symbol based alphabets (though it avoids the word barrier problem - which occurs in Chinese\footnote{See \cite{nr1} p. 540}).
 \item The statistical method might be very complex.
 }
 
 \method{Syntactic Features}
 {\label{syntactic}
-These types of methods tries to identify the author through the syntactic
-features prevalent in the corpus of the authors
-work. The underlying assumption is that each author has a certain way of writing, a style (which should be distinguished from the definition used in \ref{stylistic}), that they subconsciously in their text. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A naunphrase is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
+These types of methods tries to identify the author through the syntactic features that has been added subconsciously by the authors. Syntactic features include the frequency of different types of phrases (for instance \cite{style} uses concepts such as noun phrases, verb phrases, prepositional phrase, adverbial phrase and conjunctions\footnote{A naunphrase is a phrase that centers around a noun, while a verb phrase is a phrase that centers around a verb, and so on. A conjunction is a part of text that bridges two different parts, but has little meaning in itself}) and the frequency of punctuation.
 } 
 {
 In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phrase, ADVP a adverbial phrase and CON conjunction.\\
@@ -53,11 +52,10 @@ In the follow NP defines a Noun Phrase, VP a Verb Phrase, PP prepositional phras
 {
 \item Could very well be very accurate.
 }{
-\item Requires advanced software that can identify the different parts of the sentence - which is beyond the scope of this project.
-
+\item Requires advanced software that can identify the different parts of the sentence - which is beyond the scope of this project - or a lot of manual intervention.
 }
 
-\method{Stylistic information}
+\method{Semantic information}
 {\label{stylistic}
 Looking at the style of a text seems like an obvious choice when trying to identify the author (and indeed, not only the name, but also other data, like age and sex). In order to do, the text must be parsed to identify and mark parts of the text for certain predefined categories. \cite{style} mentions 3 top categories: 
 \begin{description}
@@ -67,7 +65,7 @@ Looking at the style of a text seems like an obvious choice when trying to ident
 \end{description}
 }
 {
-I have annotated the words that I believe might have been annotated by the system. However, I would like to note that this is only an approximation, and should not be taken as a qualification of the system described in \cite{style}. Any errors should be attributed to me, and not the system used in \cite{style}:\\
+I have annotated the words that I believe might have been annotated by the system. However, I would like to note that this is only an approximation, and should not be taken as a qualification of the system described in \cite{style}:\\
 \q{His proposition is, "that \ann{Value}{whenever} any two of the three branches of government shall concur in opinion, \ann{Elaboration}{each by the voices of two thirds of their whole number}, \ann{Orientation}{that a convention is necessary for altering the constitution, or CORRECTING BREACHES OF IT}, a convention \ann{Type}{shall} be called for the purpose.}
 }  
 {
@@ -75,24 +73,27 @@ I have annotated the words that I believe might have been annotated by the syste
 \item Given that the system could differentiate between the different cases, it is likely that information about the text could be used to construct a profile.
 }{
 \item For optimal efficiency it would require the entire text to be spelled correctly. Since I intend to create my corpora from text from Internet forums - this requirement cannot be satisfied.
-\item The system seems to require that the specific words must be identified and tied to categories. This would mean that it cannot be applied to another language without a prohibitively amount of work - which cannot be automated.
+\item The system seems to require that the specific words must be identified and tied to categories. This would mean that it cannot be applied to another language without a prohibitively amount of work - which I cannot see how should be automated.
 } 
 
 \method{Application Specific}
 {\label{application}
-Instead of trying to fit a general model on on every text, the application specific takes care to use information about the medium in question - such as HTML tags, indentation, the use of signature, fonts, size etc. All tailored to the specific applications.
+Instead of trying to fit a general model on on every text, the application specific takes care to use information about the medium in question - such as HTML tags (for texts found on the Internet), indentation, the use of signature, fonts, size etc. All tailored to the specific applications.
 }
 {
-\fixme{Find and add example}
-Since this method is mainly for use for web based applications, I cannot use the example from the Federalist papers, and i will therefore use another example, that I have taken from the web page [something]. 
-\q{}
-}
-{
-\item Might be applicable since this project focuses explicitly on posts from Internet forums, and that different users uses different signatures.
-\item Could very well improve the number of correctly attributed papers, as forum regulars tend to have signatures and/or signature styles.
+Since this method is primarily used for texts that appears in either computer programs or the Internet (forum, blog or e-mail) I cannot use the example from the Federalist papers. Instead I will use the following e-mail, using \cite{Vel01mininge-mail} to analyse it: 
+
+\q{Hej, Jeg har provet at folge dit raad, og har provet at stramme op i test afsnittet. Mvh. Mikkel} 
+
+Which then would be analysed and mined for 170 different values. Two examples would be
+\begin{description}
+\item[Number of blank lines / number of lines:] 0 / 1
+\item[Average sentence length:] 42 letters
+\end{description}
 }{
-\item Might very well become too specific, and will thus only work on a subsection of forums or wikis (and not on those that have their own style or formatting).
-\item Is described very vaguely - there is not much information on how the information should be processed or gathered (which in this case might be non-trivial).
+\item Could be very fitting since this project focuses explicitly on posts from Internet forums, and that different users have widely different ways of making their posts (i.e. the length, the inclusion of HTML tags or not, signatures etc.).
+}{
+\item The final solution might end up being too specific, and would thus only work on a subsection of forums or wikis, which uses the same formatting as the algorithm looks for.
 \item Requires more advanced pattern recognition than could be implemented in this project. 
 }
 
@@ -103,12 +104,12 @@ From this I have concluded that the best choice would be to use the character ba
 
 \subsection{Choice of n-gram analysis}
 
-\subsubsection{\cite{nr3}}
+\subsubsection*{\cite{nr3}}
 \cite{nr3} first selects the most important n-grams, using a number of rules (which, due to their complexity, will not be included here). In order to compare whether or not a certain author has written a certain text, another involved formula is then used, to gauge the information that can be gained from the author's corpora.
 
-I find this n-gram analysis intimidating - not only does the functions themselves seem rather advanced, but since some of the key concepts are not included in the paper itself (which may contain even more implementation details) which makes me wary of choosing it. Another problem is that the key glue function requires much manual tuning, which is language specific - which is one of the factors I would like to avoid. 
+I find this n-gram analysis intimidating - not only does the functions themselves seem rather advanced, but some of the key concepts are not explained in full in the paper which makes me wary of choosing it. Another problem is that the key ``glue'' function seems to require much language specific manual tuning, which was one of the things I am trying to avoid. 
 
-\subsubsection{\cite{nr2}}
+\subsubsection*{\cite{nr2}}
 This paper uses a improved version of the algorithm found in \cite{Bennet}. \cite{Bennet} uses the basic idea that an authors profile can be found by calculating the difference between the frequency of a character in the English language (based on some standard frequency) and the frequency of the author.\\
 
 The Authors of \cite{nr2}, however, use the following formula
@@ -119,8 +120,8 @@ which calculates the dissimilarity between the text t and one of the potential a
 
 This method has the clear advantage that it is rather straightforward, and unlike \cite{Bennet} it does not require standard frequencies for the English language (which there could be multiple versions off - and results, depending on the version used). One might however wonder whether or not this system is too simple.
 
-\subsubsection{\cite{nr4}}
-The method found in \cite{nr4} is a method based on statistical analysis, which implements its own algorithm to rate the similarity of the different authors. The underlying assumption is that the chance of the i'th gram being something is a function being based on all the i - 1 preceding grams. Since it is practically unfeasibly to base it on the i - 1 preceding grams, the implemented method only looks on the last n grams, where $n \in \{3,4,5,6 \}$. 
+\subsubsection*{\cite{nr4}}
+The method found in \cite{nr4} is  based on statistical analysis, which implements its own algorithm to rate the similarity of the different authors. The underlying assumption is that the chance of the i'th gram being something is a function being based on all the i - 1 preceding grams. Since it is practically unfeasibly to base it on the i - 1 preceding grams, the implemented method only looks on the last n grams, where $n \in \{3,4,5,6 \}$. 
 
 \subsection{Final choice}
 
@@ -131,4 +132,4 @@ In the end I choose \cite{nr4} for several reasons:
 \item The good results had been reported on famous Authors with a very specific way of writing - and the Authors themselves note that it would be interesting to apply their methods on less distinct corpora. 
 \end{itemize}
 
-I furthermore choose to set n = 3, on the grounds that it will make the amount of data that must be processed manageable (since, as mentioned earlier the process will need to remember n*m - $n^2$ + n characters.). Since I in the implementation phase found that it also was prudent to calculate all the preceding n-grams (in this case 1- and 2-grams), this has turned out to be prudent.  
+I furthermore choose to set n = 3, on the grounds that it will make the amount of data that must be processed manageable (since, as mentioned earlier the process will need to remember n*m - $n^2$ + n characters.). Since I in the implementation phase found that it also was prudent to calculate all the preceding n-grams (in this case 1- and 2-grams), this has turned out to be prudent.

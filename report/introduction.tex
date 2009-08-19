@@ -1,33 +1,33 @@
 \section{Introduction}
 \label{introduction}
-Authorship Attribution is the science of attributing the ownership of a disputed or anonymous text, given a list of potential authors. A corpora (a relevant subset of these authors texts) is analysed, and the gained information is then used to find the most likely author of the disputed text.\\
+Authorship Attribution is the science of assigning ownership of a disputed or anonymous text, given a list of potential authors. A relevant subset of these authors texts, a so-called corpora, is analysed, and the gained information is then used to find the most likely author of the disputed text.\\
 
-The most famous case of Author Attribution is the attribution of 12 essays written in the \q{The Federalist Papers} series, whom both Alexander Hamilton and James Madison claimed to have written. Many modern works on Authorship Analysis attribute these works to James Madison \cite{Fung03thedisputed}.\\
- The introduction of computers, and the Internet, where texts can be published anonymously, has increased the importance of Author Attribution, as it is now easier than ever before to commit plagiarism or illegal sharing of texts - such as for school projects. Authorship Attribution might also be used for Internet forums and message boards, so that it can be used to identify the author of possible ``sock puppets'' \footnote{i.e. posts written by authors who register an extra account to either further their own causes or oppose others}.\\ 
+The most famous case of Author Attribution is the attribution of 12 essays written in the ``The Federalist Papers'' series, whom both Alexander Hamilton and James Madison claimed to have written. Many modern works on Authorship Analysis attribute these works to James Madison \cite{Fung03thedisputed}.\\
+ The introduction of computers and the Internet, where texts can be published anonymously, has increased the importance of Author Attribution, as it is now easier than ever before to commit plagiarism or illegal sharing of texts - for example selling school reports on the Internet. Authorship Attribution might also be used for Internet forums and message boards, where it can identify the real author of possible ``sock puppets'' \footnote{i.e. posts written by authors who create a false persona on the forum to either backup their own opinions or oppose others}.\\ 
 
-I will in this report try to apply an already developed Author Attribution technique to posts found on Internet forums, and try to evaluate the quality of the result.\\
+I will in this report try to apply an already developed Author Attribution technique to posts found on a Internet forum, and try to evaluate the quality of the technique.\\
 
-Internet forums are interesting to study, since the posts that comprise them are short, informal, and full of bad spelling and grammar\footnote{Not to mention the many strange abbreviations (``lol'', ``btw''), and features unique to the Internet (such as hyperlinks or embedded pictures)}. All of this quite unlike the works of famous authors (who tend to be used in the studies \cite{nr4}). 
+Internet forums are interesting to study, since the posts that comprise them are short, informal, and full of bad spelling and grammar\footnote{Not to mention the many strange abbreviations (``lol'', ``btw''), and features unique to the Internet (such as hyperlinks and embedded videos and pictures)}. All of this quite unlike the works of famous authors (who tend to be used in the studies \cite{nr4}). 
 
 \subsection{Applications}
-When attempting to apply Authorship Attribution techniques to the Internet, it is important to consider which kinds of systems this is applicable. Idealy, one should be able to use Authorship Attribution on every post or comment on the Internet, and thus be able to figure out the identify of an anonymous poster, or is dealing with a ``sock puppet'' or a previously banned user. However, there are some simple problems that prohibits this ideal from being reality:
+When attempting to apply Authorship Attribution techniques to the Internet, it is important to consider in which contexts it is applicable. Ideally, we should be able to use Authorship Attribution on all text on the Internet, and thus be able to figure out the identify of an anonymous poster, presumed ``sock puppet'' or previously banned user. However, there are some fundamental problems that prohibits this ideal from being reality:
 
 \begin{description}
-\item[Comments:] In services with comment features (such as blogs, on-line newspaper or video streaming services) there may be problems with the sparseness of the data. Depending on how debate-able the topic is, most people might only post a few comments for that item - but the total number of comments for each item might end up being rather large. This means that for any given timeblock, there will be a large author to post ratio (i.e. close to 1), which means that quite a lot of threads would have to be harvested in order to get a decent corpora from an author.. Forums and message boards have less problems with this, as they are often used as places of discussion and often feature disagreement between 2 or more parties who keep posting in the same thread. It is here also important to mention that forums and message boards has a greater social dimension.
+\item[Comments:] In services with comment features (such as blogs, on-line newspaper or video streaming services) there may be problems with the sparseness of the data. Depending on how debate-able the topic is, most people will only post a few comments pr. item - but if the item is popular, then this might be done by many authors, which in the end creates a lot of posts. This means that for any given time block, there will be a large author to post ratio (i.e. close to 1), which necessitates that the comments for many items/threads would have to be collected in order to assemble a decent corpora from an author. Forums and message boards does not suffer from this to the same degree, as almost all threads are created to start a debate. Forums and message boards also tends to have a greater social dimension.
 
-\item[Wikis:] One of the problems that wikis face is vandalism, either in the form of erroneous material, or outright defacement of its pages - an Author Attribution system could be seen as a help, as malicious users could be banned before they acted on their impulses. In practice, however, the following problems makes it practically infeasible and impractical.
+\item[Wikis:] One of the problems that wikis face is vandalism, either in the form of erroneous material, or outright defacement of its pages - an Author Attribution system could be seen as a help, as malicious users could be banned before they acted on their impulses. In practice, however, the following problems makes it practically infeasible:
 \begin{description}
 \item[Vandals:] Since an account handle is cheap (or perhaps not even needed), the vandal can just register for a new one, and then vandalise, delete and deface pages she/he wants to. Since most wiki software allows the pages to be restored in a few clicks, and has provisions to ban the IP-address\footnote{Which acts as a far better identifier than an on-line handle} from which the changes took place - Author Attribution seem like an expensive approach.  
 
-\item[Editing problem:] Another problem that might occur when trying to make Author Attribution on a wiki, is that, while some people who will write long, connected, passage of texts\footnote{For instance the creator/main contributor of the article}, many other edits are minor changes that occur inside already existing passages, which would not be very useful to create a profile of the author.   
+\item[Editing problem:] Another problem that might occur when trying to make Author Attribution on a wiki, is that, while some people who will write long, connected, passage of texts\footnote{For instance the creator/main contributor of the article}, many other edits are minor changes that occur inside already existing passages - and therefore not representative for the authors corpora profile.   
 \end{description} 
 \end{description}
 
-I therefore think that forums and message boards are both the most feasible and  interesting on-line systems to deploy Author Attribution software.
+On these grounds I therefore think that forums and message boards are both the most feasible and  interesting on-line systems to apply Author Attribution to.
 
 \subsection{Scope and Limitations}
 \label{scope}
-A common feature in papers about Authorship Attribution is that their sample languages tend to be English, Greek and Chinese \cite{syntactic}, \cite{nr2}, \cite{nr4} and \cite{app-spe}. Since I do not have any relation to any Greek or Chinese forum, and since I do not understand either language, I have chosen to exclusively concentrate on forums and methods that works on a character based language\footnote{Compared to the pictogram based alphabet, such as Chinese} - more specifically Danish.
+A common feature in papers about Authorship Attribution is that their sample languages tend to be English, Greek and Chinese \cite{syntactic}, \cite{nr2}, \cite{nr4} and \cite{app-spe}. Since I do not have any relation to any Greek or Chinese forum, and do not understand either language, I have chosen to concentrate exclusively on forums and methods that works on a character based language\footnote{Compared to the pictogram based alphabets, such as Chinese} - more specifically Danish.
 
 \subsection{Expectations to the reader}
 \label{expectations}
@@ -45,7 +45,7 @@ After having completed this assignment I will have learned
 \end{itemize}
 
 \subsection{Terminology}
-In this report I will use the words ``post'' and ``text'' interchangeably, and likewise with the words ``forum'' and ``message-board'', as there in this case is no real difference. 
+In this report I will use the words ``post'' and ``text'' interchangeably\footnote{Since each post is self-contained, I think it is valid to identify it as a short text}, and likewise with the words ``forum'' and ``message-board'', as there in this case is no practical distinction. 
 
 \subsection{Reader guide}
 In this section I give a quick overview of what the different section in report will cover.
