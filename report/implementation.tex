@@ -1,29 +1,31 @@
 \section{Implementation}
 \label{implementation}
 
-In this section I will try to describe the interesting implementation choices I have made during this project.
+In this section I will try to describe the implementation choices I have made in this project.
 
 \subsection{Choice of programming language}
-I choose to write my project in Python as I felt it was the language that suited me and the project best. There was neither the need for using an object-oriented approch (Java and C\#), excessive speed (C and C++), and since the problem did not seem to be a functional one.
+I choose to write my project in Python as I felt that a fast development time was more important than a super fast program.
 
 \subsection{Creation of n-grams}
-Since the creation of n-grams themselves was not a critical part of the project, I opted not to write my own code. Therefore I choose python-ngram (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/\footnote{Address has been tested to work on the 13th of August, 2009}. To make it fit the program better I have altered some of the code, and even added my own. There is no overarching pattern - but I have clearly labeled the changes in the code itself.
+Since the creation of n-grams themselves was not a critical part of the project, I opted not to write my own code. Therefore I choose python-ngram (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/\footnote{Address has been tested to work on the 13th of August, 2009}. I have made alterations to the program, the most important of which are the following:
+
 \subsubsection*{Numbers}
-Since numbers are bound to appear in a text, I have had to take care of how to present them. Since there is little chance of the same number appearing multiple times over several posts, the usage of the numbers themselves are more interesting. Therefore I have opted to turn all numbers into the same escape character: ``$\backslash$v''
+Since numbers are bound to appear in some texts, I have chosen to represent them as the escape characters ``$\backslash$v'', since it is the appearance of numbers and their pattern that is interesting, not the numbers themselves.
+
 \subsubsection*{Padding}
-The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the (n-1) first and the (n-1) last characters would have their own n-grams. However, since I also create 1 and 2 grams (see below), I do not find any use for this feature, and since the padding was made by plain capital X's, I choose to un-comment the part of the code.
+The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the (n-1) first and the (n-1) last characters would have their own n-grams. However, since I also create 1 and 2 grams (see below).
+
+\subsubsection*{Implementation changes}
+Through experimentation, I have found that it essential to not only create the 3-grams, but also the 2 and 1 grams. If these n-grams are not created, then the probability of most the n-grams will be 0, just as what happened to $p_3$ in \pref{Good-Turing}.
 
 \subsection{Good-Turing smoothing}
-Like above, I did not choose to write my own Good-Turing smoothing, but did rather use the ``Natural Language Toolkit'' for python, version 0.9.9, which can be found at www.nltk.org\footnote{Address has been tested to work on 13th of August, 2009}.
-
-\subsection{Implementation changes}
-Through experimentation, I have found that it essential that if one has to test for n-grams of length 3, the n-grams of length 1, 2 and 3 has to be made, in order to get a probability that is greater than 0. If this correction is not done, the $N_{r+1}$ that caused $p_3$ in \pref{Good-Turing} to become 0 will likewise make all the results 0. However, there is another advantage of making both the 1- and 2-grams, since it is neccsary to count the number of occourences of a n-gram in the authors corpora in (\ref{eq:probHat}). If I instead had used the built-in python count function on the text, I could in certain cases have ended up with a smaller number - due to an implementation quirck: For instance, if I had the text ``sss'' and I had to check for the text ``ss'', I would get the value 1, while if I used the n-gram solution I would get 2 - which I find to be the more correct value.
+Like above, I did not choose to write my own Good-Turing smoothing, but have instead used the ``Natural Language Toolkit'' for python, version 0.9.9, which can be found at www.nltk.org\footnote{Address has been tested to work on 13th of August, 2009}.
 
 \subsection{Scalability of implementation}
-In order to measure whether or not the algorithm scales, I have found it necessary to make 2 tests: 
+In order to measure whether or not the algorithm scales, I have found it necessary to make 2 separate tests: 
 \begin{enumerate}
-\item The time it takes to make the n-grams from the corpora. The only parameter in this case is the number of texts in the corpora we will create n-grams for.
-\item The time it takes to decide which author is most likely to have written a text. This test has 2 parameters: The number of texts in the corpora of the corpora to test against, and the number of test to make
+\item The time it takes to create the n-grams from the corpora. The only parameter in this case is the number of texts that appears in the corpora.
+\item The time it takes to decide which author is most likely to have written a text. This test has 2 parameters: The number of texts in the corpora to test against, and the number of test to make
 \end{enumerate}
 
 In order to get a proper resolution for both tests, I have chosen 12 different corpora and text sizes, and have tested all $12 \times 12$ combinations. The numbers for both the corpora and the texts are as follows 100, 200, 300, $\ldots$, 1100, 1200.\\
@@ -33,20 +35,23 @@ I ran the tests - serially - on a computer with a 8x3.06Ghz Core i7-950 with 6 G
 \subsubsection{Make n-gram}
 \input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/ngramTime}\\ \\
 
-Both the above table and figure \ref{fig:ngram} clearly shows that the time required to make the n-grams grows liner with the tothe number of posts in the corpora.
+Both the above table and figure \ref{fig:ngram} clearly shows that the time required to make the n-grams grows liner with the number of posts in the corpora.
 
 \begin{figure}[!hbp]
 \includegraphics[width=\textwidth]{tabeller/ngram.png}\\
-\caption{Time used to create n-grams compared to the number of n-grams\label{fig:ngram}}
+\caption{Time used to create n-grams compared to the number of texts in the corpora\label{fig:ngram}}
 \end{figure}
 
 \subsubsection{Decide authors}
-The horizontal values are the number of articles in the corpora, while the vertical values are the amount of articles that have to be attributed.\\
+The horizontal values are the number of texts in the corpora, while the vertical values are the amount of texts that have to be attributed.\\
 \input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/crossSave}
 
-Figure \ref{fig:work}, which is based on the 12th horizontal line\footnote{I have choosen this particular line, since it is the one that has to attribute all the authors, and thus would be the one that would best show if there was any significant non-linear time increase when the number of items in the corpora increased} (i.e. the bottom line in the table), clearly showes that the time required to attribute 1200 authors grows lineary with the amount of posts in the corpora. 
+Figure \ref{fig:work}, which is based on the 12th horizontal line\footnote{I have chosen this particular line, since it is the one that has to attribute all the authors, and thus would be the one that would best show if there was any significant non-linear time increase when the number of items in the corpora increased} (i.e. the bottom line in the table), clearly shows that the time required to attribute 1200 authors grows linearly with the amount of posts in the corpora.\\
+
+Since both of these tests time consumption grows linearly with the number of texts in the corpora, its clear that the algorithm could be used in practice, given that it is able to correctly attribute the authors  
 
 \begin{figure}[!hbp]
 \includegraphics[width=\textwidth]{tabeller/work.png}
-\caption{Time for article attribution with 1200 articles \label{fig:work}}
+\caption{Time for text attribution with 1200 texts \label{fig:work}}
 \end{figure}
+

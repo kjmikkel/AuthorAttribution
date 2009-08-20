@@ -1,24 +1,24 @@
 \section{Tests}
 \label{tests}
 
-In this section I detail the tests I will use in order to study the effectiveness of my implementation.
+In this section present my test results in order to determine the effectiveness of my implementation.
 
-Having attempted by running the tests I sat up in the last section, I will use the same parameters that the authors of \cite{nr4} used, in order to make them comparable. These parameters are: 
+In order to make my test results comparable with \cite{nr4} I will use the same parameters that they used. These parameters are: 
 
 \begin{description}
-\item[Overall Average] Which is the number of correctly attributed texts divided by the number of texts that have been attributed. E.g. if 8 texts have been identified correctly, and 10 texts have been identified, then the overall average would be 0.8 
+\item[Overall Average] The number of correctly attributed texts divided by the number of texts that have been attributed. E.g. if 8 texts have been correctly attributed, and 10 texts have been attributed, then the overall average would be 0.8 
 
-\item[Precision] The number of correctly attributed texts for an author, divided by the total number of texts that have been attributed to that author. E.g. if the author has had 8 texts correctly attributed to him, and in total 10 texts have been attributed to him (which means that 2 of them must belong to other authors), then the Precision would be 0.8. Thus, this is essentially local accuracy.
+\item[Precision] The number of correctly attributed texts for an author, divided by the total number of texts that have been attributed to that author. E.g. if the author has had 8 texts correctly attributed to him, and in total 10 texts have been attributed to him, then the Precision would be 0.8. Thus, this is essentially local accuracy.
 
-\item[Recall] Recall is the number of correctly attributed texts for an author, divided by the by the number of texts of that author that has been attributed in the session. E.g. if the authors has had 8 texts correctly attributed to him, but there was 10 texts there was to be attributed (and which has been attributed to other authors) - then the recall is 0.8.
+\item[Recall] Recall is the number of correctly attributed texts for an author, divided by the by the number of texts that should have been attributed to. E.g. if the authors has had 8 texts correctly attributed to him, but there was 10 texts there was to be attributed - then the recall is 0.8.
 
-\item[F-measure] F-measure is a combination of Recall and Precision like so: $\frac{2 \times precision \times recall}{precision+recall}$ 
+\item[F-measure] F-measure is calculated like so: $\frac{2 \times precision \times recall}{precision+recall}$ 
 
-\item[Macro-average F-measure] The Macro-average F-measure is all the authors F-measures summed together, and then divided by the number of authors. 
+\item[Macro-average F-measure] The Macro-average F-measure is the average of all the authors F-measure. 
 \end{description}
 
 \subsection*{Key}
-In the following I each author will follow the following format: Axx$^{n}$, where xx is the number identifying the number, and n is the number of posts that the author has written. Furthermore, since no test contain every author, the authors who appear both in the corpora and the test results will have the following formatting: \aAuthor{Axx$^{n}$}, whereas authors who only appear in the corpora will have no such formatting. All authors who have written only 1 post, will furthermore have the following formatting: \veryFew{Axx$^{n}$}. These formatting may overlap.\\
+In the following I each author will follow the following format: Axx$^{n}$, where xx is the number identifying the author, and n is the number of posts that the author has written. Furthermore, since no test contain every author, the authors who appear both in the corpora and the texts that are to be attributed will have the following formatting: \aAuthor{Axx$^{n}$}, whereas authors who only appear in the corpora will have no such formatting. All authors who have written only 1 post, will furthermore have the following formatting: \veryFew{Axx$^{n}$}. These formatting may overlap.\\
 
 \subsection{Test results}
 
@@ -99,7 +99,7 @@ All the posts from a random author who has written \postAmount{Many} posts is ch
 \clearpage
 \subsubsection{UltimateStressTest}
 A random half of the corpora is checked against the entire corpora \pref{UltimateStressTest}.\\
-Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision, hits, misses (the number texts wrongly attributed the author), the number and percentage of texts attributed to an author with only 1 post).
+Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision, hits, misses (the number texts wrongly attributed the author), the number and percentage of texts attributed to an author with only 1 post.
 
 \texttt{Ultimate Test 1:}\\\\
 \input{tabeller/UltimateTest/UltimateTest1}\\

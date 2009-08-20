@@ -2,11 +2,9 @@
 \label{conclusion}
 
 \subsection{Results}
-From \ref{interpretation} I can conclude that the algorithm described in \cite{nr4} cannot be used with the Good-Turing smoothing for identifying user on Internet forums. The results in \ref{tests} that when authors with few n-grams (i.e. has written few short posts) appear in the corpora, there is a high probability that they will be attributed as the author\footnote{And even then, there is no guarantee that they will be attributed the posts that they themselves have written}.\\
+From section \ref{interpretation} I can conclude that the algorithm described in \cite{nr4} cannot be used with the Good-Turing smoothing for identifying user on Internet forums. The results in section \ref{tests} that when authors with few n-grams (i.e. has written few short posts) appear in the corpora, there is a high probability that they will be attributed as the author\footnote{And even then, there is no guarantee that they will be attributed the posts that they themselves have written}.\\
 
-A clear lesson from \cite{nr4} is therefore that any n-gram algorithm that has to be used for Internet forums must be robust enough to give texts a proportionate weight/probability based on the n-.grams they produce, so that author corporas of widely different sizes can be tested together, and still give meaningful results. 
-
-It is, however, important to point out that this project does not refute results found in \cite{nr4} concerning established authors with large texts samples. An indication that the proposed algorithm might indeed work, is found in the fact that the most successful test was ManyAuthorPosts - which is the test most resembling the tests found in \cite{nr4} - i.e. all authors have made many posts - which means that the size of each authors corpora is more likely to be of a similar size.\\
+A clear lesson from \cite{nr4} is therefore that any n-gram algorithm that has to be used for Internet forums must be robust enough to give texts a proportionate probability based on the n-grams, so that author corporas of widely different sizes can be tested together, and still give meaningful results. 
 
 \subsection{Future work}
 
@@ -15,11 +13,11 @@ It is, however, important to point out that this project does not refute results
 
 \item While this report has produced bad results when it comes to texts written in the Danish language, it would be interesting to see the results of using it on different languages - such as English, Greek or Chinese.
 
-\item This report was made using 3-grams with characters as the basic level, and I therefore feel that it would be interesting to see another configuration - such as either using words instead of characters, and trying the entire spectrum of 3-6 grams - both for accuracy as well as time expenditure. 
+\item This report was made using 3-grams with characters as the token/gram, and it would therefore be interesting to see the results of a different configuration - such as using words as the token/gram, and trying the entire spectrum of 3-6 grams. 
 
-\item Attempt to use the a modified algorithm on a larger corpora - preferably from an active forum with a large number of users. It should be noted, however, that a larger corpora will not necessary make any algorithm perform better, as the main goals of this project has been to attribute the ownership anonymous and ``sock-puppet'' posts - both of which there tend to be an upper bound on\footnote{Since there is no hard evidence marking one anonymous post from another, the bound should in most cases be set to 1, and potential ``sock-puppet'' are unlikely to have over a dozen posts}. Success on a larger corpora would serve to increase the confidence of the solution, however. 
+\item Attempt to use the a modified algorithm on a larger corpora - preferably from an active forum with a large number of users. 
 
-\item Turn a working algorithm into a plug-in for a forum, in order to field test its value in a real situation. Here it would especially be interesting to study the reactions from both forum users as well as the moderators\footnote{How do they grade its ease of use, how much do they trust its results, does it improve their judgements, do they feel it is needed at all? etc.}. This should be done in order to study the social dimension of bringing Author Attribution to the Internet.
+\item Turn a working algorithm into a plug-in for a forum, in order to field test its value in a real situation. Here it would especially be interesting to study the reactions from both forum users as well as the moderators. This should be done in order to study the social dimension of bringing Author Attribution to the Internet.
 \end{itemize}  
 
 \subsubsection*{Acknowledgements}

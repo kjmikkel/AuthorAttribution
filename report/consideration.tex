@@ -1,15 +1,15 @@
 \section{Considerations}
 \label{considerations}
 
-In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably, I will perform each test multiple times (with different author texts) in order to gain a better overview of the effectiveness of the algorithm. Unless otherwise noted, I  will run each test 3 times.
+In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably, I will perform each test multiple times (with different author texts and corporas where applicable) in order to gain a better overview of the effectiveness of the algorithm. Unless otherwise noted, I  will run each test 3 times.
 
 \subsection{Initial smoke tests}
 \label{smokeTest}
 In the initial smoke tests I detected the following problems with the algorithm:
 \begin{enumerate}
-\item In the first toy problem I tested, the algorithm was unable to correctly attribute the text, even though there were only 2 authors, who both had only one single text in the corpora - the first a sting of a's, the second a string of b's. In this case the text was attributed to the wrong author.
+\item In the first toy problem I tested, the algorithm was unable to correctly attribute the text, even though there were only 2 authors, who both had only a single text in the corpora - the first a sting of a's, the second a string of b's. Text was attributed to the wrong author.
 
-\item Authors of short bogus texts, would be given a far greater probability than they warranted, and their authors were often chosen as the most probable author. A possible explanation for this is that due to the way that Good-Turing smoothing works the probability given to the n-grams that do not appear in text is greater, which gives the short texts an unfair advantaged. 
+\item Authors of short bogus texts (i.e. texts that was produced by mashing the keyboard) were given a far greater probability than they warranted, and their authors were often chosen as the most probable author. 
 \end{enumerate}
  
 
@@ -17,25 +17,25 @@ In the initial smoke tests I detected the following problems with the algorithm:
 \test{
 The name of the test
 }{
-The description of how the test will be done - including which kind of post that will be used in the corpus, and which kinds of posts that will be used for the author. 
+The description of how the test will be done - including which kind of post that will be used in the corpora, and which kinds of posts that will be tested. 
 }{
-The purpose of the test - what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and the code.
+The purpose of the test - what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and code.
 }{
-The entries whose author we are trying to attribute
+A description of the texts we are attempting to attribute
 }{
-What the corpus is going to contain - how many entries, the number of posts in it, etc. \ldots
+What the corpus is going to contain - how many texts and the what the corpora is going to contain etc.
 }
 
 \subsection{Values}
 In order to make my results more independent of my current datasat - I introduce the following values:
 
-\subsubsection*{Number of posts}
-$Axx_{\alpha} = $the number of posts author xx has written\\ 
+\subsubsection*{Number of texts}
+$Axx_{\alpha} = $the number of texts author xx has written\\ 
 $\Omega = max(A0_\alpha, A1_\alpha, \ldots A89_\alpha, A90_\alpha)$. In this case $\Omega = 137$\\
 
-Let $\tau_x = \rm{ceil}(\Omega \times \frac{x}{4})$ and let the predicate $\#(a, \rm{num})$ be true if author a has posted num papers. Let 
+Let $\tau_x = \rm{ceil}(\Omega \times \frac{x}{4})$ and let the predicate $\#(author, \rm{num})$ be true if author a has posted num papers. Let 
 
-$$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ posts }\in\rm{ author }: \{\rm{posts }\mid \#(a, \tau_x)\}$$ 
+$$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ texts }\in\rm{ author }: \{\rm{texts }\mid \#(a, \tau_x)\}$$ 
  
 And so we have have to check for 
 \begin{description}
@@ -44,7 +44,7 @@ And so we have have to check for
 \item[$\Phi_3$ \postAmount{many}:] 103-9999.
 \end{description}
 
-\subsubsection*{Length of posts}
+\subsubsection*{Length of texts}
 
 \begin{description}
 \item[\postSize{Short} post:] A post that contains 100 characters or less
@@ -54,13 +54,13 @@ And so we have have to check for
 \end{description}
 
 \subsection{Selection of authors}
-In order to select the authors I wrote a python script that found all of the authors in a selected corpus (for example only having texts from authors who have written a certain number of texts). It then randomly selected n of these, and saved it to a file, so that, while the authors were randomly chosen, they could be retrieved later, so I had consistent data to work on.
+In the tests where I have had to select authors, I have used a small python script, that, with the built-in Random function, have selected the authors.
 
 \subsection{Authordata}
 A list of the authors and their relevant data can be found in \pref{reportTable}. This includes number of texts each author has written, average of characters written etc.
 
 \subsection{Tests}
-I will in this section describe the various texts that I will run. It should be noted that there are no StressTest for \postAmount{few}, since no author has written \postAmount{few} posts. 
+I will in this section describe the various texts that I will run. It should be noted that there are no StressTest for \postAmount{few}, since no author has written \postAmount{few} texts.\\ 
 
 \test{StressTest1}{
 Take a post from an author appearing in the corpora with a single, \postSize{Long} text, and see if the author can be correctly attributed compared to the entire corpus.
@@ -73,23 +73,23 @@ The entire corpora
 }
 
 \test{StressTest2}{
-Check a single post from an author who has written \postAmount{Some} posts against all texts written by authors who have written \postAmount{Some} posts
+Check a single post from an author who has written \postAmount{Some} texts against all texts written by authors who have written \postAmount{Some} texts
 }{
 To check the limits of the algorithm. This should have a greater chance of succeeding than the one above, since the post is only checked against texts in its own size category.
 }{
 A single random post from the corpora described below
 }{
-All texts from authors who have written \postAmount{Some} posts
+All texts from authors who have written \postAmount{Some} texts
 }
 
 \test{StressTest3}{
-Check a single post from an author who has written \postAmount{Many} posts against all texts written by authors who have written \postAmount{Many} posts
+Check a single post from an author who has written \postAmount{Many} texts against all texts written by authors who have written \postAmount{Many} texts
 }{
 Check the limits of the algorithm. This has a chance of succeeding
 }{
 A single post from the corpora described below
 }{
-All texts from authors who have written \postAmount{Many} posts
+All texts from authors who have written \postAmount{Many} texts
 }
 
 \test{StressTest4}{
@@ -103,21 +103,21 @@ The same post as in StressTest1
 }
 
 \test{ShortBogusTest}{
-Take a post from an author A with multiple \postSize{Long} posts, and create a corpora from all the texts of A, and a short bogus post from a bogus author.
+Take a post from an author A with multiple \postSize{Long} texts, and create a corpora from all the texts of A, and a short bogus post from a bogus author.
 }{
-This test to check whether the algorithm gives a higher probability to authors with very little information - even if the bogus post is very dissimilar to the post that it is being checked against.
+This test checks whether the algorithm gives a higher probability to authors with very little information.
 }{
 1 long post from A 
 }{
-All the posts from A, plus 2 bogus post.
+All the texts from A, plus 2 bogus post.
 }
 
 \test{AuthorSomePost}{
-Take all the posts from an author A, where $\#(A, \tau_2)$ is true, and let the corpora be $\Phi_2$.
+Take all the texts from an author A, where $\#(A, \tau_2)$ is true, and let the corpora be $\Phi_2$.
 }{
-A simple test to see whether the algorithm will work better if all authors have written a comparatively equal amount of texts, and there are \postAmount{Some} of them.
+A simple test to see whether the algorithm will work better if all authors have written a comparatively equal number of texts, and there are \postAmount{Some} of them.
 }{
-All posts from an author A, where $\#(A, \tau_2)$ is true
+All texts from an author A, where $\#(A, \tau_2)$ is true
 }{
 $\Phi_2$.
 }
@@ -125,17 +125,17 @@ $\Phi_2$.
 \test{AuthorManyPost}{
 Take all post from an author A, where $\#(A, \tau_3)$ is true, and let the corpora be $\Phi_3$
 }{
-A simple test to see whether the algorithm will work better if all authors have written a comparatively equal amount of texts, and there are \postAmount{Many} of them.
+A simple test to see whether the algorithm will work better if all authors have written a comparatively equal number of texts, and there are \postAmount{Many} of them.
 }{
-All posts from an author A, where $\#(A, \tau_3)$ is true
+All texts from an author A, where $\#(A, \tau_3)$ is true
 }{
 $\Phi_3$.
-}
+}x
 
 \test{UltimateStressTest}{
-Take a random selection of authors, who have made over half the posts in the entire corpora, and test it on the rest of the corpora. 
+Take a random selection of authors, who have made over half the texts in the entire corpora, and test it on the corpora. 
 }{
-This test is to check the overall quality of the algorithm - i.e. if it can attribute the posts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}. Since the authors are chosen at random, some of the runs may have many authors (with a low average of posts), while others will only have few (but with a larger average of posts).
+This test is to check the overall quality of the algorithm - i.e. if it can attribute the texts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}.
 }{
 All the texts from random authors, who together have made over half the texts in the corpora
 }{
