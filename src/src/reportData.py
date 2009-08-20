@@ -528,18 +528,17 @@ def printPartList(authorList, keyList, stringResult):
     return stringResult
     
 def doUltimateTable():
-    getcontext().prec = 2
     worker = JSON.workOnJSON()
     filename = "UltimateTest"
-    foldername = "UltimateTest"
+    folderName = "UltimateTest"
     corpora = "newData"
     placeToSave = folderName + filename
     givenNum = 3
     for index in range(1, givenNum + 1):
         (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
-        placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename + str(index)
+        placeToSave = constants.folderLocation + "report/tabeller/" + folderName + "/" + filename + str(index)
         (authorAttri, averageFMeasure, authorList, overall) = makeTableData(id, authorData, placeToSave, num)
-        produceUltimateTables(authorAttri, averageFMeasure, authorList, authorList, id, authorData, placeToSave, num, overall, corpora)
+        produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora)
 
 def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora): 
         (listOfOne, writtenDict) = getAuthorWrittenData(1, corpora) 
@@ -567,6 +566,7 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
 
         lessThan10 = 0
         totalPosts = 0.0    
+        getcontext().prec = 2
         for i in range(0, lines):        
             authors = keys[:numberALine]
             keys = keys[numberALine:]
@@ -599,8 +599,9 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
                 if authorData.has_key(oriName):
                     entry = authorAttri[oriName]
                     authorName = activeAuthor + authorName + "}"
-                    
-                    lineStr.write(authorName + " & " + str(entry["recall"]) + " & " + str(entry["precision"]) + " & " + str(numberHits) + " & " + str(numberMisses) + " & ") 
+                    recall = Decimal(str(entry["recall"]))
+                    precision = Decimal(str(entry["precision"]))
+                    lineStr.write(authorName + " & " + str(recall) + " & " + str(precision)[:5] + " & " + str(numberHits) + " & " + str(numberMisses) + " & ") 
                 else:
                     lineStr.write(authorName + " & 0.0 & 0 & " + str(numberHits) + " & " + str(numberMisses) + " & ") 
                 
@@ -608,9 +609,10 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
             stringResult.write(next)
             stringResult.write(line) 
             
-        stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + "}" + next)
+        stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Overall Accuracy: " + str(overall)[:7] + " Macro-average F-measure: " + str(averageFMeasure)[:7] + "}" + next)
         stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Total number of posts attributed to authors with less than 1 posts: " + str(lessThan10) + "}" + next)
-        percentage = float(lessThan10) / float(totalPosts) * 100
+        percentage = Decimal(str(float(lessThan10) / float(totalPosts) * 100)[:5])
+        print "percent:", percentage
         stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Percentage of posts attributed authors with 1 post: " + str(percentage) + "\\%}" + next)
         stringResult.write(line)
         stringResult.write("\\end{tabular}")
@@ -686,7 +688,6 @@ def getAuthorWrittenData(num, corpora):
     return (listOfOne, writtenDict)
    
 def makeBozoTables(filename, corpora):
-    getcontext().prec = 2
     folderName = "Bozo"
     worker = JSON.workOnJSON()
     placeToSave = folderName + filename
@@ -706,7 +707,7 @@ def bozoTest():
     doNumberTest()
     
     #Do the ultimate tests
-    #makeBozoTables("UltimateTexts1", "newData" ,"UltimateTest", times)
+    makeBozoTables("UltimateTest", "newData")
     
 def doBozoStressTest():
         # StressTest1
@@ -733,5 +734,5 @@ def doNumberTest():
 if __name__ == '__main__':              
     #doTables()
     #produceStats()
-    #doUltimateTable()
-        bozoTest()
+    doUltimateTable()
+    bozoTest()
