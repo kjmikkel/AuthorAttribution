@@ -1,9 +1,10 @@
 """
 Constant values
 """
+import os
 
 # paths
-folderLocation = "/home/mikkel/Documents/AuthorAttribution/"
+folderLocation =  os.getcwd().split("AuthorAttribution")[0] + "AuthorAttribution/"
 location = folderLocation + "src/data/"
 authors = location + "Authors/"
 corpora = location + "Corpora/"
