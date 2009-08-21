@@ -11,7 +11,7 @@ corpora = location + "Corpora/"
 tests = location + "Tests/"
 tableSave = folderLocation + "report/tabeller/"
 resultDir = location + "Results/"
-bozo = location + "Bozo/"
+randomTest = location + "RandomTest/"
 
 #The number of posts
 fewPosts = (35, 68)
@@ -24,3 +24,5 @@ shortLength = (0, 100)
 mediumLength = (100, 1000)
 longLength = (1000, 3000)
 rantLength = (3000, 9999999)
+
+testTimes = 1000000

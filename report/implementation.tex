@@ -6,40 +6,40 @@ In this section I will try to describe the implementation choices I have made in
 \subsection{Choice of programming language}
 I choose to write my project in Python as I felt that a fast development time was more important than a super fast program.
 
-\subsection{Creation of n-grams}
-Since the creation of n-grams themselves was not a critical part of the project, I opted not to write my own code. Therefore I choose python-ngram (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/\footnote{Address has been tested to work on the 13th of August, 2009}. I have made alterations to the program, the most important of which are the following:
+\subsection{Creation of $n$-grams}
+Since the creation of $n$-grams themselves was not a critical part of the project, I opted not to write my own code. Therefore I choose \texttt{python-ngram} (version 2.0b2) which can be found at http://python-ngram.sourceforge.net/\footnote{Address has been tested to work on the 13th of August, 2009}. I have made alterations to the program, the most important of which are the following:
 
 \subsubsection*{Numbers}
 Since numbers are bound to appear in some texts, I have chosen to represent them as the escape characters ``$\backslash$v'', since it is the appearance of numbers and their pattern that is interesting, not the numbers themselves.
 
 \subsubsection*{Padding}
-The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the (n-1) first and the (n-1) last characters would have their own n-grams. However, since I also create 1 and 2 grams (see below).
+The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the $(n-1)$ first and the $(n-1)$ last characters would have their own $n$-grams. However, since I also create 1 and 2 grams, this is not needed (see below).
 
 \subsubsection*{Implementation changes}
-Through experimentation, I have found that it essential to not only create the 3-grams, but also the 2 and 1 grams. If these n-grams are not created, then the probability of most the n-grams will be 0, just as what happened to $p_3$ in \pref{Good-Turing}.
+Through experimentation, I have found that it essential to not only create the 3-grams, but also the 1- and 2- grams. If these $n$-grams are not created, then the probability of most the $n$-grams will be 0, just as what happened to $p_3$ in \pref{Good-Turing}.
 
 \subsection{Good-Turing smoothing}
-Like above, I did not choose to write my own Good-Turing smoothing, but have instead used the ``Natural Language Toolkit'' for python, version 0.9.9, which can be found at www.nltk.org\footnote{Address has been tested to work on 13th of August, 2009}.
+Like above, I did not choose to write my own Good-Turing smoothing, but have instead used the \texttt{Natural Language Toolkit} for python, version 0.9.9, which can be found at www.nltk.org\footnote{Address has been tested to work on 13th of August, 2009}.
 
 \subsection{Scalability of implementation}
 In order to measure whether or not the algorithm scales, I have found it necessary to make 2 separate tests: 
 \begin{enumerate}
-\item The time it takes to create the n-grams from the corpora. The only parameter in this case is the number of texts that appears in the corpora.
+\item The time it takes to create the $n$-grams from the corpora. The only parameter in this case is the number of texts that appears in the corpora.
 \item The time it takes to decide which author is most likely to have written a text. This test has 2 parameters: The number of texts in the corpora to test against, and the number of test to make
 \end{enumerate}
 
-In order to get a proper resolution for both tests, I have chosen 12 different corpora and text sizes, and have tested all $12 \times 12$ combinations. The numbers for both the corpora and the texts are as follows 100, 200, 300, $\ldots$, 1100, 1200.\\
+In order to get a proper resolution for both tests, I have chosen 12 different corpora and text sizes, and have tested all $12 \times 12$ combinations. The numbers for both the corpora and the texts are as follows $100, 200, 300, \ldots, 1100, 1200$.\\
 
-I ran the tests - serially - on a computer with a 8x3.06Ghz Core i7-950 with 6 GB of RAM, running Windows XP Pro. 
+I ran the tests --- serially --- on a computer with a 8x3.06Ghz Core i7-950 with 6 GB of RAM, running Windows XP Pro. 
 
-\subsubsection{Make n-gram}
+\subsubsection{Make $n$-gram}
 \input{/home/mikkel/Documents/AuthorAttribution/report/tabeller/ngramTime}\\ \\
 
-Both the above table and figure \ref{fig:ngram} clearly shows that the time required to make the n-grams grows liner with the number of posts in the corpora.
+Both the above table and figure \ref{fig:ngram} clearly shows that the time required to make the $n$-grams grows liner with the number of posts in the corpora.
 
 \begin{figure}[!hbp]
 \includegraphics[width=\textwidth]{tabeller/ngram.png}\\
-\caption{Time used to create n-grams compared to the number of texts in the corpora\label{fig:ngram}}
+\caption{Time used to create $n$-grams compared to the number of texts in the corpora\label{fig:ngram}}
 \end{figure}
 
 \subsubsection{Decide authors}
@@ -54,4 +54,3 @@ Since both of these tests time consumption grows linearly with the number of tex
 \includegraphics[width=\textwidth]{tabeller/work.png}
 \caption{Time for text attribution with 1200 texts \label{fig:work}}
 \end{figure}
-

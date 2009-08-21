@@ -21,6 +21,8 @@
 \usepackage{lscape}
 \usepackage{pdflscape}
 \usepackage{verbatim}
+\usepackage[final]{listings}
+
 %\usepackage{ulem}
 \ifPDF
 	\usepackage[pdftex]{hyperref}
@@ -30,8 +32,24 @@
 	\usepackage[dvips]{graphicx}
 %	\usepackage[dvips]{hyperref}
 \fi
-
-%\lstset{language=ML,numbers=left,stepnumber=1,basicstyle=\scriptsize}
+\lstset{ %
+language=Python,                % choose the language of the code
+basicstyle=\scriptsize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+%backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=true,         % underline spaces within strings
+showtabs=true,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+tabsize=2,	                % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=true,        % sets if automatic breaks should only happen at whitespace
+escapeinside={\%*}{*)}          % if you want to add a comment within your code
+}
 % Pages styles (master pages)
 \makeatletter
 \newcommand{\sqbox}{\hfill$\square$}
@@ -52,6 +70,7 @@
 \newcommand{\aAuthor}[1]{\emph{#1}}
 \newcommand{\veryFew}[1]{\texttt{#1}}
 \newcommand{\pref}[1]{See section \ref{#1} p. \pageref{#1}}
+\newcommand{\nref}[1]{see section \ref{#1} p. \pageref{#1}}
 \newcommand{\method}[5]{
 \subsection{#1}
 #2 
@@ -71,7 +90,7 @@
 \end{itemize}
 }
 \newcommand{\test}[5]{
-\texttt{Designation:}
+\texttt{Name:}
 \label{#1}
 #1\\
 \texttt{Description:}
@@ -80,14 +99,19 @@
 #3\\
 \texttt{Author texts}
 #4\\
-\texttt{Corpora}
-#5\\\\
+\texttt{Corpus}
+#5
 }
-
+\newcommand{\nl}{\\\\}
 \newcommand{\postSize}[1]{\texttt{#1}}
 \newcommand{\postAmount}[1]{\texttt{#1}}
 \newcommand{\q}[1]{\texttt{``#1''}}
 \newcommand{\forum}{web forums}
+\newcommand{\src}[1]{
+\subsection{#1.py}
+\label{code:#1}
+\lstinputlisting{../src/src/#1.py}
+}
 \newcommand\ps@Standard{
 \renewcommand\@oddhead{Mikkel Kjær Jensen, CPR: 2501851747}
 \renewcommand\@evenhead{\@oddhead}

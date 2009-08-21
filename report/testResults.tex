@@ -3,111 +3,150 @@
 
 In this section present my test results in order to determine the effectiveness of my implementation.
 
-In order to make my test results comparable with \cite{nr4} I will use the same parameters that they used. These parameters are: 
+In order to make my test results comparable with \cite{nr4} I will use the same parameters that they used. To make it easier to compare with the results in \cite{nr4}, I will keep all percentage results as a faction (e.g. 1 would be 100 \% and 0.33 would be 33 \%) --- results not computed in \cite{nr4} will however, be in percentage. These I will look for are: 
 
 \begin{description}
 \item[Overall Average] The number of correctly attributed texts divided by the number of texts that have been attributed. E.g. if 8 texts have been correctly attributed, and 10 texts have been attributed, then the overall average would be 0.8 
 
 \item[Precision] The number of correctly attributed texts for an author, divided by the total number of texts that have been attributed to that author. E.g. if the author has had 8 texts correctly attributed to him, and in total 10 texts have been attributed to him, then the Precision would be 0.8. Thus, this is essentially local accuracy.
 
-\item[Recall] Recall is the number of correctly attributed texts for an author, divided by the by the number of texts that should have been attributed to. E.g. if the authors has had 8 texts correctly attributed to him, but there was 10 texts there was to be attributed - then the recall is 0.8.
+\item[Recall] Recall is the number of correctly attributed texts for an author, divided by the by the number of texts that should have been attributed to. E.g. if the authors has had 8 texts correctly attributed to him, but there was 10 texts there was to be attributed --- then the recall is 0.8.
 
 \item[F-measure] F-measure is calculated like so: $\frac{2 \times precision \times recall}{precision+recall}$ 
 
 \item[Macro-average F-measure] The Macro-average F-measure is the average of all the authors F-measure. 
 \end{description}
 
+\subsection{Random selection}
+In order to have a baseline to compare my results against, I have for each subtest made a random selection test. For each text that had to be selected in the test, I have selected one million random authors as the texts author. The result of this will be presented at the end of each subsection, and will be compared to the real results in section \ref{interpretation}. If the random selection returns better results than the method found in \cite{nr4}, then my implementation of \cite{nr4} cannot be used. 
+
+Since I do a million random selections, the concept of precision will become meaningless in tests when there is only text from one author --- since there in practice is no chance of that author not being chosen once. I will therefore only show precision for Random selection tests when there are multiple authors. 
+
+The code that generates the random selections can be found in section \ref{code:randomTest}.
+
 \subsection*{Key}
-In the following I each author will follow the following format: Axx$^{n}$, where xx is the number identifying the author, and n is the number of posts that the author has written. Furthermore, since no test contain every author, the authors who appear both in the corpora and the texts that are to be attributed will have the following formatting: \aAuthor{Axx$^{n}$}, whereas authors who only appear in the corpora will have no such formatting. All authors who have written only 1 post, will furthermore have the following formatting: \veryFew{Axx$^{n}$}. These formatting may overlap.\\
+In the following I each author will follow the following format: Axx$^{n}$, where xx is the number identifying the author, and n is the number of posts that the author has written. Furthermore, since no test contain every author, the authors who appear both in the corpus and the texts that are to be attributed will have the following formatting: \aAuthor{Axx$^{n}$}, whereas authors who only appear in the corpus will have no such formatting. All authors who have written only 1 post, will furthermore have the following formatting: \veryFew{Axx$^{n}$}. These formatting may overlap.\\
 
 \subsection{Test results}
 
 \subsubsection{StressTest1}
-A single post is compared against the entire corpora - for more information \pref{StressTest1}.\\
-\input{tabeller/StressTest/StressTest11}
+A single post is compared against the entire corpus --- for more information, \nref{StressTest1}.\nl
+
+\input{tabeller/StressTest/StressTest11}\nl
+
+\input{tabeller/StressTest/StressTest12}\nl
+
+\input{tabeller/StressTest/StressTest13}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/StressTest1}
 
 \subsubsection{StressTest2}
-A single post from an author who has written \postAmount{Some} posts are checked against the entire corpora \pref{StressTest2}.\\
+A single post from an author who has written \postAmount{Some} posts are checked against the entire corpus, \nref{StressTest2}.\\
 
-\texttt{Stress Test 2.1:}\\
-\input{tabeller/StressTest/StressTest31}\\ \\
+\texttt{Stress Test 2.1:}\nl
+\input{tabeller/StressTest/StressTest31}\nl
 
-\texttt{Stress Test 2.2:}\\
-\input{tabeller/StressTest/StressTest32}\\ \\
+\texttt{Stress Test 2.2:}\nl
+\input{tabeller/StressTest/StressTest32}\nl
 
-\texttt{Stress Test 2.3:}\\
-\input{tabeller/StressTest/StressTest33}
+\texttt{Stress Test 2.3:}\nl
+\input{tabeller/StressTest/StressTest33}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/StressTest3}
 
 \subsubsection{StressTest3}
-One post from an author who has written \postAmount{Many} posts are checked against the entire corpora \pref{StressTest4}.\\
+One post from an author who has written \postAmount{Many} posts are checked against the entire corpus, \nref{StressTest4}.\\
 
-\texttt{Stress Test 3.1:}\\
-\input{tabeller/StressTest/StressTest41}\\
+\texttt{Stress Test 3.1:}\nl
+\input{tabeller/StressTest/StressTest41}\nl
 
-\texttt{Stress Test 3.2:}\\
-\input{tabeller/StressTest/StressTest42}\\
+\texttt{Stress Test 3.2:}\nl
+\input{tabeller/StressTest/StressTest42}\nl
 
-\texttt{Stress Test 3.3:}\\
-\input{tabeller/StressTest/StressTest43}
+\texttt{Stress Test 3.3:}\nl
+\input{tabeller/StressTest/StressTest43}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/StressTest4}
 
 \subsubsection{StressTest4}
-A single text from an author is checked against all the texts \pref{StressTest4} .\\
+A single text from an author is checked against all the texts, \nref{StressTest4} .\\
 
-\texttt{Stress Test 4.1:}\\
-\input{tabeller/StressTest/StressTest51}\\
+\texttt{Stress Test 4.1:}\nl
+\input{tabeller/StressTest/StressTest51}\nl
 
-\texttt{Stress Test 4.2:}\\
-\input{tabeller/StressTest/StressTest52}\\
+\texttt{Stress Test 4.2:}\nl
+\input{tabeller/StressTest/StressTest52}\nl
 
-\texttt{Stress Test 4.3:}\\
-\input{tabeller/StressTest/StressTest53}
+\texttt{Stress Test 4.3:}\nl
+\input{tabeller/StressTest/StressTest53}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/StressTest5}
 
 \subsubsection{AuthorSomePost}
-All the posts from a random author who has written \postAmount{Some} posts is checked against all the posts from all authors who have written \postAmount{Some} posts \pref{AuthorSomePost}.\\  
+All the posts from a random author who has written \postAmount{Some} posts is checked against all the posts from all authors who have written \postAmount{Some} posts \nref{AuthorSomePost}.\\  
 
-\texttt{AuthorSomePost 1:}\\
-\input{tabeller/AuthorSomePost/AuthorSomePost1}\\
+\texttt{AuthorSomePost 1:}\nl
+\input{tabeller/AuthorSomePost/AuthorSomePost1}\nl
 
-\texttt{AuthorSomePost 2:}\\
-\input{tabeller/AuthorSomePost/AuthorSomePost2}\\
+\texttt{AuthorSomePost 2:}\nl
+\input{tabeller/AuthorSomePost/AuthorSomePost2}\nl
 
-\texttt{AuthorSomePost 3:}\\
-\input{tabeller/AuthorSomePost/AuthorSomePost3}
+\texttt{AuthorSomePost 3:}\nl
+\input{tabeller/AuthorSomePost/AuthorSomePost3}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/AuthorSomePost}
 
 \subsubsection{AuthorManyPost}
-All the posts from a random author who has written \postAmount{Many} posts is checked against all the posts from all authors who have written \postAmount{Many} posts \pref{AuthorManyPost}.\\  
+All the posts from a random author who has written \postAmount{Many} posts is checked against all the posts from all authors who have written \postAmount{Many} posts \nref{AuthorManyPost}.\\  
 
-\texttt{AuthorManyPost 1:}\\
-\input{tabeller/AuthorManyPost/AuthorManyPost1}\\
+\texttt{AuthorManyPost 1:}\nl
+\input{tabeller/AuthorManyPost/AuthorManyPost1}\nl
 
-\texttt{AuthorManyPost 2:}\\
-\input{tabeller/AuthorManyPost/AuthorManyPost2}\\
+\texttt{AuthorManyPost 2:}\nl
+\input{tabeller/AuthorManyPost/AuthorManyPost2}\nl
 
-\texttt{AuthorManyPost 3:}\\
-\input{tabeller/AuthorManyPost/AuthorManyPost3}
+\texttt{AuthorManyPost 3:}\nl
+\input{tabeller/AuthorManyPost/AuthorManyPost3}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/AuthorManyPost}
 
 \subsubsection{ShortBogusTest}
-\texttt{Short Bogus Test 1:}\\
-\input{tabeller/ShortBogusTest/ShortBogusText1}\\
+All texts from an author are tested against a corpus comprising only of the authors text, and 2 short bogus texts, in order to whether authors with few texts are given a too large probability when tested against. \pref{ShortBogusTest}
 
-\texttt{Short Bogus Test 2:}\\
-\input{tabeller/ShortBogusTest/ShortBogusText2}\\
+\texttt{Short Bogus Test 1:}\nl
+\input{tabeller/ShortBogusTest/ShortBogusText1}\nl
 
-\texttt{Short Bogus Test 3:}\\
-\input{tabeller/ShortBogusTest/ShortBogusText3}\\
+\texttt{Short Bogus Test 2:}\nl
+\input{tabeller/ShortBogusTest/ShortBogusText2}\nl
 
-\clearpage
+\texttt{Short Bogus Test 3:}\nl
+\input{tabeller/ShortBogusTest/ShortBogusText3}\nl
+
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/ShortBogusText}
+
 \subsubsection{UltimateStressTest}
-A random half of the corpora is checked against the entire corpora \pref{UltimateStressTest}.\\
+A random half of the corpus is checked against the entire corpus, \nref{UltimateStressTest}.\\
 Due to the size of the table, I have chosen to not represent the table in the manner used in \cite{nr4}, but instead just summing up the recall, precision, hits, misses (the number texts wrongly attributed the author), the number and percentage of texts attributed to an author with only 1 post.
-
-\texttt{Ultimate Test 1:}\\\\
-\input{tabeller/UltimateTest/UltimateTest1}\\
+\clearpage
+\texttt{Ultimate Test 1:}\nl
+\input{tabeller/UltimateTest/UltimateTest1}
 
 \clearpage
-\texttt{Ultimate Test 2:}\\\\
-\input{tabeller/UltimateTest/UltimateTest2}\\
+\texttt{Ultimate Test 2:}\nl
+\input{tabeller/UltimateTest/UltimateTest2}
+
 
 \clearpage
-\texttt{Ultimate Test 3:}\\\\
-\input{tabeller/UltimateTest/UltimateTest3}\\
+\texttt{Ultimate Test 3:}\nl
+\input{tabeller/UltimateTest/UltimateTest3}
+
+\clearpage
+\texttt{Random selection:}\nl
+\input{tabeller/RandomTest/UltimateTest}

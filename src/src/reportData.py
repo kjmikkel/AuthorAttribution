@@ -3,7 +3,6 @@ from cStringIO import StringIO
 from operator import itemgetter
 from decimal import *
 import pprint
-import pprint
 import json
 import workOnJSON as JSON
 from cStringIO import StringIO
@@ -38,7 +37,6 @@ def doStressTable(num):
     
     # StressTest2
     # No one in this category
-    #AuthorTest(num, "singleAuthorData", "few" ,"StressTest", "StressTest"
     
     #StressTest 2
     makeTable("StressTest3", "StressTest", "Some",num)
@@ -51,7 +49,7 @@ def doStressTable(num):
 
 #Produce the main table
 def makeTable(filename, foldername, corpora, givenNum):
-    getcontext().prec = 2
+    getcontext().prec = 3
     worker = JSON.workOnJSON()
     for index in range(1, givenNum + 1):
         (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
@@ -104,7 +102,6 @@ def produceTable(authorAttri, averageFMeasure, authorList2, authorList1, attribu
     # I use a very primitive algorithm to sort the values properly
     authorList1 = sortKeys(authorList1)
     authorList2 = sortKeys(authorList2)
-
     # The dictionary to store the new "real" names, so that they do not have to be recomputed
     newNameDict = {}
     
@@ -124,20 +121,18 @@ def produceTable(authorAttri, averageFMeasure, authorList2, authorList1, attribu
     activeAuthor = "\\aAuthor{"
     veryFew = "\\veryFew{"
     
-    
     for authorName in authorList1:
         oriName = authorName
-            
+        
         if authorData.has_key(oriName):
             authorName = activeAuthor + authorName + "}"
-            
+        
         if listOfOne.count(oriName):
             authorName = veryFew + authorName + "}"
         authorName += "$^{" + str(writtenDict[oriName]) + "}$"
-    
+        
         # I store the name so that we do not have to recompute it 
         newNameDict[oriName] = authorName
-        
         stringResult.write(authorName + " & ")
     stringResult.write("Recall " + next + "\n")
     stringResult.write(line)
@@ -147,7 +142,7 @@ def produceTable(authorAttri, averageFMeasure, authorList2, authorList1, attribu
         oriName = oAuthor
         if newNameDict.has_key(oriName):
             oAuthor = newNameDict[oriName]    
-    
+        
         stringResult.write(oAuthor + " & ")
         
         # Go through a line - this is the main part
@@ -192,7 +187,7 @@ def produceTable(authorAttri, averageFMeasure, authorList2, authorList1, attribu
     else:
         overall = 0.0
         
-    stringResult.write("\\multicolumn{" + str(numElements + 2)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure) + "}" + next + "\n")
+    stringResult.write("\\multicolumn{" + str(numElements + 2)+ "}{|c|}{Overall Accuracy: " + str(overall) + " Macro-average F-measure: " + str(averageFMeasure ) + "}" + next + "\n")
     stringResult.write(line)
     stringResult.write("\\end{tabular} \n")
 
@@ -229,9 +224,9 @@ def produceResult(authorData, authorList):
             recall = Decimal(str(correctlyAttributed)) / Decimal(str(writtenByAuthor))
         else:
             recall = 0.0
-        
+
         if (precision and recall):
-            fMeasure = Decimal((Decimal(2) * precision * recall) / (precision + recall))
+                fMeasure = Decimal((Decimal(2) * precision * recall) / (precision + recall))
         else:
             fMeasure = Decimal("0.0")
         
@@ -336,18 +331,14 @@ def produceStatisticalData(filename, filename_save):
     numberTexts = 0
     minNumber = 1000000
     maxNumber = -1
+    
     for key in authorData.keys():
         entry = authorData[key]
         length += entry["totalLength"]
         numberTexts += entry["textNumber"]
         minNumber = min(minNumber, entry["totalLength"])
         maxNumber = max(maxNumber, entry["totalLength"])
-    
-    #print "Number of authors:", len(authorData)
-    #print "Length:", length
-    #print "Number of texts:", numberTexts
-    #print "Average:", str(round(Decimal(length) / Decimal(numberTexts), 3))
-    
+
     keys = sortKeys(authorData.keys())
     worker.save_JSON_file(filename_save, authorData)
 
@@ -359,10 +350,13 @@ def produceStatisticalData(filename, filename_save):
     count = 0
     endCount = 35
     
+    numberOnePost = 0
     for name in keys:
         entry = authorData[name]
         number = str(entry["textNumber"])
-        
+        if number == "1":
+            numberOnePost += 1
+            
         stringWriter.write(str(name[0:15]) + " & " + number + " & " + str(entry["min"]) + " & " +  str(entry["max"]) + " & " + str(entry["average"]) + "\\\\\n")
         
         if count == endCount:
@@ -376,6 +370,8 @@ def produceStatisticalData(filename, filename_save):
     stringWriter.write("& & & & & \\\\ \n")
     stringWriter.write("Number of Authors & Number of Texts & Total Min & Total Max & Total Average \\\\ \n")
     stringWriter.write(str(len(authorData)) + " & " + str(numberTexts) + " & " + str(minNumber) + " & " + str(maxNumber) +  " & " + str(round(Decimal(length) / Decimal(numberTexts), 3)) + "\\\\ \n")
+    oneAuthor = str(float(numberOnePost) / float(len(authorData)) * 100)
+    stringWriter.write("\\multicolumn{5}{c}{Percentage of authors who have only written 1 post: " +  oneAuthor[:5] + " \\%}")
     stringWriter.write("\\end{tabular}\n")
     
     FILE_TO_SAVE = open(constants.tableSave + "reportFile.tex","w")
@@ -401,7 +397,7 @@ def fixAuthorNames(fileName, fileNameToSave):
     print list[0], list[1], list[50]
     JSON.save_JSON_file(fileNameToSave, list)    
       
-# Produce stats    
+# Produce a table containing the information for each author
 def produceStats():
     startFile = constants.corpora + "data.json"
     newFile = constants.corpora + "newData.json"
@@ -436,6 +432,7 @@ def getAuthorWithOverXPosts(data_file, metadata_file, number):
 location = "data/"
 resultDir = location + "Results/"
 
+# Produce the 12 * 12 table, containing the time
 def produceXtable():
     getcontext().prec = 4
     worker = JSON.workOnJSON()
@@ -540,10 +537,15 @@ def doUltimateTable():
         (authorAttri, averageFMeasure, authorList, overall) = makeTableData(id, authorData, placeToSave, num)
         produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora)
 
-def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora): 
+def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, num, overall, corpora, ultimate = 1): 
+        if len(authorList) > 1 or ultimate:
+            randomTest = 0
+        else:
+            randomTest = 1
+            
         (listOfOne, writtenDict) = getAuthorWrittenData(1, corpora) 
         
-        numberALine = 2
+        numberALine = min(2, len(authorData))
         numElements = len(authorData)
         lines = int(math.ceil(float(numElements) / float(numberALine)))
         
@@ -556,12 +558,22 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
         line = "\\hline \n"
         activeAuthor = "\\aAuthor{"
         veryFew = "\\veryFew{"
+        if randomTest:
+            values = 4
+        else:
+            values = 5
+        print values
         
-        middleLine = ("c|" * 5 + "|") * numberALine
+        middleLine = ("c|" * values + "|") * numberALine
         middleLine = middleLine[:-1]
         stringResult.write("\\begin{tabular}{|" +  middleLine + "}\n")
         stringResult.write(line)
-        stringResult.write(("Name & Recall & Precision & Hits & Miss &" * numberALine)[:-1] + next)
+        if not randomTest:
+            precision = "Precision &"
+        else:
+            precision = ""
+            
+        stringResult.write((("Name & Recall & " + precision + " Hits & Miss &") * numberALine)[:-1] + next)
         stringResult.write(line)
 
         lessThan10 = 0
@@ -579,11 +591,10 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
                     numberHits = 0
             
                 numberMisses = 0
-                #if authorData.has_key(authorName):
                 for authorName2 in authorList:
                     if authorData.has_key(authorName2) and authorData[authorName2].has_key(authorName):
                         numberMisses += authorData[authorName2][authorName]
-        
+    
                 numberMisses -= numberHits
                 
                 oriName = authorName
@@ -596,24 +607,28 @@ def produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorDa
                 if listOfOne.count(oriName):
                         authorName =  veryFew + authorName + "}"
                 
+                resol = 4
                 if authorData.has_key(oriName):
                     entry = authorAttri[oriName]
                     authorName = activeAuthor + authorName + "}"
-                    recall = Decimal(str(entry["recall"]))
-                    precision = Decimal(str(entry["precision"]))
-                    lineStr.write(authorName + " & " + str(recall) + " & " + str(precision)[:5] + " & " + str(numberHits) + " & " + str(numberMisses) + " & ") 
+                    recall = Decimal(str(entry["recall"])[:resol])
+                    if not randomTest:
+                        precision = str(Decimal(str(entry["precision"])[:resol])) + " & "
+                    else:
+                        precision = ""
+                    lineStr.write(authorName + " & " + str(recall) + " & " + precision + str(numberHits)[:resol] + " & " + str(numberMisses)[:5] + " & ") 
                 else:
-                    lineStr.write(authorName + " & 0.0 & 0 & " + str(numberHits) + " & " + str(numberMisses) + " & ") 
+                    lineStr.write(authorName + " & 0.0 & 0 & " + str(numberHits)[:resol] + " & " + str(numberMisses)[:resol] + " & ") 
                 
             stringResult.write(lineStr.getvalue()[:-2])
             stringResult.write(next)
             stringResult.write(line) 
             
-        stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Overall Accuracy: " + str(overall)[:7] + " Macro-average F-measure: " + str(averageFMeasure)[:7] + "}" + next)
-        stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Total number of posts attributed to authors with less than 1 posts: " + str(lessThan10) + "}" + next)
-        percentage = Decimal(str(float(lessThan10) / float(totalPosts) * 100)[:5])
-        print "percent:", percentage
-        stringResult.write("\\multicolumn{" + str(numberALine * 5)+ "}{|c|}{Percentage of posts attributed authors with 1 post: " + str(percentage) + "\\%}" + next)
+        stringResult.write("\\multicolumn{" + str(numberALine * values)+ "}{|c|}{Overall Accuracy: " + str(overall)[:7] + "  Macro-average F-measure: " + str(averageFMeasure )[:7] + " }" + next)
+        if ultimate:
+            stringResult.write("\\multicolumn{" + str(numberALine * values)+ "}{|c|}{Total number of posts attributed to authors with less than 1 posts: " + str(lessThan10) + "}" + next)
+            percentage = Decimal(str(float(lessThan10) / float(totalPosts) * 100)[:5])        
+            stringResult.write("\\multicolumn{" + str(numberALine * values)+ "}{|c|}{Percentage of posts attributed authors with 1 post: " + str(percentage) + " \\%}" + next)
         stringResult.write(line)
         stringResult.write("\\end{tabular}")
         
@@ -633,40 +648,6 @@ def sortKeys(authorList):
     if authorList.count("Bogus"):
         keys.append("Bogus")
     return keys
-"""
-def makeUltimateTable():
-    worker = JSON.workOnJSON()
-    saveFile = "UltimateTestTest.tex"
-    newFile = constants.corpora + "newData.json"
-    saveStats = constants.location + "dataSave.json"
-    authorPost = 1
-    getAuthorWithOverXPosts(newFile, saveStats, 1)
-    
-    authors = worker.read_JSON_file("authorsWithOver1.json")
-    authorDict = {}
-    for author in authors:
-        authorDict[author["user_id"]] = 1
-    
-    smallAuthors = authorDict.keys()
-        
-    authors = worker.read_JSON_file(newFile)
-    authorDict = {}
-    for author in authors:
-g        authorDict[author["user_id"]] = 1
-    
-    allAuthors = authorDict.keys()
-    
-    filename = "UltimateTest"
-    filename_save = "UltimateTestTest"
-    foldername = "UltimateTest"
-    givenNum = 3
-    
-    for index in range(1, givenNum + 1):
-        (id, authorData, name, num) = worker.read_JSON_file(constants.resultDir + filename + str(index) + ".json")
-        placeToSave = constants.folderLocation + "report/tabeller/" + foldername + "/" + filename_save
-        (authorAttri, averageFMeasure, authorList, overall) = makeTableData(id, authorData, placeToSave, num)
-        produceTable(authorAttri, averageFMeasure, smallAuthors, allAuthors, id, authorData, placeToSave, num, overall)
-""" 
 
 def getAuthorWrittenData(num, corpora):
     worker = JSON.workOnJSON()
@@ -687,52 +668,56 @@ def getAuthorWrittenData(num, corpora):
     
     return (listOfOne, writtenDict)
    
-def makeBozoTables(filename, corpora):
-    folderName = "Bozo"
+def makeRandomTestTables(filename, corpora):
+    folderName = "RandomTest"
     worker = JSON.workOnJSON()
     placeToSave = folderName + filename
-    authorData = worker.read_JSON_file(constants.bozo + filename + ".json")
+    authorData = worker.read_JSON_file(constants.randomTest + filename + ".json")
     placeToSave = constants.folderLocation + "report/tabeller/" + folderName + "/" + filename
     (authorAttri, averageFMeasure, authorList, overall) = makeTableData({}, authorData, placeToSave, 1)
-    produceUltimateTables(authorAttri, averageFMeasure, authorList, id, authorData, placeToSave, -1, overall, corpora)
+    
+    ultimate = None
+    if filename.count("Ultimate"):
+        ultimate = 1
+        
+    produceUltimateTables(authorAttri, averageFMeasure, authorData.keys(), id, authorData, placeToSave, -1, overall, corpora, ultimate)
 
-def bozoTest():
+def randomTest():
    
-    doBozoStressTest()
+    doRandomStressTest()
     
     #Short Bogus Test
-    makeBozoTables("ShortBogusText", "shortBogusCorpora1") 
+    makeRandomTestTables("ShortBogusText", "shortBogusCorpora1") 
     
     #All of the number tests
     doNumberTest()
     
     #Do the ultimate tests
-    makeBozoTables("UltimateTest", "newData")
+    makeRandomTestTables("UltimateTest", "newData")
     
-def doBozoStressTest():
+def doRandomStressTest():
         # StressTest1
-    makeBozoTables("StressTest1", "newData")
+    makeRandomTestTables("StressTest1", "newData")
     
     #StressTest 3
-    makeBozoTables("StressTest3", "Some")
+    makeRandomTestTables("StressTest3", "Some")
         
     # StressTest 4
-    makeBozoTables("StressTest4", "Many")
+    makeRandomTestTables("StressTest4", "Many")
        
     # StressTest5
-    makeBozoTables("StressTest5", "singlePostCorpora")
+    makeRandomTestTables("StressTest5", "singlePostCorpora")
     
 
 def doNumberTest():
     #AuthorSomePost
-    makeBozoTables("AuthorSomePost", "Some")
+    makeRandomTestTables("AuthorSomePost", "Some")
     
     #AuthorManyPost
-    makeBozoTables("AuthorManyPost", "Many")
+    makeRandomTestTables("AuthorManyPost", "Many")
  
     
-if __name__ == '__main__':              
+if __name__ == '__main__':
     #doTables()
-    #produceStats()
-    doUltimateTable()
-    bozoTest()
+    # randomTest()
+    produceStats()

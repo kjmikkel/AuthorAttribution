@@ -13,9 +13,8 @@ runTimeTest = 0
 corpNumber = 0
 
 """
-Do the test
+Run all tests
 """
-
 def doAllTests():
     num = 3
     doStressTest(num)
@@ -26,11 +25,8 @@ def doAllTests():
     #All of the number tests
     doNumberTest(num)
     
-    # Dummy tests
-  #  AuthorTest(0, "testUl", "testData" ,"UltimativeTest", "UltimativeTest")
-    
     #Do the ultimate tests
-   # AuthorTest(num, "UltimateTexts", "newData" ,"UltimateTest", "UltimateTest")
+    AuthorTest(num, "UltimateTexts", "newData" ,"UltimateTest", "UltimateTest")
     
 def doNumberTest(num):
     #AuthorSomePost
@@ -45,18 +41,18 @@ def doStressTest(num):
 #    AuthorTest(num, "singleAuthorData", "newData" ,"StressTest", "StressTest1")
     
     # StressTest2
-    # No one in this category
-    #AuthorTest(num, "singleAuthorData", "few" ,"StressTest", "StressTest"
+    # No tests in this category
     
     #StressTest 3
     AuthorTest(num, "someStress", "Some" ,"StressTest", "StressTest3")
         
     # StressTest 4
-    AuthorTest(num, "manyStress", "Many" ,"StressTest", "StressTest4")
+   # AuthorTest(num, "manyStress", "Many" ,"StressTest", "StressTest4")
        
     # StressTest5
-   # AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
+ #   AuthorTest(num, "singleAuthorData", "singlePostCorpora" ,"StressTest", "StressTest5")
 
+# Do the test that checks the time consumption
 def timeTest():
     corpora = [i * 100 for i in range(1,14)]
     corpora.append(1329)
@@ -91,6 +87,7 @@ def AuthorTest(num, filename_test, corpora_name, foldername, filename_save):
                 corpora_final_name = corpora_name + str(index)
             value = runTest(authorText, corpora_final_name + ".json", folder + filename_save, index)
             
+# Runs the inards of an actual test
 def runTest(compareDict, filename, name, num):
     # files to work on
     tempName = name.rpartition("/")[-1]
@@ -123,8 +120,10 @@ def runTest(compareDict, filename, name, num):
     worker.save_JSON_file(constants.resultDir + tempName + str(num) + ".json", (id, authorData, name, num))            
             
 def compareAuthors(authors, compareDict, tg_dict):
+
     # this dict contains how many texts (that we are comparing against the corpus) each author has written
     authorMade = {}
+    
     # The dict that contains which authors have had their text attributed to whom
     resultDict = {}        
             
@@ -138,37 +137,26 @@ def compareAuthors(authors, compareDict, tg_dict):
         
         (gram, workList) = com.total_ngram(compareTo)
         dataDist = {}
-            # We do the actual testing
-        
+
+        # We do the actual testing        
         for author in authors:
             sum = 0.0
-            #tg = copy.deepcopy(tg_dict[author])
             tg = tg_dict[author]
             for word in workList:
                 sum += tg.propability(word, 0)
             
             dataDist[author] = sum
-          #  print "Done with", author, "took", str(endTime - timeStart), "seconds"
         
-        
-       # b = dict(map(lambda item: (item[1],item[0]), a.items()))
-        #author = b[max(b.values()())]
-       # sort = sorted(dataDist.items(), key=itemgetter(1))
-       # author = sort[-1][0]
         value = -1
         for an in dataDist.keys():
-#            print (an, dataDist[an])
             newValue = dataDist[an]
             if newValue > value:
- #               print "newValue:", newValue
-  #              print "newAuthor:", an
                 value = newValue 
                 author = an
                 
         print "Real author:", realAuthor
         print "Most likely author:", author
-        print "Probability:", value
-        
+
         if not authorMade.has_key(author):
             authorMade[author] = [realAuthor]
         else:
@@ -224,4 +212,5 @@ def makeNgram(filename):
     return (newAuthorDict, tg_dict)
 
 if __name__ == '__main__':          
-    doAllTests()
+    num = 3
+    doStressTest(num)

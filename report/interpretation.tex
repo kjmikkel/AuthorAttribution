@@ -2,31 +2,41 @@
 \label{interpretation}
 In this section I will interpret the test results from the last section. I will do so test by test, before giving an overall conclusion.
 
-\subsection{StressTest}
-The test results in the last section clearly shows that not one of StressTests had a single hit. While not surprising, it does mean that that the algorithm will not be able to identify anonymous posts.
+\subsection{StressTest1}
+The results shows that the algorithm has not been able to correctly identify a single author in StressTests1, and that in all three cases the text has been attributed to an author with a since post, and none of these longer than 112 characters. This is a strong indicator that the algorithm cannot be used for the attribution of anonymous texts, since it is not certain that the author may have written more than one.  
+
+This assumption is only strengthened by the random results, which are marginally better than the real results.
+
+\subsection{StressTest2-4}
+The last 3 StressTests also shows that the algorithm has not been able to correctly identify a single author, while the random results each time has given a marginally better results. Especially the results in StressTest3 are interesting, since the random results net a 33 percent overall accuracy, while the algorithm is unable to correctly attribute even a single text.
 
 \subsection{AuthorSomePost}
-We see that in both 1 and 3 there is a single correct hit.
+Compared to the last tests AuthorSomePost servers as an indicator that the algorithm is able to correctly attribute authors, since both the first and the third test has a single correct hit. It is however still worse than the random selection, which has a better accuracy than all of the AuthrSomePost tests combined.
 
 \subsection{AuthorManyPost}
-This test is an interesting case, since all of the sub tests have correct hits. While it would be fair to presume that this is because each author has more posts, it is worth noting that both the first and second test has a worse score on all 4 parameters, than the third test, which has the fewest posts - \pref{reportTable}. From the same source it also becomes apparent that A1's post on average are shorter than A3's. This illustrates that more, and longer posts does not necessary make the algorithm better, but that the contents (and the n-grams found within), must play a large part in it.
+AuthorManyPost is quite interesting since it is the first test that reports results, that on average is better than the random results, and which are reasonable even on its own.-
+While it initially would be probable to assume that since each author has written more the results are better, it is worth noting that both the first and second test delivers  worse results than the third test, on all 4 parameters --- which has the fewest posts \nref{reportTable}. From the same source it also becomes apparent that A1's post on average are shorter than A3's. 
+
+This illustrates that more, and longer posts does not necessary make the algorithm better, but that the contents (and the $n$-grams found within), must play a large part in it. Together with the fact that AuthorSomePost also was able to correctly identify 2 posts, one hypothesis might be that the algorithm might work better if tested on a corpus where each author supplies roughly the same amount of texts.  
 
 \subsection{ShortBogusTest}
-It is clear from the table that the algorithm consistently has chosen the bogus texts, which seems to indicate that the algorithm applies a greater probability to shorter texts.\\
+It is clear from the table that the algorithm consistently has chosen the bogus texts, not surprisingly showing far better results with the random test, which indicates that the algorithm applies a greater probability to shorter texts.
 
-One possible explanation might lie in the way that Good-Turing calculates the value for all the unseen object (the n-grams that does not appear in the authors corpora). As previously stated in section \ref{Good-Turing} (p. \pageref{Good-Turing}) the probability of an unseen object in the Good-Turing smoothing is $u =\frac{N_1}{N}$, where $N_1$ is the frequency of the frequency of the most frequent n-gram and $N =\sum r * N_r$. Since N in such cases might be comparatively small, and $N_1$ comparatively large for authors with few short posts, unseen objects may have a unwarranted large probability - and chosen more often since the shorter text must contain more unseen n-grams, than authors who have written long texts.\\
+One possible explanation might lie in the way that Good-Turing calculates the value for all the unseen object (the $n$-grams that does not appear in the authors corpora). As previously stated in section \ref{Good-Turing} (p. \pageref{Good-Turing}) the probability of an unseen object in the Good-Turing smoothing is $u =\frac{N_1}{N}$, where $N_1$ is the frequency of the frequency of the most frequent $n$-gram and $N =\sum r * N_r$. Since N in such cases might be comparatively small, and $N_1$ comparatively large for authors with few short posts, unseen objects may have a unwarranted large probability --- and chosen more often since the shorter text must contain more unseen $n$-grams, than authors who have written long texts.\\
 
 These results do not necessarily contract those found in \cite{nr4}, since \cite{nr4} worked with larger corpora from several well established authors. Such distributions are unlikely to be found on Internet forums or message board. 
 
 \subsection{Ultimate tests}
-The ultimate test clearly shows that authors with only 1 text (and thus most likely\footnote{Though there are some exceptions, A79-A82 being the most prominent - see \ref{reportTable}} a small part of the corpora) have far too many posts attributed to them, compared to authors who have written larger part of the corpora. Together with ShortBogusTets this is perhaps the most damming test, as it fails to correctly attribute any author who has written more than 10 posts - something an Authorship Attribution system for an Internet forum should be able to do.  
+The ultimate test clearly shows that authors with only 1 text (and thus most likely\footnote{Though there are some exceptions, A79-A82 being the most prominent --- see \ref{reportTable}} a small part of the corpora) have far too many posts attributed to them, compared to authors who have written larger part of the corpus. Together with ShortBogusTets this is perhaps the most damming test, as it fails to correctly attribute any author who has written more than 10 posts --- something an Authorship Attribution system for an Internet forum should be able to do. 
+
+The randomly selected results shows far better values, with a far less bias towards authors with 1 post. 
 
 \subsection{Conclusion}
 \begin{itemize}
 \item The StressTests shows that the algorithm is unable to identify an author from only one post (which would be needed if sock puppets are to be identified). 
 \item ShortBogusTest shows that the algorithm attributes a far greater, and unfair, probability to authors who have written little
 \item UltimateTest is the tests that mostly resemble a real world situation, and the fact that it fails, most likely due to the problems detected in ShortBogusTest and the initial smoke tests (\pref{smokeTest}), is a good indicator that the algorithm is not suited for Authorship Attribution on data from Internet forums.
-\item AuthorManyPost is a very interesting case, as its acceptable results are a stark departure from the previous results. It seems likely that the algorithm was designed to work under conditions like the ones provided in AuthorManyPost, given that \cite{nr4} tested their algorithm on well established authors, with a large corpora.
+\item AuthorManyPost is a very interesting case, as its acceptable results are a stark departure from the previous results. It seems likely that the algorithm was designed to work under conditions like the ones provided in AuthorManyPost, given that \cite{nr4} tested their algorithm on well established authors, with large corpora.
 \end{itemize}
 
-From the data found in the different tests, it is clear that the algorithm, or at least the implementation of the algorithm with Good-Turing smoothing, found in \cite{nr4} is not suitable for attributing authors in a corpora of 1329 forum posts\footnote{\pref{reportTable}}. I furthermore find it unlikely that a larger corpora would have give better results, especially when it comes to tests like StressTest1, or UltimateTest. From these tests I have to conclude that the algorithm cannot be used for Authorship Attribution on for Internet forums.
+From the data found in the above tests, it is clear that the algorithm, or at least the implementation of the algorithm with Good-Turing smoothing, is not suitable for attributing authors in a corpus of 1329 forum posts\footnote{\pref{reportTable}}. I furthermore find it unlikely that a larger corpus would have give better results, especially when it comes to tests like StressTest1, or UltimateTest. From these tests I have to conclude that the algorithm cannot be used for Authorship Attribution for Internet forums.

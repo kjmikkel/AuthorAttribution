@@ -1,33 +1,32 @@
 \section{Considerations}
 \label{considerations}
 
-In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably, I will perform each test multiple times (with different author texts and corporas where applicable) in order to gain a better overview of the effectiveness of the algorithm. Unless otherwise noted, I  will run each test 3 times.
+In this section I will describe the different tests that I will use to gauge the effectiveness of the algorithm. In order to do so probably, I will perform each test multiple times (with different author texts and corpora where applicable) in order to gain a better overview of the effectiveness of the algorithm. Unless otherwise noted, I  will run each test 3 times.
 
 \subsection{Initial smoke tests}
 \label{smokeTest}
 In the initial smoke tests I detected the following problems with the algorithm:
 \begin{enumerate}
-\item In the first toy problem I tested, the algorithm was unable to correctly attribute the text, even though there were only 2 authors, who both had only a single text in the corpora - the first a sting of a's, the second a string of b's. Text was attributed to the wrong author.
+\item In the first toy problem I tested, the algorithm was unable to correctly attribute the text, even though there were only 2 authors, who both had only a single text in the corpus --- the first a sting of a's, the second a string of b's. Text was attributed to the wrong author.
 
-\item Authors of short bogus texts (i.e. texts that was produced by mashing the keyboard) were given a far greater probability than they warranted, and their authors were often chosen as the most probable author. 
+\item Authors of short bogus texts (i.e. texts that were produced by mashing the keyboard) were given a far greater probability than they warranted, and their authors were often chosen as the most probable author. 
 \end{enumerate}
  
 
 \subsection{Explanation of test description}
-\test{
-The name of the test
+\test{The name of the test
 }{
-The description of how the test will be done - including which kind of post that will be used in the corpora, and which kinds of posts that will be tested. 
+The description of how the test will be done --- including which kind of post that will be used in the corpus, and which kinds of posts that will be tested. 
 }{
-The purpose of the test - what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and code.
+The purpose of the test --- what are we to archive by doing it, and how likely it is to succeed, based on previous smoke-tests and code.
 }{
 A description of the texts we are attempting to attribute
 }{
-What the corpus is going to contain - how many texts and the what the corpora is going to contain etc.
+What the corpus is going to contain --- the number of texts and the what the corpus is going to contain etc.
 }
 
 \subsection{Values}
-In order to make my results more independent of my current datasat - I introduce the following values:
+In order to make my results more independent of my current datasets. I introduce the following values:
 
 \subsubsection*{Number of texts}
 $Axx_{\alpha} = $the number of texts author xx has written\\ 
@@ -39,9 +38,9 @@ $$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ texts }\in\rm{ auth
  
 And so we have have to check for 
 \begin{description}
-\item[$\Phi_1$ \postAmount{few}:] 35-68
-\item[$\Phi_2$ \postAmount{some}:] 69-102
-\item[$\Phi_3$ \postAmount{many}:] 103-9999.
+\item[$\Phi_1$ \postAmount{Few}:] 35-68
+\item[$\Phi_2$ \postAmount{Some}:] 69-102
+\item[$\Phi_3$ \postAmount{Many}:] 103-9999.
 \end{description}
 
 \subsubsection*{Length of texts}
@@ -60,84 +59,76 @@ In the tests where I have had to select authors, I have used a small python scri
 A list of the authors and their relevant data can be found in \pref{reportTable}. This includes number of texts each author has written, average of characters written etc.
 
 \subsection{Tests}
-I will in this section describe the various texts that I will run. It should be noted that there are no StressTest for \postAmount{few}, since no author has written \postAmount{few} texts.\\ 
-
+I will in this section describe the various texts that I will run. It should be noted that there are no StressTest for \postAmount{Few}, since no author has written \postAmount{Few} texts.\nl
 \test{StressTest1}{
-Take a post from an author appearing in the corpora with a single, \postSize{Long} text, and see if the author can be correctly attributed compared to the entire corpus.
+Take a post from an author appearing in the corpus with a single, \postSize{Long} text, and see if the author can be correctly attributed compared to the entire corpus.
 }{
 Check the limits of the algorithm. It will most likely not be able to attribute the author correctly.
 }{
 1 \postSize{Long} post
 }{
-The entire corpora
-}
-
+The entire corpus
+}\nl
 \test{StressTest2}{
 Check a single post from an author who has written \postAmount{Some} texts against all texts written by authors who have written \postAmount{Some} texts
 }{
 To check the limits of the algorithm. This should have a greater chance of succeeding than the one above, since the post is only checked against texts in its own size category.
 }{
-A single random post from the corpora described below
+A single random post from the corpus described below
 }{
 All texts from authors who have written \postAmount{Some} texts
-}
-
+}\nl
 \test{StressTest3}{
 Check a single post from an author who has written \postAmount{Many} texts against all texts written by authors who have written \postAmount{Many} texts
 }{
 Check the limits of the algorithm. This has a chance of succeeding
 }{
-A single post from the corpora described below
+A single post from the corpus described below
 }{
 All texts from authors who have written \postAmount{Many} texts
-}
-
+}\nl
 \test{StressTest4}{
-I check a single post against a corpora that includes exactly 1 post from each author.
+I check a single post against a corpus that includes exactly 1 post from each author.
 }{
-Check the limits of the algorithms. There is a non-trivial likelihood that this will succeed. It should be noted that due to the selection criteria for this corpora, authors with a single post contributes far more to the corpora than normally.
+Check the limits of the algorithms. There is a non-trivial likelihood that this will succeed. It should be noted that due to the selection criteria for this corpus, authors with a single post contributes far more to the corpus than normally.
 }{
 The same post as in StressTest1
 }{
-1 post from each author in the corpora
-}
-
+1 post from each author in the corpus
+}\nl
 \test{ShortBogusTest}{
-Take a post from an author A with multiple \postSize{Long} texts, and create a corpora from all the texts of A, and a short bogus post from a bogus author.
+Take a post from an author A with multiple \postSize{Long} texts, and create a corpus from all the texts of A, and a short bogus post from a bogus author.
 }{
-This test checks whether the algorithm gives a higher probability to authors with very little information.
+1This test checks whether the algorithm gives a higher probability to authors with very little information.
 }{
 1 long post from A 
 }{
 All the texts from A, plus 2 bogus post.
-}
-
+}\nl
 \test{AuthorSomePost}{
-Take all the texts from an author A, where $\#(A, \tau_2)$ is true, and let the corpora be $\Phi_2$.
+Take all the texts from an author A, where $\#(A, \tau_2)$ is true, and let the corpus be $\Phi_2$.
 }{
 A simple test to see whether the algorithm will work better if all authors have written a comparatively equal number of texts, and there are \postAmount{Some} of them.
 }{
 All texts from an author A, where $\#(A, \tau_2)$ is true
 }{
 $\Phi_2$.
-}
-
+}\nl
 \test{AuthorManyPost}{
-Take all post from an author A, where $\#(A, \tau_3)$ is true, and let the corpora be $\Phi_3$
+Take all post from an author A, where $\#(A, \tau_3)$ is true, and let the corpus be $\Phi_3$
 }{
 A simple test to see whether the algorithm will work better if all authors have written a comparatively equal number of texts, and there are \postAmount{Many} of them.
 }{
 All texts from an author A, where $\#(A, \tau_3)$ is true
 }{
 $\Phi_3$.
-}x
-
+}\nl
 \test{UltimateStressTest}{
-Take a random selection of authors, who have made over half the texts in the entire corpora, and test it on the corpora. 
+Take a random selection of authors, who have made over half the texts in the entire corpus, and test it on the corpus. 
 }{
-This test is to check the overall quality of the algorithm - i.e. if it can attribute the texts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}.
+This test is to check the overall quality of the algorithm --- i.e. if it can attribute the texts correctly, based on the five attributes in the test section, and compared to the results found in \cite{nr4}.
 }{
-All the texts from random authors, who together have made over half the texts in the corpora
+All the texts from random authors, who together have made over half the texts in the corpus
 }{
-The entire corpora
+The entire corpus
 }
