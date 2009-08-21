@@ -103,5 +103,4 @@ def fixValues():
 
 if __name__ == '__main__':
     randomTest("singleAuthorData", "newData" , "StressTest1", constants.testTimes)
-    #runRandomTest()
-   # fixValues()
+    runRandomTest()

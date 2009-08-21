@@ -718,6 +718,6 @@ def doNumberTest():
  
     
 if __name__ == '__main__':
-    #doTables()
-    # randomTest()
+    doTables()
+     randomTest()
     produceStats()

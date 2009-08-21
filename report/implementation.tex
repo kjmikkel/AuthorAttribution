@@ -16,7 +16,7 @@ Since numbers are bound to appear in some texts, I have chosen to represent them
 The code would originally add padding to the start and the end of the text. This was most likely done to ensure that the $(n-1)$ first and the $(n-1)$ last characters would have their own $n$-grams. However, since I also create 1 and 2 grams, this is not needed (see below).
 
 \subsubsection*{Implementation changes}
-Through experimentation, I have found that it essential to not only create the 3-grams, but also the 1- and 2- grams. If these $n$-grams are not created, then the probability of most the $n$-grams will be 0, just as what happened to $p_3$ in \pref{Good-Turing}.
+Through experimentation, I have found that it essential to not only create the 3-grams, but also the 1- and 2- grams. If these $n$-grams are not created, then the probability of most the $n$-grams will be 0, just as what happened to $p_3$ in section \ref{Good-Turing}, p. \pageref{Good-Turing}.
 
 \subsection{Good-Turing smoothing}
 Like above, I did not choose to write my own Good-Turing smoothing, but have instead used the \texttt{Natural Language Toolkit} for python, version 0.9.9, which can be found at www.nltk.org\footnote{Address has been tested to work on 13th of August, 2009}.
@@ -48,7 +48,7 @@ The horizontal values are the number of texts in the corpora, while the vertical
 
 Figure \ref{fig:work}, which is based on the 12th horizontal line\footnote{I have chosen this particular line, since it is the one that has to attribute all the authors, and thus would be the one that would best show if there was any significant non-linear time increase when the number of items in the corpora increased} (i.e. the bottom line in the table), clearly shows that the time required to attribute 1200 authors grows linearly with the amount of posts in the corpora.\\
 
-Since both of these tests time consumption grows linearly with the number of texts in the corpora, its clear that the algorithm could be used in practice, given that it is able to correctly attribute the authors  
+Since both of these tests time consumption grows linearly with the number of texts in the corpora, it is clear that the algorithm could be used in practice, given that it is able to correctly attribute the authors  
 
 \begin{figure}[!hbp]
 \includegraphics[width=\textwidth]{tabeller/work.png}

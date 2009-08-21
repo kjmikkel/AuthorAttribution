@@ -34,7 +34,7 @@ $\Omega = max(A0_\alpha, A1_\alpha, \ldots A89_\alpha, A90_\alpha)$. In this cas
 
 Let $\tau_x = \rm{ceil}(\Omega \times \frac{x}{4})$ and let the predicate $\#(author, \rm{num})$ be true if author a has posted num papers. Let 
 
-$$\Phi_x = \forall\rm{ author }\in\rm{ Authors, }\forall\rm{ texts }\in\rm{ author }: \{\rm{texts }\mid \#(a, \tau_x)\}$$ 
+$$\Phi_x = \forall\rm{\rm{\emph{author}} }\in\rm{\emph{Authors}, }\forall\rm{\emph{texts} }\in\rm{\emph{author} }: \{\rm{\emph{texts} }\mid \#(a, \tau_x)\}$$ 
  
 And so we have have to check for 
 \begin{description}
@@ -53,10 +53,10 @@ And so we have have to check for
 \end{description}
 
 \subsection{Selection of authors}
-In the tests where I have had to select authors, I have used a small python script, that, with the built-in Random function, have selected the authors.
+In the tests where I have had to select authors, I have used a small python script to random select the authors - \nref{code:test}.
 
 \subsection{Authordata}
-A list of the authors and their relevant data can be found in \pref{reportTable}. This includes number of texts each author has written, average of characters written etc.
+A list of the authors and their relevant data can be found in section \ref{reportTable}, p. \pageref{reportTable}. This includes number of texts each author has written, average of characters written etc.
 
 \subsection{Tests}
 I will in this section describe the various texts that I will run. It should be noted that there are no StressTest for \postAmount{Few}, since no author has written \postAmount{Few} texts.\nl

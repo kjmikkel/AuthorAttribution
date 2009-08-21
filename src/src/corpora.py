@@ -137,5 +137,5 @@ def makeTimeTest():
     worker.save_JSON_file(saveFile, listToSave)
             
 if __name__ == '__main__':          
-    #makeTimeTest()
+    makeTimeTest()
     makeCorpora()

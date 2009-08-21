@@ -12,15 +12,12 @@
 \label{conclusion}
 
 \subsection{Summery}
-I have in this report investigated possible methods for Authorship Attribution for Internet forums, and discussed the advantages and disadvantages of each of these methods. I have given a detailed explaination of how the $n$-gram method proposed in \cite{nr4} works, as well as an introduction to Good-Turing smoothing. I have designed and run tests designed to expose whether the algorithm could be used on Internet forums, and interpreted the returend results.  
+I have in this report investigated possible methods for Authorship Attribution for Internet forums, and discussed the advantages and disadvantages of each of these methods. I have come to the conclusion, that Internet forums should be the primary concern for Authorship Attribution, and that less work should be used on comment sections (such as YouTube) and Wikis.  I have given a detailed explanation of how the $n$-gram method proposed in \cite{nr4} works. 
 
 \subsection{Results}
-From section \ref{interpretation} I can conclude that the algorithm described in \cite{nr4} cannot be used with the Good-Turing smoothing for identifying user on Internet forums. The results in section \ref{tests} that when authors with few $n$-grams (i.e. has written few short posts) appear in the corpora, there is a high probability that they will be attributed as the author\footnote{And even then, there is no guarantee that they will be attributed the posts that they themselves have written}.\\
-
-A clear lesson from \cite{nr4} is therefore that any $n$-gram algorithm that has to be used for Internet forums must be robust enough to give texts a proportionate probability based on the $n$-grams, so that author corporas of widely different sizes can be tested together, and still give meaningful results. 
+From section \ref{interpretation} I can conclude that the algorithm described in \cite{nr4} cannot be used with the Good-Turing smoothing for identifying user on Internet forums. The results in section \ref{tests} that when authors with few $n$-grams (i.e. has written few short posts) appear in the corpus, there is a high probability that they will be attributed as the author. It is therefore important, that future $n$-gram based Authorship Attribution methods for Internet forums, must give texts a more proportionate probability based on both their $n$-grams and length. If this is not done, then $n$-gram based methods will be of little use, as it will exclude copora with widely different number (and sizes) of texts --- which makes the method of little use for Authorship Attribution on Internet forums. 
 
 \subsection{Future work}
-
 \begin{itemize}
 \item Since it is likely that many of the wrong attributions are caused by the way that Good-Turing smoothing assigns a far too high probability for the $n$-grams that does not appear in small corporas, it would be interesting to see whether using another smoothing technique (\cite{nr4} also proposes Witten-Bell smoothing) would improve the results.
 
@@ -31,7 +28,4 @@ A clear lesson from \cite{nr4} is therefore that any $n$-gram algorithm that has
 \item Attempt to use the a modified algorithm on a larger corpora --- preferably from an active forum with a large number of users. 
 
 \item Turn a working algorithm into a plug-in for a forum, in order to field test its value in a real situation. Here it would especially be interesting to study the reactions from both forum users as well as the moderators. This should be done in order to study the social dimension of bringing Author Attribution to the Internet.
-\end{itemize}  
-
-\subsubsection*{Acknowledgements}
-I would like to thank Johan Brinck for giving me the forum data that I have been analysing.
+\end{itemize}
